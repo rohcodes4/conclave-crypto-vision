@@ -46,7 +46,7 @@ const ProtectedRoute: React.FC = () => {
         </video>
 
         {/* Foreground content starts */}
-        <div className="relative w-full max-w-md z-10 -mt-28 overflow-visible bg-black rounded-xl max-md:border-[#ff7229] border-[1px] shadow-lg shadow-[#ff7229]">
+        <div className="relative w-full max-w-md z-10 -mt-28 overflow-visible rounded-xl max-md:border-[#ff7229] border-[1px] shadow-lg shadow-[#ff7229]">
           {/* Frame image in front of video */}
           <img
             src={frame}
