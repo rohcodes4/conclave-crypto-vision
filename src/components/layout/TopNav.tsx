@@ -1,0 +1,254 @@
+
+import React, { useState, useRef } from "react";
+import { NavLink, Link, useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  Home,
+  Sparkles,
+  Wallet,
+  Menu,
+  LineChart,
+  Settings,
+  Search,
+  X,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useSearchSolanaTokens } from "@/services/solscanService";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useOnClickOutside } from "@/hooks/use-click-outside";
+import UserMenu from "../auth/UserMenu";
+
+interface TopNavProps {
+  navOpen: boolean;
+  setNavOpen: (open: boolean) => void;
+}
+
+const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
+  const { user } = useAuth();
+  const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  
+  const navItems = [
+    { name: "Explore", path: "/", icon: Search },
+    { name: "New Pairs", path: "/new-pairs", icon: Sparkles },
+    { name: "Pump Vision", path: "/pump-vision", icon: LineChart },
+    { name: "Holdings", path: "/holdings", icon: Wallet },
+    { name: "Settings", path: "/settings", icon: Settings },
+  ];
+  
+  const { data: searchResults, isLoading } = useSearchSolanaTokens(searchQuery);
+  
+  useOnClickOutside(searchRef, () => {
+    setShowResults(false);
+    if (isMobile) {
+      setShowSearch(false);
+    }
+  });
+  
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    if (e.target.value.length > 1) {
+      setShowResults(true);
+    } else {
+      setShowResults(false);
+    }
+  };
+
+  const handleSelectToken = () => {
+    setSearchQuery("");
+    setShowResults(false);
+    if (isMobile) {
+      setShowSearch(false);
+    }
+  };
+
+  const toggleMobileSearch = () => {
+    setShowSearch(!showSearch);
+    if (!showSearch) {
+      setTimeout(() => {
+        const searchInput = document.querySelector('input[type="search"]');
+        if (searchInput) {
+          (searchInput as HTMLInputElement).focus();
+        }
+      }, 100);
+    }
+  };
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-40 h-28 md:h-16 border-b border-crypto-card bg-crypto-bg/90 backdrop-blur-sm">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        {/* Logo and Mobile Menu Button */}
+        <div className="flex items-center">
+       
+          <Link to="/" className="mr-4 flex items-center">
+            <h1 className="text-md font-bold text-gradient whitespace-pre">PAPER TRADER</h1>
+          </Link>
+          {/* {isMobile && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="mr-2"
+              onClick={() => setNavOpen(!navOpen)}
+            >
+              {navOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          )} */}
+        </div>
+
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-1 flex-1 justify-center">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                cn(
+                  "flex whitespace-pre items-center gap-2 px-3 py-2 rounded-md transition-colors",
+                  isActive
+                    ? " text-crypto-accent"
+                    : "text-crypto-muted hover:text-crypto-text"
+                )
+              }
+            >
+              <item.icon className="h-4 w-4" />
+              <span>{item.name}</span>
+            </NavLink>
+          ))}
+        </div>
+
+        {/* Search and User Menu */}
+        <div className="flex items-center gap-2">
+          {/* Mobile Search Toggle */}
+          {isMobile && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="mr-1"
+              onClick={toggleMobileSearch}
+            >
+              {showSearch ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
+            </Button>
+          )}
+          
+          {/* Search Bar - Hidden on mobile unless toggled */}
+          <div 
+            className={cn(
+              "relative",
+              isMobile ? (showSearch ? "w-full absolute top-16 left-0 right-0 z-50 bg-crypto-bg border-b border-crypto-card p-3" : "hidden") : "w-64"
+            )} 
+            ref={searchRef}
+          >
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-crypto-muted" />
+              <Input
+                type="search"
+                placeholder="Search tokens..."
+                className="pl-10 bg-crypto-card border-crypto-card h-9"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onFocus={() => searchQuery.length > 1 && setShowResults(true)}
+              />
+            </div>
+            
+            {showResults && searchQuery.length > 1 && isLoading && (
+              <div className="absolute top-full left-0 w-full mt-1 bg-crypto-card border border-crypto-card rounded-md shadow-lg z-40 p-4 text-center">
+                <div className="text-crypto-muted">Searching...</div>
+              </div>
+            )}
+            
+            {showResults && searchQuery.length > 1 && searchResults && searchResults.length === 0 && !isLoading && (
+              <div className="absolute top-full left-0 w-full mt-1 bg-crypto-card border border-crypto-card rounded-md shadow-lg z-40 p-4 text-center">
+                <div className="text-crypto-muted">No tokens found</div>
+              </div>
+            )}
+            
+            {showResults && searchResults && searchResults.length > 0 && (
+              <div className="absolute top-full left-0 w-full mt-1 bg-crypto-card border border-crypto-card rounded-md shadow-lg z-40 max-h-80 overflow-auto">
+                {searchResults.map((token) => (
+                  <Link 
+                    to={`/token/${token.id}`} 
+                    key={token.id} 
+                    className="flex items-center gap-3 p-3 hover:bg-crypto-bg/50 transition-colors"
+                    onClick={handleSelectToken}
+                  >
+                    <div className="h-8 w-8 rounded-full bg-crypto-card flex items-center justify-center overflow-hidden">
+                      {token.logoUrl ? (
+                        <img
+                          src={token.logoUrl}
+                          alt={`${token.name} logo`}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-gradient-to-br from-crypto-accent/30 to-crypto-highlight/30" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="font-medium">{token.name}</div>
+                      <div className="text-xs text-crypto-muted">{token.symbol}</div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          <UserMenu />
+        </div>
+      </div>
+      
+      {/* Mobile Navigation */}
+      {isMobile && navOpen && (
+        <div className="md:hidden absolute left-0 right-0 top-16 bg-crypto-bg border-b border-crypto-card z-30">
+          <nav className="container mx-auto py-2 px-4">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                onClick={() => setNavOpen(false)}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-3 py-3 px-4 rounded-md mb-1 transition-colors",
+                    isActive
+                      ? "bg-crypto-accent text-white"
+                      : "text-crypto-muted hover:bg-crypto-card hover:text-crypto-text"
+                  )
+                }
+              >
+                <item.icon className="h-5 w-5" />
+                <span>{item.name}</span>
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+      )}
+       <div className="flex md:hidden items-center space-x-1 flex-1 justify-start overflow-x-auto">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                cn(
+                  "flex whitespace-pre items-center gap-2 px-3 py-2 rounded-md transition-colors",
+                  isActive
+                    ? " text-crypto-accent"
+                    : "text-crypto-muted hover:text-crypto-text"
+                )
+              }
+            >
+              <item.icon className="h-4 w-4" />
+              <span>{item.name}</span>
+            </NavLink>
+          ))}
+        </div>
+    </header>
+  );
+};
+
+export default TopNav;
