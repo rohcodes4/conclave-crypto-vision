@@ -36,6 +36,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
       {!hasEntered && (
         <div
           className="font-pixel relative z-10 text-white text-4xl md:text-6xl font-bold cursor-pointer border-[#ff7229] border-[6px] p-6 pt-7 rounded-full"
+          style={{ WebkitTextStroke: "1px #ff7229" }}
           onClick={handleEnterClick}
         >
           ENTER

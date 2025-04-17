@@ -12,6 +12,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import MatrixRain from "@/components/MatrixRain";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -125,7 +126,8 @@ const Auth = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-crypto-bg px-4">
-      <Card className="border-crypto-card rounded-[25px] shadow-[#ff7229] border-[#ff7229] border-[4px] w-full max-w-md bg-crypto-card  font-pixel">
+      <MatrixRain/>
+      <Card className="border-crypto-card rounded-[25px] shadow-[#ff7229] border-[#ff7229] border-[4px] w-full max-w-md bg-crypto-card  font-pixel z-10">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl text-[#ff7229]">Paper Trader</CardTitle>
           <CardDescription className="text-[10px] mt-2">Sign in to access your paper trading account</CardDescription>

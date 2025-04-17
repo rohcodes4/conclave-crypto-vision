@@ -10,6 +10,9 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      textShadow: {
+        lg: '2px 2px 4px #ffffff', // white shadow
+      },
       fontFamily: {
         pixel: ['"Press Start 2P"', 'monospace'],
       },
@@ -45,5 +48,7 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwindcss-textshadow'),
+  ],
 } satisfies Config

@@ -9,6 +9,7 @@ import diamond from '@/assets/images/diamond.png';
 import frame from '@/assets/images/frame.png';
 // import MetallicBackground from '@/components/MetallicBackground';
 import bg from '@/assets/videos/bg.mp4';
+import MatrixRain from '../MatrixRain';
 
 const ProtectedRoute: React.FC = () => {
   const { user, loading, signInWithDiscord } = useAuth();
@@ -30,11 +31,12 @@ const ProtectedRoute: React.FC = () => {
     );
   }
 
+  
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-crypto-bg p-4 z-4 relative">
         {/* Video background behind everything */}
-        <video
+        {/* <video
           autoPlay
           muted
           loop
@@ -43,22 +45,22 @@ const ProtectedRoute: React.FC = () => {
         >
           <source src={bg} type="video/mp4" />
           Your browser does not support the video tag.
-        </video>
-
+        </video> */}
+        <MatrixRain/>
         {/* Foreground content starts */}
-        <div className="relative w-full max-w-md z-10 -mt-28 overflow-visible rounded-xl max-md:border-[#ff7229] border-[1px] shadow-lg shadow-[#ff7229]">
+        <div className="relative w-full max-w-md z-10 -mt-28 overflow-visible  rounded-xl">
           {/* Frame image in front of video */}
-          <img
+          {/* <img
             src={frame}
             alt="frame"
             className="max-md:hidden absolute inset-0 w-[120%] h-[150%] -top-[17%] object-cover pointer-events-none overflow-visible z-10"
-          />
+          /> */}
 
           {/* Login card */}
           <div className="relative z-20 rounded-lg p-6 md:p-8 w-full font-pixel text-white overflow-visible">
             <img src={diamond} className="max-h-[200px] mx-auto" />
 
-            <h1 className="mt-3 text-2xl md:text-3xl font-bold text-crypto-border mb-8 text-center uppercase tracking-[5px]">
+            <h1 className="mt-3 text-2xl md:text-3xl font-bold text-crypto-border mb-8 text-center uppercase tracking-[5px] text-shadow-(color:#ffffff) text-shadow-lg" style={{ WebkitTextStroke: "1px white" }}>
               Paper Trader
             </h1>
 
