@@ -396,7 +396,7 @@ const Settings = () => {
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" className="w-full bg-red-900 hover:bg-red-800 text-white">
-                      Delete Account
+                      Sign Out
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent className="bg-crypto-card border-crypto-card">
@@ -417,7 +417,7 @@ const Settings = () => {
                         }}
                         disabled={isDeleting}
                       >
-                        {isDeleting ? "Deleting..." : "Delete Account"}
+                        {isDeleting ? "Signing out..." : "Sign Out"}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

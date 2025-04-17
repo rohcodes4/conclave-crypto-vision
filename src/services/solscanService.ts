@@ -135,7 +135,7 @@ export const searchSolanaTokens = async (query: string): Promise<TokenInfo[]> =>
 // Fetch trending tokens on Solana using Solscan Pro API
 export const fetchTrendingTokens = async (limit:number=20): Promise<TokenInfo[]> => {
   try {
-    const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/trending?limit=40`, {
+    const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/trending?limit=72`, {
       headers: {
         "accept": "application/json",
         "token": SOLSCAN_API_KEY
@@ -249,7 +249,7 @@ export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record
 export const fetchNewPairs = async (): Promise<TokenInfo[]> => {
   try {
     const response = await fetch(
-      `${DEXSCREENER_API_URL}/token-profiles/latest/v1?metadataOnly=false&chain=solana&limit=36`
+      `${DEXSCREENER_API_URL}/token-profiles/latest/v1?metadataOnly=false&chain=solana&limit=72`
     );
 
     if (!response.ok) {
