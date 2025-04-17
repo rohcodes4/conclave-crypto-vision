@@ -40,15 +40,29 @@ const TokenGrid = ({
   useEffect(() => {
     // Ensure we're getting a valid tokens array
     if (Array.isArray(tokens)) {
-      // Filter out any invalid tokens
-      const validTokens = tokens.filter(token => 
+      const validTokens = tokens.filter(token =>
         token && typeof token === 'object' && token.id && token.name && token.symbol
       );
-      setDisplayedTokens(validTokens);
-    } else {
+  
+      const visible = validTokens.filter(token => token.holder > 0 && token.marketCap > 0);
+      const hidden = validTokens.filter(token => !(token.holder > 0 && token.marketCap > 0));
+  
+      setDisplayedTokens(visible); // Or however many to show initially
+    }else {
       console.error("Invalid tokens data:", tokens);
       setDisplayedTokens([]);
     }
+    // if (Array.isArray(tokens)) {
+    //   // Filter out any invalid tokens
+    //   const validTokens = tokens.filter(token => 
+    //     token && typeof token === 'object' && token.id && token.name && token.symbol
+    //   );
+    //   setDisplayedTokens(validTokens.filter((token)=>  token && typeof token === 'object' && token.holder>0 && token.marketCap>0));      
+    // } else {
+    //   console.error("Invalid tokens data:", tokens);
+    //   setDisplayedTokens([]);
+    // }
+    
   }, [tokens]);
 
   useEffect(() => {
@@ -85,7 +99,8 @@ const TokenGrid = ({
       <div className={`${title!=""?"":"mt-2 md:mt-6"} rounded-lg overflow-hidden grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-0 md:gap-0`}>
         {displayedTokens && displayedTokens.length > 0 ? (
           // Show tokens
-          displayedTokens.map((token) => {
+          displayedTokens.map((token, index) => {
+            if(index>=20) return;
             if(token.marketCap>0 && token.holder>0){
         return(    <TokenCard 
               key={token.id} 

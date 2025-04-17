@@ -87,7 +87,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
         <div className="flex items-center">
        
           <Link to="/" className="mr-4 flex items-center">
-            <h1 className="text-md font-bold text-gradient whitespace-pre">PAPER TRADER</h1>
+            <h1 className="text-md font-bold text-gradient whitespace-pre font-pixel">PAPER TRADER</h1>
           </Link>
           {/* {isMobile && (
             <Button 
