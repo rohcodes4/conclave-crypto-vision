@@ -11,11 +11,16 @@ import frame from '@/assets/images/frame.png';
 import bg from '@/assets/videos/bg.mp4';
 import MatrixRain from '../MatrixRain';
 
-const ProtectedRoute: React.FC = () => {
+type SplashScreenProps = {
+  handleSplashComplete: () => void;
+};
+
+const ProtectedRoute:  React.FC<SplashScreenProps> = ({ handleSplashComplete }) => {
   const { user, loading, signInWithDiscord } = useAuth();
 
   const handleDiscordSignIn = async () => {
     try {
+      handleSplashComplete;
       await signInWithDiscord();
     } catch (error) {
       console.error('Discord sign in error:', error);

@@ -32,7 +32,11 @@ const resetSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
 });
 
-const Auth = () => {
+type SplashScreenProps = {
+  handleSplashComplete: () => void;
+};
+
+const Auth :  React.FC<SplashScreenProps> = ({ handleSplashComplete }) => {
   const { signInWithDiscord, signInWithEmail, signUpWithEmail, resetPassword, user } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -74,6 +78,7 @@ const Auth = () => {
   }, [user, navigate]);
 
   const handleSignInWithDiscord = async () => {
+    handleSplashComplete;
     setIsLoading(true);
     try {
       await signInWithDiscord();

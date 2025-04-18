@@ -39,13 +39,16 @@ const PostAuthRedirect = () => {
 
 // Main application with splash screen
 const AppContent = () => {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
   const [splashCompleted, setSplashCompleted] = useState(false);
   
   // Check if splash screen has been shown in this session
   useEffect(() => {
     const splashShown = sessionStorage.getItem('splashShown');
-    if (splashShown) {
+    if (!splashShown) {
+      setShowSplash(true);
+      setSplashCompleted(true);
+    } else {
       setShowSplash(false);
       setSplashCompleted(true);
     }
@@ -72,10 +75,10 @@ const AppContent = () => {
           <PostAuthRedirect />
           <Routes>
             {/* Add Auth route */}
-            <Route path="/auth" element={<Auth />} />
+            <Route path="/auth" element={<Auth handleSplashComplete={handleSplashComplete}/>} />
             
             {/* Protected routes */}
-            <Route element={<ProtectedRoute />}>
+            <Route element={<ProtectedRoute handleSplashComplete={handleSplashComplete}/>}>
               <Route element={<Layout />}>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/new-pairs" element={<NewPairs />} />
