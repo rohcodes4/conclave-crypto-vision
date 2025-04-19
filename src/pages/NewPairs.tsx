@@ -6,7 +6,7 @@ import { useNewPairs } from "@/services/solscanService";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const TOKENS_PER_PAGE = 36;
+const TOKENS_PER_PAGE = 20;
 
 const NewPairs = () => {
   const [selectedChain, setSelectedChain] = useState("solana");

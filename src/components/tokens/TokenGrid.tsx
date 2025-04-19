@@ -34,6 +34,7 @@ const TokenGrid = ({
   onLoadMore,
   hasMoreData = false
 }: TokenGridProps) => {
+  console.log("TOKENS: ",tokens)
   const [displayedTokens, setDisplayedTokens] = useState<Token[]>([]);
   const loaderRef = useRef<HTMLDivElement>(null);
   
@@ -41,13 +42,14 @@ const TokenGrid = ({
     // Ensure we're getting a valid tokens array
     if (Array.isArray(tokens)) {
       const validTokens = tokens.filter(token =>
-        token && typeof token === 'object' && token.id && token.name && token.symbol
+        token && typeof token === 'object' && token.id && token.name && token.symbol && token.holder>-1 && token.marketCap>-1
       );
+      
+      // const visible = validTokens.filter(token => token.holder && token.marketCap );
+      // const hidden = validTokens.filter(token => !(token.holder > 0 && token.marketCap > 0));
   
-      const visible = validTokens.filter(token => token.holder > 0 && token.marketCap > 0);
-      const hidden = validTokens.filter(token => !(token.holder > 0 && token.marketCap > 0));
-  
-      setDisplayedTokens(visible); // Or however many to show initially
+      // setDisplayedTokens(visible); // Or however many to show initially
+      setDisplayedTokens(validTokens)
     }else {
       console.error("Invalid tokens data:", tokens);
       setDisplayedTokens([]);
@@ -90,7 +92,7 @@ const TokenGrid = ({
   
   // Debug display tokens
   useEffect(() => {
-    // console.log("TokenGrid displayedTokens:", displayedTokens);
+    console.log("TokenGrid displayedTokens:", displayedTokens);
   }, [displayedTokens]);
 
   return (
@@ -101,11 +103,10 @@ const TokenGrid = ({
           // Show tokens
           displayedTokens.map((token, index) => {
             if(index>=20) return;
-            if(token.marketCap>0 && token.holder>0){
         return(    <TokenCard 
               key={token.id} 
               {...token}
-            />)}
+            />)
         })
         ) : !isLoading ? (
           // Show empty state
