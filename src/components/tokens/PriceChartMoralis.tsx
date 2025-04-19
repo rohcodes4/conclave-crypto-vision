@@ -113,6 +113,7 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
         <div className="text-center text-yellow-500 p-4 bg-[#0d2035] rounded-lg">
           Charts might not work in Telegram’s in-app browser.
           <br />
+          <p className='text-[#00ff00]'>Open in external browser.</p>
           {/* <a
             href={typeof window !== 'undefined' ? window.location.href : '#'}
             target="_blank"
