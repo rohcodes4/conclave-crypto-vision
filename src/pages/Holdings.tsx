@@ -240,7 +240,7 @@ const Holdings = () => {
             <CardContent className="p-0">
               {holdings.length === 0 ? (
                 <div className="p-8 text-center">
-                  <p className="text-crypto-muted mb-4">You don't have any assets yet.</p>
+                  <p className="text-crypto-muted mb-4">You don't have any current assets yet.</p>
                   <Link to="/trending">
                     <button className="bg-crypto-accent hover:bg-crypto-highlight text-white px-4 py-2 rounded-md transition-colors">
                       Start Trading

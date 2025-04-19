@@ -39,15 +39,22 @@ const Dashboard = () => {
       {isLoadingTokens? <div className="flex flex-col items-center justify-center h-screen bg-crypto-bg">
         <div className="w-16 h-16 border-4 border-crypto-accent border-t-transparent rounded-full animate-spin mb-8"></div>
         <p className="text-crypto-muted">Loading...</p>
-      </div>:<Card className="rounded-lg bg-crypto-card ">
+      </div>:
+      <div>
+        <div className="">
+        <h1 className="text-3xl font-bold mb-2">Trending Tokens</h1>
+        <p className="text-crypto-muted">Trending Tokens on Solana</p>
+      </div>
+      <Card className="rounded-lg bg-crypto-card mt-6">
         <CardContent className="p-0">
         <TokenGrid 
-        tokens={dashTokens.slice(0,12) || []} 
-        title="Trending Tokens" 
+        tokens={dashTokens} 
+        title="" 
         isLoading={isLoadingTokens}
       />
       </CardContent>
-      </Card>}
+      </Card>
+      </div>}
       <div className="flex justify-center">
                   <Link to="/trending" className="mr-4 flex items-center">
         
