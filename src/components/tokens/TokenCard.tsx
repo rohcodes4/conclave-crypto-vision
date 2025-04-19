@@ -101,7 +101,7 @@ const TokenCard = ({
             {marketCap >= 0 && (
               <div className="flex text-[#438fff]">
                 <span className="mr-2">MC:</span>
-                <span>{formatNumber(marketCap)}</span>
+                <span>{marketCap==0?"N/A":formatNumber(marketCap)}</span>
               </div>
             )}
             
