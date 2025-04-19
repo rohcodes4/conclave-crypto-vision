@@ -69,6 +69,7 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
       } else {
         console.error('createMyWidget function is not defined.');
         setHasChartError(true);
+        alert("Chart Error")
       }
     };
 
@@ -102,14 +103,14 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
         <div className="text-center text-yellow-500 p-4 bg-[#0d2035] rounded-lg">
           Charts might not work in Telegram’s in-app browser.
           <br />
-          <a
+          {/* <a
             href={typeof window !== 'undefined' ? window.location.href : '#'}
             target="_blank"
             rel="noopener noreferrer"
             className="underline text-blue-400"
           >
             Tap here to open in your browser
-          </a>
+          </a> */}
         </div>
       ) : (
         <div
