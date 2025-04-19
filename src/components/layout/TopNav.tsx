@@ -149,7 +149,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-crypto-muted" />
               <Input
                 type="search"
-                placeholder="Search tokens..."
+                placeholder="Search CA..."
                 className="pl-10 bg-crypto-card border-crypto-card h-9"
                 value={searchQuery}
                 onChange={handleSearchChange}
