@@ -406,7 +406,7 @@ const Holdings = () => {
                                 <div className="text-xs text-crypto-muted">{trade.symbol}</div>
                               </Link>
                             </td>
-                            <td className="py-4 px-4">${trade.price.toLocaleString()}</td>
+                            <td className="py-4 px-4">${trade.price.toFixed(8)}</td>
                             <td className="py-4 px-4">
                               <div className="font-mono">{trade.amount.toLocaleString()}</div>
                               <div className="text-xs text-crypto-muted">{trade.symbol}</div>
