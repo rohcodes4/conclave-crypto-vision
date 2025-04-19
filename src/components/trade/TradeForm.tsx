@@ -236,7 +236,7 @@ symbol: ""
               
               <div className="text-sm text-crypto-muted flex justify-between">
                 <span>Token Price:</span>
-                <span>${currentPrice.toLocaleString()} USD</span>
+                <span>${currentPrice.toFixed(8)} USD</span>
               </div>
             </div>
             <Button 
@@ -314,7 +314,7 @@ symbol: ""
               
               <div className="text-sm text-crypto-muted flex justify-between">
                 <span>Token Price:</span>
-                <span>${currentPrice.toLocaleString()} USD</span>
+                <span>${currentPrice.toFixed(8)} USD</span>
               </div>
             </div>
             <Button 
