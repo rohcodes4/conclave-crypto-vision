@@ -42,7 +42,7 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
 
     if (isUserOnTelegram()) {
       // alert("TG browser")
-      // setHasChartError(true);
+      setHasChartError(true);
       return;
     }
 
@@ -72,7 +72,7 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
           setHasChartError(true);
         }
       } else {
-        alert('createMyWidget function is not defined.');
+        console.error('createMyWidget function is not defined.');
         setHasChartError(true);        
       }
     };
