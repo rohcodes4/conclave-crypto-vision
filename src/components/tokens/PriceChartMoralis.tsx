@@ -37,10 +37,10 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
       const ua = navigator.userAgent.toLowerCase();
       
       // Check if it's Telegram WebView on Android
-      const isTelegramAndroid = ua.includes('android') && (ua.includes('telegram') || ua.includes('tgwebview'));
+      const isTelegramAndroid = (ua.includes('telegram') || ua.includes('tgwebview'));
       
       // Check if it's Telegram WebView on iOS (added as an extra fallback)
-      const isTelegramiOS = ua.includes('iphone') || ua.includes('ipad') && ua.includes('telegram');
+      const isTelegramiOS =  ua.includes('telegram');
       
       return isTelegramAndroid || isTelegramiOS;
     }
