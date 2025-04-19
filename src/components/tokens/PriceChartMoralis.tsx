@@ -18,7 +18,25 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
     const isTelegram = ua.includes('telegram');
     setIsTelegramBrowser(isTelegram);
 
-    if (isTelegram) {
+
+  function isUserOnTelegram(): boolean {
+    if (typeof window === 'undefined') return false;
+  
+    // Telegram's webview may expose specific proxy objects
+    if (
+      typeof (window as any).TelegramWebviewProxy !== 'undefined' ||
+      typeof (window as any).TelegramWebviewProxyProto !== 'undefined'
+    ) {
+      return true;
+    }
+  
+    // Fallback: check user agent
+    return navigator.userAgent.toLowerCase().includes('telegram');
+  }
+  
+
+    if (isUserOnTelegram()) {
+      alert("TG browser")
       setHasChartError(true);
       return;
     }
