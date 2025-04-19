@@ -16,7 +16,7 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
 
     const ua = navigator.userAgent.toLowerCase();
     const isTelegram = ua.includes('telegram');
-    setIsTelegramBrowser(isTelegram);
+    setHasChartError(isTelegram);
 
 
     function isUserOnTelegram(): boolean {
@@ -24,20 +24,26 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
     
       const w = window as any;
     
-      // Telegram webview may expose specific objects
+      // Check for Telegram-specific WebView objects
       if (
         typeof w.TelegramWebviewProxy !== 'undefined' ||
         typeof w.TelegramWebviewProxyProto !== 'undefined' ||
-        typeof w.Telegram !== 'undefined' // ✅ ADD THIS LINE
+        typeof w.Telegram !== 'undefined'
       ) {
         return true;
       }
     
-      // Fallback: check user agent
+      // Fallback: check user agent for Telegram or WebView on Android
       const ua = navigator.userAgent.toLowerCase();
-      return ua.includes('telegram') || ua.includes('tgwebview'); // ✅ ADD 'tgwebview' as well
+      
+      // Check if it's Telegram WebView on Android
+      const isTelegramAndroid = ua.includes('android') && (ua.includes('telegram') || ua.includes('tgwebview'));
+      
+      // Check if it's Telegram WebView on iOS (added as an extra fallback)
+      const isTelegramiOS = ua.includes('iphone') || ua.includes('ipad') && ua.includes('telegram');
+      
+      return isTelegramAndroid || isTelegramiOS;
     }
-    
   
 
     if (isUserOnTelegram()) {
