@@ -193,7 +193,7 @@ const Auth :  React.FC<SplashScreenProps> = ({ handleSplashComplete }) => {
                           Forgot password?
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="sm:max-w-md">
+                      <DialogContent className="sm:max-w-md bg-black">
                         <DialogHeader>
                           <DialogTitle>Reset Password</DialogTitle>
                           <DialogDescription>
