@@ -27,7 +27,7 @@ const UserMenu = () => {
   };
 
   return (
-    <div className="flex items-center gap-4 max-md:gap-2 ml-8 max-md:ml-2">
+    <div className="flex items-center gap-4 max-md:gap-2 md:ml-8 max-md:ml-2">
       <AccountSettings />
       <AccountMenu />
     </div>

@@ -124,7 +124,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
         </div>
 
         {/* Search and User Menu */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center md:gap-2">
           {/* Mobile Search Toggle */}
           {isMobile && (
             <Button 
