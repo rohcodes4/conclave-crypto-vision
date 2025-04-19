@@ -27,9 +27,16 @@ const Dashboard = () => {
     : "Neutral";
   
   // Calculate fear and greed index (simple version: average of % changes, normalized to 0-100)
-  const fearAndGreedScore = trendingTokens ? 
-    Math.min(100, Math.max(0, 50 + (trendingTokens.reduce((sum, token) => sum + token.change24h, 0) / trendingTokens.length))) 
-    : 50;
+  // const fearAndGreedScore = trendingTokens ? 
+  //   Math.min(100, Math.max(0, 50 + (trendingTokens.reduce((sum, token) => sum + token.change24h, 0) / trendingTokens.length))) 
+  //   : 50;
+  const fearAndGreedScore = trendingTokens ? (() => {
+    const validTokens = trendingTokens.filter(token => typeof token.change24h === 'number');
+    const avgChange = validTokens.length
+      ? validTokens.reduce((sum, token) => sum + token.change24h, 0) / validTokens.length
+      : 0;
+    return Math.min(100, Math.max(0, 50 + avgChange));
+  })() : 50;
 
       const [sortBy, setSortBy] = useState<"marketCap" | "change24h" | "volume24h">("marketCap");
       const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
