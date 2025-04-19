@@ -36,7 +36,7 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
   
 
     if (isUserOnTelegram()) {
-      alert("TG browser")
+      // alert("TG browser")
       setHasChartError(true);
       return;
     }
@@ -97,7 +97,7 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
   }, [tokenAddress]);
 
   return (
-    <div className="w-full max-md:h-[600px] h-[500px] flex flex-col">
+    <div className={`w-full ${hasChartError?"h-[100px]":"max-md:h-[600px] h-[500px]"} flex flex-col`}>
       {hasChartError ? (
         <div className="text-center text-yellow-500 p-4 bg-[#0d2035] rounded-lg">
           Charts might not work in Telegram’s in-app browser.
