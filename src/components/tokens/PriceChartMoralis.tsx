@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const PRICE_CHART_ID = 'price-chart-widget-container';
 
@@ -8,32 +8,49 @@ interface PriceChartProps {
 
 export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isTelegramBrowser, setIsTelegramBrowser] = useState(false);
+  const [hasChartError, setHasChartError] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    const ua = navigator.userAgent.toLowerCase();
+    const isTelegram = ua.includes('telegram');
+    setIsTelegramBrowser(isTelegram);
+
+    if (isTelegram) {
+      setHasChartError(true);
+      return;
+    }
+
     const loadWidget = () => {
       if (typeof (window as any).createMyWidget === 'function') {
-        (window as any).createMyWidget(PRICE_CHART_ID, {
-          autoSize: true,
-          chainId: 'solana',
-          tokenAddress: tokenAddress,
-          showHoldersChart: false,
-          defaultInterval: '1D',
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'Etc/UTC',
-          theme: 'moralis',
-          locale: 'en',
-          backgroundColor: '#071321',
-          gridColor: '#0d2035',
-          textColor: '#68738D',
-          candleUpColor: '#4CE666',
-          candleDownColor: '#E64C4C',
-          hideLeftToolbar: false,
-          hideTopToolbar: false,
-          hideBottomToolbar: false
-        });
+        try {
+          (window as any).createMyWidget(PRICE_CHART_ID, {
+            autoSize: true,
+            chainId: 'solana',
+            tokenAddress: tokenAddress,
+            showHoldersChart: false,
+            defaultInterval: '1D',
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'Etc/UTC',
+            theme: 'moralis',
+            locale: 'en',
+            backgroundColor: '#071321',
+            gridColor: '#0d2035',
+            textColor: '#68738D',
+            candleUpColor: '#4CE666',
+            candleDownColor: '#E64C4C',
+            hideLeftToolbar: false,
+            hideTopToolbar: false,
+            hideBottomToolbar: false
+          });
+        } catch (err) {
+          console.error('Chart initialization failed:', err);
+          setHasChartError(true);
+        }
       } else {
         console.error('createMyWidget function is not defined.');
+        setHasChartError(true);
       }
     };
 
@@ -47,6 +64,7 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
       script.onload = loadWidget;
       script.onerror = () => {
         console.error('Failed to load the chart widget script.');
+        setHasChartError(true);
       };
       document.body.appendChild(script);
     } else {
@@ -54,7 +72,6 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
     }
 
     return () => {
-      // Optional: Remove the script on unmount (only if this widget won’t be reused often)
       if (script && script.parentNode) {
         script.parentNode.removeChild(script);
       }
@@ -63,12 +80,27 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
 
   return (
     <div className="w-full max-md:h-[600px] h-[500px] flex flex-col">
-      <div
-        id={PRICE_CHART_ID}
-        ref={containerRef}
-        className="w-full flex-grow md:max-h-[500px]"
-        style={{ height: '100%' }}
-      />
+      {hasChartError ? (
+        <div className="text-center text-yellow-500 p-4 bg-[#0d2035] rounded-lg">
+          Charts might not work in Telegram’s in-app browser.
+          <br />
+          <a
+            href={typeof window !== 'undefined' ? window.location.href : '#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline text-blue-400"
+          >
+            Tap here to open in your browser
+          </a>
+        </div>
+      ) : (
+        <div
+          id={PRICE_CHART_ID}
+          ref={containerRef}
+          className="w-full flex-grow md:max-h-[500px]"
+          style={{ height: '100%' }}
+        />
+      )}
     </div>
   );
 };
