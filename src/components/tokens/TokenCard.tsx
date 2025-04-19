@@ -105,7 +105,7 @@ const TokenCard = ({
               </div>
             )}
             
-            {holder >= 0 && <div className={`flex ${marketCap > 0 ? "justify-end" : ""} text-[#42b192]`}>
+            {holder >= 0 && <div className={`flex ${marketCap >= 0 ? "justify-end" : ""} text-[#42b192]`}>
               <span className="mr-2">Holders:</span>
               <span>{holder}</span>
             </div>}

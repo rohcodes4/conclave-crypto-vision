@@ -1,8 +1,8 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TokenGrid from "@/components/tokens/TokenGrid";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowUp, ArrowDown, Wallet, LineChart } from "lucide-react";
+import { ArrowUp, ArrowDown, Wallet, LineChart, ArrowDownUp } from "lucide-react";
 import { useTrendingSolanaTokens } from "@/services/solscanService";
 import { useTrendingTokens } from "@/services/tokenService";
 import { useTradeStore } from "@/services/tradeService";
@@ -31,6 +31,29 @@ const Dashboard = () => {
     Math.min(100, Math.max(0, 50 + (trendingTokens.reduce((sum, token) => sum + token.change24h, 0) / trendingTokens.length))) 
     : 50;
 
+      const [sortBy, setSortBy] = useState<"marketCap" | "change24h" | "volume24h">("marketCap");
+      const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+    
+      const toggleSort = (field: "marketCap" | "change24h" | "volume24h") => {
+        if (sortBy === field) {
+          setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+        } else {
+          setSortBy(field);
+          setSortOrder("desc");
+        }
+      };
+    
+      const sortedTokens = React.useMemo(() => {
+        if (!trendingTokens) return [];
+        
+        return [...trendingTokens].sort((a, b) => {
+          if (sortOrder === "asc") {
+            return (a[sortBy] || 0) - (b[sortBy] || 0);
+          }
+          return (b[sortBy] || 0) - (a[sortBy] || 0);
+        });
+      }, [trendingTokens, sortBy, sortOrder]);
+
   return (
     <div className="space-y-8">
       {/* <div>
@@ -46,9 +69,35 @@ const Dashboard = () => {
         <p className="text-crypto-muted">Trending Tokens on Solana</p>
       </div>
       <Card className="rounded-lg bg-crypto-card mt-6">
+      <div className="flex gap-2 mb-0 overflow-x-auto py-2 no-scrollbar mt-4 ml-6">
+        <Button
+          variant={sortBy === "marketCap" ? "default" : "outline"}
+          size="sm"
+          onClick={() => toggleSort("marketCap")}
+          className="flex items-center gap-1"
+        >
+          Market Cap {sortBy === "marketCap" && <ArrowDownUp className="h-3 w-3" />}
+        </Button>
+        <Button
+          variant={sortBy === "change24h" ? "default" : "outline"}
+          size="sm"
+          onClick={() => toggleSort("change24h")}
+          className="flex items-center gap-1"
+        >
+          24h % {sortBy === "change24h" && <ArrowDownUp className="h-3 w-3" />}
+        </Button>
+        <Button
+          variant={sortBy === "volume24h" ? "default" : "outline"}
+          size="sm"
+          onClick={() => toggleSort("volume24h")}
+          className="flex items-center gap-1"
+        >
+          Volume {sortBy === "volume24h" && <ArrowDownUp className="h-3 w-3" />}
+        </Button>
+      </div>
         <CardContent className="p-0">
         <TokenGrid 
-        tokens={dashTokens} 
+        tokens={sortedTokens} 
         title="" 
         isLoading={isLoadingTokens}
       />

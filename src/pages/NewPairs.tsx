@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNewPairs } from "@/services/solscanService";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { ArrowDownUp } from "lucide-react";
 
 const TOKENS_PER_PAGE = 20;
 
@@ -43,6 +45,29 @@ const NewPairs = () => {
     setDisplayedTokens(nextTokens);
     setPage(nextPage);
   };
+   const [sortBy, setSortBy] = useState<"marketCap" | "change24h" | "volume24h">("marketCap");
+        const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+      
+        const toggleSort = (field: "marketCap" | "change24h" | "volume24h") => {
+          if (sortBy === field) {
+            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+          } else {
+            setSortBy(field);
+            setSortOrder("desc");
+          }
+        };
+      
+        const sortedTokens = React.useMemo(() => {
+          if (!newTokens) return [];
+          
+          return [...newTokens].sort((a, b) => {
+            if (sortOrder === "asc") {
+              return (a[sortBy] || 0) - (b[sortBy] || 0);
+            }
+            return (b[sortBy] || 0) - (a[sortBy] || 0);
+          });
+        }, [newTokens, sortBy, sortOrder]);
+  
 
   return (
     <div className="space-y-6">
@@ -78,12 +103,38 @@ const NewPairs = () => {
         </Card>
       ) : (
         <Card className="bg-crypto-card border-crypto-card rounded-lg">
+          <div className="flex gap-2 mb-0 overflow-x-auto py-2 no-scrollbar mt-4 ml-6">
+        <Button
+          variant={sortBy === "marketCap" ? "default" : "outline"}
+          size="sm"
+          onClick={() => toggleSort("marketCap")}
+          className="flex items-center gap-1"
+        >
+          Market Cap {sortBy === "marketCap" && <ArrowDownUp className="h-3 w-3" />}
+        </Button>
+        <Button
+          variant={sortBy === "change24h" ? "default" : "outline"}
+          size="sm"
+          onClick={() => toggleSort("change24h")}
+          className="flex items-center gap-1"
+        >
+          24h % {sortBy === "change24h" && <ArrowDownUp className="h-3 w-3" />}
+        </Button>
+        <Button
+          variant={sortBy === "volume24h" ? "default" : "outline"}
+          size="sm"
+          onClick={() => toggleSort("volume24h")}
+          className="flex items-center gap-1"
+        >
+          Volume {sortBy === "volume24h" && <ArrowDownUp className="h-3 w-3" />}
+        </Button>
+      </div>
           {/* <CardHeader>
             <CardTitle>New Token Pairs on Solana</CardTitle>
           </CardHeader> */}
           <CardContent className="max-md:p-0">
             <TokenGrid 
-              tokens={displayedTokens} 
+              tokens={sortedTokens} 
               title="" 
               // title="Latest Pairs" 
               isLoading={isLoading}
