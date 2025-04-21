@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { ethers } from 'ethers';
 import { supabase } from '@/integrations/supabase/client';
 
-
 declare global {
-    interface Window {
-      ethereum?: any
-    }
+  interface Window {
+    ethereum?: any;
   }
+}
 
 const Web3Login = () => {
   const [address, setAddress] = useState('');
@@ -17,7 +16,7 @@ const Web3Login = () => {
     try {
       setLoading(true);
 
-      // Connect MetaMask
+      // Connect to MetaMask
       const provider = new ethers.BrowserProvider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner();
@@ -27,23 +26,30 @@ const Web3Login = () => {
       const message = `Login to MyApp\n${Date.now()}`;
       const signature = await signer.signMessage(message);
 
-      // Send to lightweight serverless function (for verifying and creating JWT)
+      // Send to Supabase Edge Function for verification and JWT creation
       const res = await fetch('https://pulzjmzhbqunbjfqehmd.supabase.co/functions/v1/web3-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address, message, signature }),
-    });
+        body: JSON.stringify({ address: walletAddress, message, signature }),
+      });
 
-      const { token } = await res.json();
+      const { token, error } = await res.json();
+
+      if (error || !token) {
+        throw new Error(error || 'Failed to retrieve token');
+      }
 
       // Use Supabase JWT sign-in
-      const { data, error } = await supabase.auth.signInWithIdToken({
+      const { data, error: authError } = await supabase.auth.signInWithIdToken({
         provider: 'web3',
         token,
       });
 
-      if (error) throw error;
-      setAddress(walletAddress);
+      if (authError) {
+        throw authError;
+      }
+
+      setAddress(walletAddress); // Set the logged-in address
     } catch (err) {
       console.error('Login failed:', err);
     } finally {
@@ -62,4 +68,3 @@ const Web3Login = () => {
 };
 
 export default Web3Login;
-
