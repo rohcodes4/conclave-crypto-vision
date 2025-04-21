@@ -34,15 +34,7 @@ const Web3Login = () => {
   
       const signature = await signer.signMessage(message);
       console.log('Signature:', signature);
-  
-      try {
-        const signature = await signer.signMessage(message);
-        console.log('Signature:', signature);
-      } catch (signErr) {
-        console.error('Signature error:', signErr);
-        alert('Signing failed — did you reject or block the popup?');
-        return;
-      }
+
       
       const res = await fetch('https://pulzjmzhbqunbjfqehmd.supabase.co/functions/v1/web3-login', {
         method: 'POST',
@@ -69,7 +61,7 @@ const Web3Login = () => {
   
   return (
     <div>
-      <button onClick={loginWithWeb3} disabled={loading} className='text-center'>
+      <button onClick={loginWithWeb3} disabled={loading} className='text-center mx-auto'>
         {loading ? 'Logging in...' : 'Login with wallet'}
       </button>
       {address && <p>Logged in as: {address}</p>}
