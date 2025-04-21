@@ -29,7 +29,7 @@ const Web3Login = () => {
       const walletAddress = await signer.getAddress();
 
       // Sign a message
-      const message = `Login to MyApp\n${Date.now()}`;
+      const message = `Login to Paper Trader:\n${Date.now()}`;
       const signature = await signer.signMessage(message);
 
       // Use Supabase function to verify and get the JWT token
