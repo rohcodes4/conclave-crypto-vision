@@ -2,6 +2,12 @@
 import { useState } from 'react';
 import { ethers } from 'ethers';
 
+declare global {
+    interface Window {
+      ethereum?: any
+    }
+  }
+  
 const Web3Login = () => {
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
@@ -10,17 +16,29 @@ const Web3Login = () => {
     try {
       setLoading(true);
 
-      // Connect MetaMask
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = await provider.getSigner();
+      // Check if MetaMask is available
+      if (typeof window.ethereum === 'undefined') {
+        alert('MetaMask is not installed!');
+        return;
+      }
+
+      // Create a provider using MetaMask
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+      // Request account access from MetaMask
+      await provider.send('eth_requestAccounts', []);
+
+      // Get the signer (the user’s account)
+      const signer = provider.getSigner();
       const walletAddress = await signer.getAddress();
 
-      // Sign message
+      // Create a message to sign
       const message = `Login to MyApp\n${Date.now()}`;
+
+      // Sign the message
       const signature = await signer.signMessage(message);
 
-      // Send to Supabase Edge Function
+      // Send the address, message, and signature to your Supabase Edge Function
       const res = await fetch('https://pulzjmzhbqunbjfqehmd.supabase.co/functions/v1/web3-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -29,26 +47,26 @@ const Web3Login = () => {
 
       const { token } = await res.json();
 
-      if (!token) throw new Error("No token received");
+      if (!token) throw new Error('No token received');
 
-      // Store token locally
-      localStorage.setItem("supabase_web3_token", token);
+      // Store the token in localStorage for further use
+      localStorage.setItem('supabase_web3_token', token);
 
-      // Decode JWT to get address
+      // Decode the JWT token (optional)
       const payload = JSON.parse(atob(token.split('.')[1]));
       setAddress(payload.sub);
-      console.log("Logged in as:", payload.sub);
+      console.log('Logged in as:', payload.sub);
 
     } catch (err) {
-      console.error("Web3 login error:", err);
-      alert("Web3 login failed");
+      console.error('Web3 login error:', err);
+      alert('Web3 login failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className='flex justify-center'>
+    <div>
       <button onClick={loginWithWeb3} disabled={loading}>
         {loading ? 'Logging in...' : 'Login with MetaMask'}
       </button>
@@ -58,6 +76,7 @@ const Web3Login = () => {
 };
 
 export default Web3Login;
+
 
 // import { useState } from 'react';
 // // import { supabase } from '@/integrations/supabase/client';

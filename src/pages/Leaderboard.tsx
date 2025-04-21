@@ -27,7 +27,7 @@ export default function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState<AggregatedResult[]>([])
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
-  const limit = 10; // Number of top users to display
+  const limit = 20; // Number of top users to display
 
   function aggregateTrades(trades: Trade[]): AggregatedResult[] {
     const userMap: Record<string, AggregatedResult> = {}
