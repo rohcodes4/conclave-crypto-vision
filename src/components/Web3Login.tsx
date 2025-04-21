@@ -16,15 +16,28 @@ const Web3Login = () => {
     try {
       setLoading(true);
 
+      // Ensure MetaMask is available
+      if (typeof window.ethereum === 'undefined') {
+        console.error('MetaMask not found');
+        alert('MetaMask is not installed');
+        setLoading(false);
+        return;
+      }
+
       // Connect to MetaMask
       const provider = new ethers.BrowserProvider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner();
       const walletAddress = await signer.getAddress();
 
+      console.log('Connected wallet address:', walletAddress);
+
       // Sign message
       const message = `Login to MyApp\n${Date.now()}`;
       const signature = await signer.signMessage(message);
+      
+      console.log('Message to sign:', message);
+      console.log('Signature:', signature);
 
       // Send to Supabase Edge Function for verification and JWT creation
       const res = await fetch('https://pulzjmzhbqunbjfqehmd.supabase.co/functions/v1/web3-login', {
@@ -33,11 +46,15 @@ const Web3Login = () => {
         body: JSON.stringify({ address: walletAddress, message, signature }),
       });
 
+      console.log('API request sent, awaiting response...');
+      
       const { token, error } = await res.json();
 
       if (error || !token) {
         throw new Error(error || 'Failed to retrieve token');
       }
+
+      console.log('Received token:', token);
 
       // Use Supabase JWT sign-in
       const { data, error: authError } = await supabase.auth.signInWithIdToken({
