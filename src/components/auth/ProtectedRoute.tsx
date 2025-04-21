@@ -10,6 +10,8 @@ import frame from '@/assets/images/frame.png';
 // import MetallicBackground from '@/components/MetallicBackground';
 import bg from '@/assets/videos/bg.mp4';
 import MatrixRain from '../MatrixRain';
+import TelegramLogin from '../TelegramLogin';
+import Web3Login from '../Web3Login';
 
 type SplashScreenProps = {
   handleSplashComplete: () => void;
@@ -92,6 +94,8 @@ const ProtectedRoute:  React.FC<SplashScreenProps> = ({ handleSplashComplete }) 
                 <ExternalLink className="h-5 w-5" />
                 Sign in with Discord
               </Button>
+              {/* <TelegramLogin/> */}
+              <Web3Login/>
             </div>
           </div>
         </div>
