@@ -12,6 +12,7 @@ import {
   Settings,
   Search,
   X,
+  Clipboard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ import { useSearchSolanaTokens } from "@/services/solscanService";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useOnClickOutside } from "@/hooks/use-click-outside";
 import UserMenu from "../auth/UserMenu";
+import { toast } from "sonner";
 
 interface TopNavProps {
   navOpen: boolean;
@@ -80,8 +82,12 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
     }
   };
 
+  const handleBuyToken = () =>{
+    window.open("https://dexscreener.com/solana/7offdxsklazhfbzz1mmbmzuybvgqmvjmsijgb8hjcwp", "_blank");
+  }
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 h-28 md:h-16 border-b border-crypto-card bg-crypto-bg/90 backdrop-blur-sm">
+    <header className="fixed top-0 left-0 right-0 z-40 h-44 md:h-[8.5rem] border-b border-crypto-card bg-crypto-bg/90 backdrop-blur-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo and Mobile Menu Button */}
         <div className="flex items-center">
@@ -122,6 +128,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
             </NavLink>
           ))}
         </div>
+        
 
         {/* Search and User Menu */}
         <div className="flex items-center md:gap-2">
@@ -246,6 +253,26 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
               <span>{item.name}</span>
             </NavLink>
           ))}
+        </div>
+        <div className="flex justify-center items-center pt-4 pb-4 border-white border-[1px] rounded-md w-max mx-auto px-4">
+          <Button variant="link" className="bg-crypto-border font-black" onClick={handleBuyToken}>BUY $PTC</Button>
+          <div className="flex items-center gap-0 ml-2">
+                                <code className="bg-black p-2 rounded-lg text-xs w-full overflow-x-auto whitespace-nowrap">
+                                JUPy...DvCN
+                                </code>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="shrink-0" 
+                                  onClick={() => {
+                                    navigator.clipboard.writeText("JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN");
+                                    toast.success("Copied to clipboard!");
+                                    // You could add a toast notification here
+                                  }}
+                                >
+                                  <Clipboard className="h-4 w-4" />
+                                </Button>
+                              </div>
         </div>
     </header>
   );
