@@ -83,7 +83,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
   };
 
   const handleBuyToken = () =>{
-    window.open("https://dexscreener.com/solana/7offdxsklazhfbzz1mmbmzuybvgqmvjmsijgb8hjcwp", "_blank");
+    // window.open("https://dexscreener.com/solana/7offdxsklazhfbzz1mmbmzuybvgqmvjmsijgb8hjcwp", "_blank");
   }
 
   return (
@@ -254,18 +254,18 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
             </NavLink>
           ))}
         </div>
-        {/* <div className="flex justify-center items-center pt-4 pb-4 border-white border-[1px] rounded-md w-max mx-auto px-4">
-          <Button variant="link" className="bg-crypto-border font-black" onClick={handleBuyToken}>BUY $PTC</Button>
+        <div className="flex justify-center items-center pt-4 pb-4 border-white border-[1px] rounded-md w-max mx-auto px-4">
+          <Button variant="link" className="bg-crypto-border font-black" onClick={handleBuyToken}>BUY $TBD</Button>
           <div className="flex items-center gap-0 ml-2">
                                 <code className="bg-black p-2 rounded-lg text-xs w-full overflow-x-auto whitespace-nowrap">
-                                JUPy...DvCN
+                                TBD...TBD
                                 </code>
                                 <Button 
                                   variant="ghost" 
                                   size="icon" 
                                   className="shrink-0" 
                                   onClick={() => {
-                                    navigator.clipboard.writeText("JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN");
+                                    navigator.clipboard.writeText("TBD........TBD");
                                     toast.success("Copied to clipboard!");
                                     // You could add a toast notification here
                                   }}
@@ -273,7 +273,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
                                   <Clipboard className="h-4 w-4" />
                                 </Button>
                               </div>
-        </div> */}
+        </div>
     </header>
   );
 };
