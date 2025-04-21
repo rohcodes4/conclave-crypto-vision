@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ethers } from 'ethers';
 import { supabase } from '@/integrations/supabase/client';
+import { ethers } from 'ethers';
+
 
 declare global {
   interface Window {
@@ -22,8 +23,12 @@ const Web3Login = () => {
       }
   
       console.log('Requesting wallet connection...');
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
+    //   const provider = new ethers.BrowserProvider(window.ethereum);
+    //   await provider.send("eth_requestAccounts", []);
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+await provider.send("eth_requestAccounts", []);
+// const signer = provider.getSigner();
+
   
       const signer = await provider.getSigner();
       const walletAddress = await signer.getAddress();
