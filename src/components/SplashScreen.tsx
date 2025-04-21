@@ -34,13 +34,20 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
       </video>
 
       {!hasEntered && (
+        <div>
         <div
-          className="font-pixel relative z-10 text-white text-4xl md:text-6xl font-bold cursor-pointer border-[#ff7229] border-[6px] p-6 pt-7 rounded-full"
+          className="font-pixel relative z-10 text-white text-4xl md:text-6xl font-bold cursor-pointer border-[#ff7229] border-[6px] p-6 pt-7 rounded-full w-max mx-auto"
           style={{ WebkitTextStroke: "1px #ff7229" }}
           onClick={handleEnterClick}
         >
           ENTER
         </div>
+        <div
+        className="font-pixel relative z-10 text-white text-lg md:text-lg font-bold cursor-pointer p-6 pt-7 mx-auto text-center underline"
+        onClick={onComplete}>
+          Skip Intro
+          </div>
+          </div>
       )}
     </div>
   );
