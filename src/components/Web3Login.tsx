@@ -76,6 +76,7 @@ const Web3Login = () => {
     }
   };
   
+  
   return (
     <div>
       <button onClick={loginWithWeb3} disabled={loading}>
