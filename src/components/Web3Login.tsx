@@ -1,13 +1,13 @@
-// components/Web3Login.tsx
 import { useState } from 'react';
 import { ethers } from 'ethers';
+import { supabase } from '@/integrations/supabase/client'; // Ensure supabase is correctly initialized
 
 declare global {
-    interface Window {
-      ethereum?: any
-    }
+  interface Window {
+    ethereum?: any;
   }
-  
+}
+
 const Web3Login = () => {
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
@@ -15,68 +15,62 @@ const Web3Login = () => {
   const loginWithWeb3 = async () => {
     try {
       setLoading(true);
-  
-      // Check if MetaMask is available
-      if (typeof window.ethereum === 'undefined') {
+
+      // Ensure MetaMask is connected
+      if (!window.ethereum) {
         alert('MetaMask is not installed!');
         return;
       }
-  
-      // Create a provider using MetaMask
+
+      // Create a provider using ethers 5.8.0
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-  
-      // Request account access from MetaMask
-      await provider.send('eth_requestAccounts', []);
-  
-      // Get the signer (the user’s account)
+      await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
       const walletAddress = await signer.getAddress();
-  
-      // Create a message to sign
+
+      // Sign a message
       const message = `Login to MyApp\n${Date.now()}`;
-  
-      // Sign the message
       const signature = await signer.signMessage(message);
-  
-      // Send the address, message, and signature to your Supabase Edge Function
-      const res = await fetch('https://pulzjmzhbqunbjfqehmd.supabase.co/functions/v1/web3-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: walletAddress, message, signature }),
+
+      // Use Supabase function to verify and get the JWT token
+      const { data, error } = await supabase.functions.invoke('web3-login', {
+        body: JSON.stringify({
+          address: walletAddress,
+          message,
+          signature,
+        }),
       });
-  
-      const { token } = await res.json();
-  
-      if (!token) throw new Error('No token received');
-  
-      // Store the token in localStorage for further use
-      localStorage.setItem('supabase_web3_token', token);
-  
-      // Add Authorization header with the token for Supabase requests
-      const supabaseRes = await fetch('https://your-supabase-url.supabase.co/auth/v1/user', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-  
-      const user = await supabaseRes.json();
-      console.log('Logged in user:', user);
-  
-      // Decode the JWT token (optional)
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      setAddress(payload.sub);
-      console.log('Logged in as:', payload.sub);
-  
+
+      if (error) {
+        throw error;
+      }
+
+      // Assuming data.token is the JWT token returned from the function
+      const { token } = data;
+
+      // Use Supabase JWT sign-in (using setSession)
+      const { error: authError } = await supabase.auth.setSession(token);
+
+      if (authError) {
+        throw authError;
+      }
+
+      // Access the user from supabase.auth
+      const user = supabase.auth.getUser();
+
+      // Store the logged-in address
+      setAddress(walletAddress);
+
+      // Access the user information from the response
+      console.log('Logged in as:', user);
+
     } catch (err) {
-      console.error('Web3 login error:', err);
-      alert('Web3 login failed');
+      console.error('Login failed:', err);
     } finally {
       setLoading(false);
     }
   };
-  
-  
+
   return (
     <div>
       <button onClick={loginWithWeb3} disabled={loading}>
@@ -88,6 +82,7 @@ const Web3Login = () => {
 };
 
 export default Web3Login;
+
 
 
 // import { useState } from 'react';
