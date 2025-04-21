@@ -39,6 +39,9 @@ const Web3Login = () => {
           message,
           signature,
         }),
+        headers: {
+          "Content-Type": "application/json", // Set the content type as JSON
+        },
       });
 
       if (error) {
@@ -58,6 +61,10 @@ const Web3Login = () => {
       // Access the user from supabase.auth
       const user = supabase.auth.getUser();
 
+      if (!user) {
+        throw new Error('User not found after login');
+      }
+
       // Store the logged-in address
       setAddress(walletAddress);
 
@@ -72,7 +79,7 @@ const Web3Login = () => {
   };
 
   return (
-    <div>
+    <div className='flex justify-center'>
       <button onClick={loginWithWeb3} disabled={loading}>
         {loading ? 'Logging in...' : 'Login with MetaMask'}
       </button>
@@ -82,6 +89,7 @@ const Web3Login = () => {
 };
 
 export default Web3Login;
+
 
 
 
