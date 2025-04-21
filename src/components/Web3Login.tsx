@@ -39,6 +39,8 @@ const Web3Login = () => {
       console.log('Message to sign:', message);
       console.log('Signature:', signature);
 
+      console.log('Sending to API with:', { address: walletAddress, message, signature });
+
       // Send to Supabase Edge Function for verification and JWT creation
       const res = await fetch('https://pulzjmzhbqunbjfqehmd.supabase.co/functions/v1/web3-login', {
         method: 'POST',
@@ -46,6 +48,9 @@ const Web3Login = () => {
         body: JSON.stringify({ address: walletAddress, message, signature }),
       });
 
+      console.log('Response received');
+
+      
       console.log('API request sent, awaiting response...');
       
       const { token, error } = await res.json();
