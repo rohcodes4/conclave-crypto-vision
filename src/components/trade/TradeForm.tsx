@@ -29,7 +29,7 @@ price: 0,
 symbol: ""
   });
   const [isProcessing, setIsProcessing] = useState(false);
-  const [newBalance, setNewBalance] = useState("");
+  const [newBalance, setNewBalance] = useState("10000");
   const [dialogOpen, setDialogOpen] = useState(false);
   
   const { balance, holdings, executeTrade, updateBalance } = useTradeStore();
@@ -158,7 +158,8 @@ symbol: ""
               <DialogTitle>Update Balance</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <div className="space-y-2">
+              <p>This will reset your balance to $10,000.</p>
+              {/* <div className="space-y-2">
                 <Label htmlFor="newBalance">New Balance (USD)</Label>
                 <Input 
                   id="newBalance"
@@ -170,12 +171,12 @@ symbol: ""
                   className="bg-crypto-bg border-crypto-card"
                   placeholder="Enter new balance amount"
                 />
-              </div>
+              </div> */}
               <Button 
                 onClick={handleUpdateBalance} 
                 className="w-full bg-crypto-accent hover:bg-crypto-highlight"
               >
-                Update Balance
+                Reset Balance
               </Button>
             </div>
           </DialogContent>

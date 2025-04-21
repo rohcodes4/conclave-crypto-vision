@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const AccountSettings = () => {
   const { balance, updateBalance } = useTradeStore();
   const { user } = useAuth();
-  const [newBalance, setNewBalance] = useState(balance.toString());
+  const [newBalance, setNewBalance] = useState("10000");
   const [isOpen, setIsOpen] = useState(false);
   
   // Get login provider
@@ -112,8 +112,8 @@ const AccountSettings = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="balance">Trading Balance</Label>
-              <div className="flex items-center gap-2">
+              <Label htmlFor="balance">Current Balance:</Label>
+              {/* <div className="flex items-center gap-2">
                 <Input
                   id="balance"
                   value={newBalance}
@@ -124,19 +124,20 @@ const AccountSettings = () => {
                   className="text-black"
                 />
                 <span className="text-sm text-crypto-muted">USD</span>
-              </div>
+              </div> */}
+              <p className="pb-4">${balance.toLocaleString()}</p>
               <p className="text-xs text-crypto-muted">
-                This will reset your paper trading balance.<br/><br/> Current balance: ${balance.toLocaleString()}
+                This will reset your paper trading balance to $10,000.
               </p>
             </div>
           </div>
           
           <div className="flex justify-between">
             <Button variant="outline" onClick={() => setIsOpen(false)}>
-              Cancel
+              Close
             </Button>
             <Button onClick={handleSave} className="bg-crypto-accent hover:bg-crypto-highlight text-white">
-              Update Balance
+              Reset Balance
             </Button>
           </div>
         </DialogContent>
