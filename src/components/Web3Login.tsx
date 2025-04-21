@@ -31,8 +31,8 @@ const Web3Login = () => {
       const res = await fetch('https://pulzjmzhbqunbjfqehmd.supabase.co/functions/v1/web3-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: walletAddress, message, signature }),
-      });
+        body: JSON.stringify({ address, message, signature }),
+    });
 
       const { token } = await res.json();
 
