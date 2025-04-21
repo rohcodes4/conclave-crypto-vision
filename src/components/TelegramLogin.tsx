@@ -30,7 +30,7 @@ const TelegramLogin = () => {
       .from('profiles')
       .upsert([
         {
-          telegram_id: id,
+          id: id,
           username,
           full_name: first_name+ " "+last_name,
           avatar_url: photo_url
