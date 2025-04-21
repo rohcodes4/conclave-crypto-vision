@@ -27,7 +27,7 @@ export default function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState<AggregatedResult[]>([])
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
-  const limit = 5; // Number of top users to display
+  const limit = 10; // Number of top users to display
 
   function aggregateTrades(trades: Trade[]): AggregatedResult[] {
     const userMap: Record<string, AggregatedResult> = {}
@@ -111,17 +111,29 @@ export default function Leaderboard() {
   const topUsers = leaderboard.slice(0, limit)
   const currentUserIndex = leaderboard.findIndex((entry) => entry.user_id === currentUserId)
 
+  function modifyString(input: string): string {
+    if (input.length <= 8) {
+      return input; // Return the string as is if it's less than or equal to 8 characters
+    }
+    
+    const firstFour = input.slice(0, 3); // Get the first 4 characters
+    const lastFour = input.slice(-3); // Get the last 4 characters
+    
+    return `${firstFour}...${lastFour}`; // Concatenate and return the result
+  }
+
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Leaderboard</h1>
+      <h1 className="font-bold text-3xl font-bold mb-2">Leaderboard</h1>
+      <p className="text-crypto-muted mb-8 ">See where you rank amongst others</p>
       <table className="w-full">
         <thead>
           <tr className="text-left text-xs text-crypto-muted border-b border-crypto-card">
             <th className="pb-3 px-4">#</th>
             <th className="pb-3 px-4">User</th>
-            <th className="pb-3 px-4">Buy Volume</th>
-            <th className="pb-3 px-4">Sell Volume</th>
-            <th className="pb-3 px-4">Total Volume</th>
+            <th className="pb-3 px-4 max-md:hidden">Buy Volume</th>
+            <th className="pb-3 px-4 max-md:hidden">Sell Volume</th>
+            <th className="pb-3 px-4 max-md:hidden">Total Volume</th>
             <th className="pb-3 px-4">PNL ($)</th>
             <th className="pb-3 px-4">PNL (%)</th>
           </tr>
@@ -138,11 +150,11 @@ export default function Leaderboard() {
               >
                 <td className="py-4 px-4 font-bold text-sm">{index + 1}</td>
                 <td className="py-4 px-4 font-mono text-sm">
-                  {isCurrentUser ? 'You' : entry.user_id}
+                  {isCurrentUser ? 'You' : modifyString(entry.user_id)}
                 </td>
-                <td className="py-4 px-4 font-medium">${entry.buyVolume.toLocaleString()}</td>
-                <td className="py-4 px-4 font-medium">${entry.sellVolume.toLocaleString()}</td>
-                <td className="py-4 px-4 font-medium">${entry.totalVolume.toLocaleString()}</td>
+                <td className="py-4 px-4 font-medium max-md:hidden">${entry.buyVolume.toLocaleString()}</td>
+                <td className="py-4 px-4 font-medium max-md:hidden">${entry.sellVolume.toLocaleString()}</td>
+                <td className="py-4 px-4 font-medium max-md:hidden">${entry.totalVolume.toLocaleString()}</td>
                 <td className={`py-4 px-4 font-medium ${
                   entry.pnlDollar >= 0 ? 'text-crypto-success' : 'text-crypto-danger'
                 }`}>
@@ -168,9 +180,9 @@ export default function Leaderboard() {
             >
               <td className="py-4 px-4 font-bold text-sm">{currentUserIndex + 1}</td>
               <td className="py-4 px-4 font-mono text-sm">You</td>
-              <td className="py-4 px-4 font-medium">${leaderboard[currentUserIndex].buyVolume.toLocaleString()}</td>
-              <td className="py-4 px-4 font-medium">${leaderboard[currentUserIndex].sellVolume.toLocaleString()}</td>
-              <td className="py-4 px-4 font-medium">${leaderboard[currentUserIndex].totalVolume.toLocaleString()}</td>
+              <td className="py-4 px-4 font-medium max-md:hidden">${leaderboard[currentUserIndex].buyVolume.toLocaleString()}</td>
+              <td className="py-4 px-4 font-medium max-md:hidden">${leaderboard[currentUserIndex].sellVolume.toLocaleString()}</td>
+              <td className="py-4 px-4 font-medium max-md:hidden">${leaderboard[currentUserIndex].totalVolume.toLocaleString()}</td>
               <td className={`py-4 px-4 font-medium ${
                 leaderboard[currentUserIndex].pnlDollar >= 0 ? 'text-crypto-success' : 'text-crypto-danger'
               }`}>
