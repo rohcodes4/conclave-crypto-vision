@@ -33,7 +33,7 @@ const Web3Login = () => {
       const signature = await signer.signMessage(message);
 
       // Use Supabase function to verify and get the JWT token
-      const response = await fetch('https://your-supabase-function-url/web3-login', {
+      const response = await fetch('https://pulzjmzhbqunbjfqehmd.supabase.co/functions/v1/web3-login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
