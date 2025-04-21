@@ -126,7 +126,7 @@ export default function Leaderboard() {
     <div className="p-4 pl-3">
       <h1 className="font-bold text-3xl font-bold mb-2">Leaderboard</h1>
       <p className="text-crypto-muted mb-8 ">See where you rank amongst others</p>
-      <table className="w-max">
+      <table className="w-full">
         <thead>
           <tr className="text-left text-xs text-crypto-muted border-b border-crypto-card">
             <th className="pb-3 px-3">#</th>
