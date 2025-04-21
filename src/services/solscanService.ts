@@ -27,7 +27,9 @@ export interface TokenInfo {
   holder: number;
   fullyDilutedValuation?: number;
   circulatingSupply?: number;
-
+  website?:string,
+  twitter?:string,
+  telegram?:string
 }
 
 // Fetch token details from Solscan
@@ -56,7 +58,9 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
       volume24h: data.volume_24h || 0,
       marketCap: data.market_cap,
       description: `${data?.metadata?.description != "" && data?.metadata?.description != undefined ? data?.metadata?.description : `${data.name || "Unknown"} (${data.symbol || "UNKNOWN"}) is a Solana token.`}`,
-
+      twitter: data?.metadata?.twitter?data?.metadata?.twitter:undefined,
+      website: data?.metadata?.website?data?.metadata?.website:undefined,
+      telegram: data?.metadata?.telegram?data?.metadata?.telegram:undefined,
       logoUrl: data.icon,
       totalSupply: data.supply ? parseFloat(data.supply) : undefined,
       launchDate: data.created_time,

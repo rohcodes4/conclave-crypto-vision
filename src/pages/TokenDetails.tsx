@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ExternalLink, Share2, Link2, Clock, Users, Landmark, Coins, DollarSign, TrendingUp, Clipboard } from "lucide-react";
+import { ArrowLeft, ExternalLink, Share2, Link2, Clock, Users, Landmark, Coins, DollarSign, TrendingUp, Clipboard, Globe } from "lucide-react";
 import PriceChart from "@/components/tokens/PriceChart";
 import TradeForm from "@/components/trade/TradeForm";
 import { useTokenDetail } from "@/services/solscanService";
@@ -137,6 +137,23 @@ const TokenDetails = () => {
                           <div className="font-medium">{formatNumber(token.volume24h)}</div>
                         </div>
                       </div>
+                      { (token.twitter || token.telegram || token.website)  && <div className="flex items-center">
+                        <Globe className="h-5 w-5 text-crypto-accent mr-2" />
+                        <div>
+                          <div className="text-sm text-crypto-muted mb-1">Links</div>
+                          <div className="flex gap-2">
+                         {token.twitter && <a href={token.twitter} target="_blank" className="font-medium flex">
+                            <ExternalLink ></ExternalLink>Twitter
+                          </a>}
+                         {token.telegram && <a href={token.telegram} target="_blank" className="font-medium flex">
+                            <ExternalLink ></ExternalLink>Telegram
+                          </a>}
+                         {token.website && <a href={token.website} target="_blank" className="font-medium flex">
+                            <ExternalLink ></ExternalLink>Website
+                          </a>}
+                          </div>
+                        </div>
+                      </div>}
                     </div>
                     <div className="space-y-4">
                       <div className="flex items-center">
@@ -167,6 +184,8 @@ const TokenDetails = () => {
                           </div>
                         </div>
                       </div>
+                    
+                     
                     </div>
                   </div>
                 </CardContent>
