@@ -15,70 +15,49 @@ const Web3Login = () => {
   const loginWithWeb3 = async () => {
     try {
       setLoading(true);
-
-      // Ensure MetaMask is available
-      if (typeof window.ethereum === 'undefined') {
-        console.error('MetaMask not found');
-        alert('MetaMask is not installed');
-        setLoading(false);
+  
+      if (!window.ethereum) {
+        console.error('MetaMask not available');
         return;
       }
-
-      // Connect to MetaMask
+  
+      console.log('Requesting wallet connection...');
       const provider = new ethers.BrowserProvider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
+  
       const signer = await provider.getSigner();
       const walletAddress = await signer.getAddress();
-
       console.log('Connected wallet address:', walletAddress);
-
-      // Sign message
+  
       const message = `Login to MyApp\n${Date.now()}`;
-      const signature = await signer.signMessage(message);
-      
       console.log('Message to sign:', message);
+  
+      const signature = await signer.signMessage(message);
       console.log('Signature:', signature);
-
-      console.log('Sending to API with:', { address: walletAddress, message, signature });
-
-      // Send to Supabase Edge Function for verification and JWT creation
+  
       const res = await fetch('https://pulzjmzhbqunbjfqehmd.supabase.co/functions/v1/web3-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ address: walletAddress, message, signature }),
       });
-
-      console.log('Response received');
-
-      
-      console.log('API request sent, awaiting response...');
-      
-      const { token, error } = await res.json();
-
-      if (error || !token) {
-        throw new Error(error || 'Failed to retrieve token');
-      }
-
-      console.log('Received token:', token);
-
-      // Use Supabase JWT sign-in
-      const { data, error: authError } = await supabase.auth.signInWithIdToken({
+  
+      console.log('Fetch complete, parsing token...');
+      const { token } = await res.json();
+  
+      const { error } = await supabase.auth.signInWithIdToken({
         provider: 'web3',
         token,
       });
-
-      if (authError) {
-        throw authError;
-      }
-
-      setAddress(walletAddress); // Set the logged-in address
+  
+      if (error) throw error;
+      setAddress(walletAddress);
     } catch (err) {
       console.error('Login failed:', err);
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <div>
       <button onClick={loginWithWeb3} disabled={loading}>
