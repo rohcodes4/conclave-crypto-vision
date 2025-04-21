@@ -13,6 +13,7 @@ import {
   Search,
   X,
   Clipboard,
+  ChartColumnIncreasing,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +42,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
     { name: "New Pairs", path: "/new-pairs", icon: Sparkles },
     { name: "Pump Vision", path: "/pump-vision", icon: LineChart },
     { name: "Holdings", path: "/holdings", icon: Wallet },
+    { name: "Leaderboard", path: "/leaderboard", icon: ChartColumnIncreasing },
     { name: "Settings", path: "/settings", icon: Settings },
   ];
   
