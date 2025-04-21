@@ -65,7 +65,7 @@ await provider.send("eth_requestAccounts", []);
   };
   
   return (
-    <div>
+    <div className='flex justify-center'>
       <button onClick={loginWithWeb3} disabled={loading} className='text-center mx-auto'>
         {loading ? 'Logging in...' : 'Login with wallet'}
       </button>
