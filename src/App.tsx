@@ -19,6 +19,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { useAuth } from "./contexts/AuthContext";
 import SplashScreen from "./components/SplashScreen";
+import Leaderboard from "./pages/Leaderboard";
 
 const queryClient = new QueryClient();
 
@@ -86,6 +87,7 @@ const AppContent = () => {
                 <Route path="/pump-vision" element={<PumpVision />} />
                 <Route path="/holdings" element={<Holdings />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/leaderboard" element={<Leaderboard />} />
                 <Route path="/token/:id" element={<TokenDetails />} />
               </Route>
             </Route>
