@@ -33,22 +33,23 @@ const Web3Login = () => {
       const signature = await signer.signMessage(message);
 
       // Use Supabase function to verify and get the JWT token
-      const { data, error } = await supabase.functions.invoke('web3-login', {
+      const response = await fetch('https://your-supabase-function-url/web3-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           address: walletAddress,
           message,
           signature,
         }),
-        headers: {
-          "Content-Type": "application/json", // Set the content type as JSON
-        },
       });
 
-      if (error) {
-        throw error;
+      const data = await response.json();
+      if (response.status !== 200) {
+        throw new Error(data.error || 'Something went wrong');
       }
 
-      // Assuming data.token is the JWT token returned from the function
       const { token } = data;
 
       // Use Supabase JWT sign-in (using setSession)
