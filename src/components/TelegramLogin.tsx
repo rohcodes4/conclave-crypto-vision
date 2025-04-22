@@ -16,6 +16,9 @@ declare global {
     })
     .then(res => res.json())
     .then(async data => {
+      if (data.success && data.login_url) {
+        window.location.href = data.login_url;
+      }
       if (data.success && data.session?.access_token && data.session?.refresh_token) {
         await supabase.auth.setSession({
           access_token: data.session.access_token,
@@ -23,9 +26,7 @@ declare global {
         });
     
         const { data: { user }, error } = await supabase.auth.getUser();
-        if (data.success && data.login_url) {
-          window.location.href = data.login_url;
-        }
+       
         
         console.log('✅ Refetched user:', user);
       } else {
@@ -55,7 +56,7 @@ const TelegramLogin = () => {
     window.handleTelegramAuth = onTelegramAuth;
   }, [onTelegramAuth]);
 
-  return <div id="telegram-button-container" />;
+  return <div className='flex justify-center'><div id="telegram-button-container" /></div>;
 };
 
 export default TelegramLogin;
