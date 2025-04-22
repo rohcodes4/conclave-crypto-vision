@@ -1,3 +1,4 @@
+import { supabase } from '@/integrations/supabase/client';
 import { useEffect } from 'react';
 
 declare global {
@@ -14,11 +15,16 @@ declare global {
       body: JSON.stringify(user)
     })
     .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        alert('Logged in!');
-        // store user data or navigate
-      } else {
+    .then(async data => {
+      
+if (data.success) {
+  await supabase.auth.setSession({
+    access_token: data.session.access_token,
+    refresh_token: data.session.refresh_token
+  });
+
+  console.log('✅ User logged in!');
+ } else {
         alert('Login failed');
       }
     });
