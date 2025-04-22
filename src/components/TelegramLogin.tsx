@@ -16,24 +16,17 @@ declare global {
     })
     .then(res => res.json())
     .then(async data => {
-      
-if (data.success) {
-  await supabase.auth.setSession({
-    access_token: data.session.access_token,
-    refresh_token: data.session.refresh_token
-  });
-
-  const { data: { user }, error } = await supabase.auth.getUser();
-if (user) {
-  console.log('🎉 Fetched user:', user);
-} else {
-  console.error('❌ Failed to fetch user:', error);
-}
-
-
-  console.log('✅ User logged in!');
- } else {
-        alert('Login failed');
+      if (data.success && data.session?.access_token && data.session?.refresh_token) {
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token
+        });
+    
+        const { data: { user }, error } = await supabase.auth.getUser();
+        console.log('✅ Refetched user:', user);
+      } else {
+        console.error('❌ Invalid session returned from server:', data);
+        alert('Login failed: session data missing');
       }
     });
   }
