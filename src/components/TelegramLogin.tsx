@@ -23,6 +23,14 @@ if (data.success) {
     refresh_token: data.session.refresh_token
   });
 
+  const { data: { user }, error } = await supabase.auth.getUser();
+if (user) {
+  console.log('🎉 Fetched user:', user);
+} else {
+  console.error('❌ Failed to fetch user:', error);
+}
+
+
   console.log('✅ User logged in!');
  } else {
         alert('Login failed');
