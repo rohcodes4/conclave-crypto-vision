@@ -23,11 +23,18 @@ declare global {
         });
     
         const { data: { user }, error } = await supabase.auth.getUser();
+        if (data.success && data.login_url) {
+          window.location.href = data.login_url;
+        }
+        
         console.log('✅ Refetched user:', user);
       } else {
         console.error('❌ Invalid session returned from server:', data);
         alert('Login failed: session data missing');
       }
+
+   
+      
     });
   }
 
