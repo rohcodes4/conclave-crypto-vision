@@ -7,7 +7,25 @@ declare global {
     }
   }
 
-const TelegramLogin = ({ onTelegramAuth }) => {
+  function onTelegramAuth(user) {
+    fetch('http://localhost:4000/auth/telegram', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(user)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert('Logged in!');
+        // store user data or navigate
+      } else {
+        alert('Login failed');
+      }
+    });
+  }
+
+const TelegramLogin = () => {
+  
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://telegram.org/js/telegram-widget.js?7";
