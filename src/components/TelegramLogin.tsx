@@ -9,7 +9,7 @@ declare global {
   }
 
   function onTelegramAuth(user) {
-    fetch('http://localhost:4000/auth/telegram', {
+    fetch('https://paper-trader-backend-ygy5.onrender.com/auth/telegram', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(user)
