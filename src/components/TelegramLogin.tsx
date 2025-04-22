@@ -31,7 +31,7 @@ declare global {
         console.log('✅ Refetched user:', user);
       } else {
         console.error('❌ Invalid session returned from server:', data);
-        alert('Login failed: session data missing');
+        // alert('Login failed: session data missing');
       }
 
    
