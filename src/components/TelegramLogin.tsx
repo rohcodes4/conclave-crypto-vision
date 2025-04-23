@@ -56,7 +56,7 @@ const TelegramLogin = () => {
     window.handleTelegramAuth = onTelegramAuth;
   }, [onTelegramAuth]);
 
-  return <div className='flex justify-center !mt-6'><div id="telegram-button-container" /></div>;
+  return <div className='flex justify-center !mt-6'><div id="telegram-button-container" className='w-full' /></div>;
 };
 
 export default TelegramLogin;

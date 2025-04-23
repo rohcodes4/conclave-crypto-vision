@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ethers } from 'ethers';
 import axios from 'axios';
+import { Wallet } from 'lucide-react';
 
 export default function Web3Login() {
   const [status, setStatus] = useState('');
@@ -45,7 +46,8 @@ export default function Web3Login() {
 
   return (
     <div className='flex flex-col items-center justify-center'>
-      <button onClick={loginWithWallet} className="bg-black text-white px-4 py-2 rounded">
+      <button onClick={loginWithWallet} className="bg-[#ff7229] text-white px-4 py-2 rounded-full w-full flex justify-center gap-3 items-center">
+        <Wallet className="h-4 w-4" />      
         Connect Wallet
       </button>
       <p>{status}</p>

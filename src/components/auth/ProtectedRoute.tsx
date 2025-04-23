@@ -90,13 +90,13 @@ const ProtectedRoute:  React.FC<SplashScreenProps> = ({ handleSplashComplete }) 
 
               <Button
                 onClick={handleDiscordSignIn}
-                className="w-max mx-auto rounded-full shadow-lg  bg-[#5865F2] hover:bg-[#4752C4] flex items-center justify-center gap-2 max-md:text-[11px]"
+                className="w-full mx-auto rounded-full shadow-lg  bg-[#5865F2] hover:bg-[#4752C4] flex items-center justify-center gap-2 max-md:text-[11px]"
               >
                 <ExternalLink className="h-5 w-5" />
                 Sign in with Discord
               </Button>
-              {/* <TelegramLogin/> */}
-              {/* <Web3Login/> */}
+              <TelegramLogin/>
+              <Web3Login/>
             </div>
           </div>
         </div>
