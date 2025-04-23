@@ -13,9 +13,14 @@ export default function Web3Login() {
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
       const address = await signer.getAddress();
+      
 
       const message = `Login to PaperTrader with this wallet: ${address}`;
-      const signature = await signer.signMessage(message);
+      console.log("Signing message:", message);
+      const signature = await window.ethereum.request({
+        method: "personal_sign",
+        params: [ethers.utils.hexlify(ethers.utils.toUtf8Bytes(message)), address]
+      });
 
       setStatus('🔗 Verifying...');
 

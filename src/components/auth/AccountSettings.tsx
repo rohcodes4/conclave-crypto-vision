@@ -102,12 +102,12 @@ const AccountSettings = () => {
                       Connected with Telegram
                     </>}
                   {user.email.includes("wallet") && <>
-                      <ExternalLink className="h-3 w-3 mr-1" />
+                      <Wallet className="h-3 w-3 mr-1" />
                       Connected with Wallet
                     </>}
                   {!user.email.includes("telegram") && !user.email.includes("wallet")  && <>
                       <ExternalLink className="h-3 w-3 mr-1" />
-                      Connected with Email
+                      Connected with Discord
                     </>}
                   {/* {getLoginProvider() === "Discord" ? (
                     <>
