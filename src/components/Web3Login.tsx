@@ -46,7 +46,7 @@ export default function Web3Login() {
 
   return (
     <div className='flex flex-col items-center justify-center'>
-      <button onClick={loginWithWallet} className="bg-[#ff7229] text-white text-sm px-4 py-2 rounded-full w-full flex justify-center gap-3 items-center">
+      <button onClick={loginWithWallet} className="bg-[#ff7229] text-white text-sm px-4 py-2 rounded-full w-full flex justify-center gap-3 items-center max-md:text-[11px]">
         <Wallet className="h-4 w-4" />      
         Connect Wallet
       </button>
