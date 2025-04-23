@@ -54,6 +54,7 @@ const TelegramLogin = () => {
         const decoded = atob(encoded); // 🔥 decode base64
         const userData = JSON.parse(decoded); // ✅ parse JSON
         window.tgAuthHandled = true;
+        window.history.replaceState(null, '', window.location.pathname);
         handleTelegramAuth(userData);
       } catch (err) {
         console.error('❌ Failed to parse tgAuthResult', err);
