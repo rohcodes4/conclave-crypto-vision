@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { ExternalLink } from 'lucide-react';
 import { useCallback, useEffect } from 'react';
 
 function onTelegramAuth(user) {
@@ -74,8 +75,9 @@ const TelegramLogin = () => {
     <div className='flex justify-center mt-6'>
       <button
         onClick={handleLogin}
-        className='w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-md hover:bg-blue-600'
+        className='w-full px-4 py-2 bg-blue-500 text-white text-sm rounded-full shadow-md hover:bg-blue-600'
       >
+        <ExternalLink className='h-4 w-4'/>
         Login with Telegram
       </button>
     </div>
