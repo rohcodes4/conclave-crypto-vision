@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { ExternalLink } from 'lucide-react';
 import { useCallback, useEffect } from 'react';
@@ -39,7 +38,7 @@ const TelegramLogin = () => {
   const triggerTelegramLogin = () => {
     const bot = 'paperTrader_bot'; // without @
     const origin = encodeURIComponent(window.location.origin);
-    const url = `https://oauth.telegram.org/auth?bot=${bot}&bot_id=8086922089&origin=${origin}&embed=0&request_access=write`;
+    const url = `https://oauth.telegram.org/auth?bot_id=8086922089&origin=${origin}&embed=0&request_access=write`;
 
     window.open(url, '_blank', 'width=500,height=500');
   };
@@ -89,6 +88,94 @@ const TelegramLogin = () => {
 };
 
 export default TelegramLogin;
+
+
+
+// const TelegramLogin = () => {
+//   const handleLogin = useCallback(() => {
+//     const botName = 'paperTrader_bot';
+//     const origin = encodeURIComponent(window.location.origin);
+//     const telegramLoginUrl = `https://oauth.telegram.org/auth?bot_id=8086922089&origin=${origin}&embed=0&request_access=write`;
+
+//     // Optional: open in popup or redirect
+//     window.location.href = telegramLoginUrl;
+//   }, []);
+
+//   function onTelegramAuth(user) {
+//     fetch(`${import.meta.env.VITE_RENDER_URL}/auth/telegram`, {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify(user),
+//     })
+//       .then((res) => res.json())
+//       .then(async (data) => {
+//         if (data.success && data.login_url) {
+//           window.location.href = data.login_url;
+//         }
+  
+//         if (data.success && data.session?.access_token && data.session?.refresh_token) {
+//           await supabase.auth.setSession({
+//             access_token: data.session.access_token,
+//             refresh_token: data.session.refresh_token,
+//           });
+  
+//           const { data: { user }, error } = await supabase.auth.getUser();
+//           console.log('✅ Refetched user:', user);
+//         } else {
+//           console.error('❌ Invalid session returned from server:', data);
+//         }
+//       });
+//   }
+  
+//   useEffect(() => {
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const tgUser = {
+//       id: urlParams.get("id"),
+//       first_name: urlParams.get("first_name"),
+//       username: urlParams.get("username"),
+//       photo_url: urlParams.get("photo_url"),
+//       auth_date: urlParams.get("auth_date"),
+//       hash: urlParams.get("hash"),
+//     };
+  
+//     if (tgUser.id && tgUser.hash) {
+//       onTelegramAuth(tgUser);
+//     }
+
+   
+//   }, [window.location.href]);
+
+//   useEffect(() => {
+//     const hash = window.location.hash;
+
+//     if (hash.startsWith('#tgAuthResult=')) {
+//       try {
+//         const encoded = hash.replace('#tgAuthResult=', '');
+//         const jsonStr = decodeURIComponent(encoded);
+//         const user = JSON.parse(jsonStr);
+//         console.log('🔐 Telegram user:', user);
+//         onTelegramAuth(user);
+//       } catch (err) {
+//         console.error('❌ Failed to parse tgAuthResult:', err);
+//       }
+//     }
+//   }, []);
+  
+
+//   return (
+//     <div className='flex justify-center mt-6'>
+//       <button
+//         onClick={handleLogin}
+//         className='w-full px-4 py-2 bg-blue-500 text-white text-sm rounded-full shadow-md hover:bg-blue-600 flex gap-3 justify-center'
+//       >
+//         <ExternalLink className='h-4 w-4'/>
+//         Login with Telegram
+//       </button>
+//     </div>
+//   );
+// };
+
+// export default TelegramLogin;
 
 
 // import { supabase } from '@/integrations/supabase/client';
