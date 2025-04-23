@@ -47,7 +47,7 @@ const TelegramLogin = () => {
     script.setAttribute("data-telegram-login", "paperTrader_bot"); // without @
     script.setAttribute("data-size", "large");
     script.setAttribute("data-userpic", "true");
-    script.setAttribute("data-radius", "10");
+    script.setAttribute("data-radius", "9999");
     script.setAttribute("data-onauth", "handleTelegramAuth(user)");
     script.async = true;
     document.getElementById("telegram-button-container").appendChild(script);
@@ -56,7 +56,7 @@ const TelegramLogin = () => {
     window.handleTelegramAuth = onTelegramAuth;
   }, [onTelegramAuth]);
 
-  return <div className='flex justify-center'><div id="telegram-button-container" /></div>;
+  return <div className='flex justify-center !mt-6'><div id="telegram-button-container" /></div>;
 };
 
 export default TelegramLogin;
