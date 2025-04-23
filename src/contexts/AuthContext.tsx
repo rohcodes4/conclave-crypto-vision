@@ -32,7 +32,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (event === 'SIGNED_IN') {
           const provider = session?.user?.app_metadata?.provider || 'email';
-          toast.success(`Signed in successfully with ${provider}`);
+          const email = session?.user?.email;
+          if(email.includes("telegram")){
+          toast.success(`Signed in successfully with Telegram`);
+          } else{
+            toast.success(`Signed in successfully with ${provider}`);
+
+          }
         } else if (event === 'SIGNED_OUT') {
           toast.info('Signed out');
         } else if (event === 'PASSWORD_RECOVERY') {

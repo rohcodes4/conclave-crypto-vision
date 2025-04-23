@@ -40,7 +40,14 @@ const Settings = () => {
   const navigate = useNavigate();
   const initialTab = searchParams.get('tab') || 'profile';
   const [provider, setProvider] = useState("");
+  const [isTelegram, setIsTelegram] = useState(false);
   
+  useEffect(()=>{
+    if(user?.email.includes("telegram")){
+      setIsTelegram(true)
+    }
+  },[user])
+
   useEffect(() => {
     const fetchProvider = async () => {
       const provider = await getSignedInProvider();
@@ -98,8 +105,8 @@ const Settings = () => {
   //     setIsDeleting(true);
   
   //     // Get session to retrieve the access token
-  //     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-  //     if (sessionError || !session?.access_token) throw new Error("Unable to retrieve session.");
+      // const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      // if (sessionError || !session?.access_token) throw new Error("Unable to retrieve session.");
   
   //     const res = await fetch('https://pulzjmzhbqunbjfqehmd.supabase.co/auth/v1/user', {
   //       method: 'DELETE',
@@ -223,7 +230,7 @@ const Settings = () => {
                 <Label htmlFor="auth-provider">Authentication Provider</Label>
                 <Input
                   id="auth-provider"
-                  value={capitalize(provider)}
+                  value={isTelegram?"Telegram":capitalize(provider)}
                   disabled
                   className="bg-crypto-bg border-crypto-card"
                 />
