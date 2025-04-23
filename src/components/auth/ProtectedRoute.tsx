@@ -77,7 +77,7 @@ const ProtectedRoute:  React.FC<SplashScreenProps> = ({ handleSplashComplete }) 
             </p>
 
             <div className="space-y-4">
-              <Link to="/auth">
+              {/* <Link to="/auth">
                 <Button className="w-max mx-auto flex rounded-full bg-crypto-success hover:bg-crypto-success/90 max-md:text-[11px]">
                   <Mail className="mr-2 h-5 w-5" />
                   Sign in with Email
@@ -86,7 +86,7 @@ const ProtectedRoute:  React.FC<SplashScreenProps> = ({ handleSplashComplete }) 
 
               <div className="relative flex justify-center text-xs">
                 <span className="rounded-lg px-2 text-white">Or</span>
-              </div>
+              </div> */}
 
               <Button
                 onClick={handleDiscordSignIn}

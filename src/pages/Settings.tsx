@@ -189,7 +189,7 @@ const Settings = () => {
         </Avatar>
         <div>
           <h1 className="text-2xl font-bold">Account Settings</h1>
-          <p className="text-crypto-muted">{user.email}</p>
+          <p className="text-crypto-muted">{formatUserIdentifier(user.email)}</p>
         </div>
       </div>
 
