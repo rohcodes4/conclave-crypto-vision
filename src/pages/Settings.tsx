@@ -221,7 +221,7 @@ const Settings = () => {
               <div className="space-y-2">
                 {user.email.includes("telegram") && <Label htmlFor="email">Telegram</Label>}
                 {user.email.includes("wallet") && <Label htmlFor="email">Wallet:</Label>}
-                {(!user.email.includes("telegram") || !user.email.includes("wallet")) && <Label htmlFor="email">Email</Label>}
+                {(!user.email.includes("telegram") && !user.email.includes("wallet")) && <Label htmlFor="email">Email</Label>}
                 <Input
                   id="email"
                   value={formatUserIdentifier(user.email) || ""}
