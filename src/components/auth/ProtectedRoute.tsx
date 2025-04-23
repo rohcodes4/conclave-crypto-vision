@@ -94,7 +94,7 @@ const ProtectedRoute:  React.FC<SplashScreenProps> = ({ handleSplashComplete }) 
                 <ExternalLink className="h-5 w-5" />
                 Sign in with Discord
               </Button>
-              {/* <TelegramLogin/> */}
+              <TelegramLogin/>
               <Web3Login/>
             </div>
           </div>
