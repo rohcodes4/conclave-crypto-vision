@@ -35,6 +35,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const email = session?.user?.email;
           if(email.includes("telegram")){
           toast.success(`Signed in successfully with Telegram`);
+          } else if(email.includes("wallet")){
+            toast.success(`Signed in successfully with Wallet`);          
           } else{
             toast.success(`Signed in successfully with ${provider}`);
 
