@@ -13,6 +13,19 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, Settings, User, CreditCard, Shield } from "lucide-react";
 
+export function formatUserIdentifier(input: string): string {
+  if (input.startsWith('wallet-') && input.endsWith('@walletuser.com')) {
+    const address = input.replace('wallet-', '').replace('@walletuser.com', '');
+    return `${address.slice(0, 4)}...${address.slice(-4)}`;
+  }
+
+  if (input.startsWith('telegram-') && input.endsWith('@telegramuser.com')) {
+    return input.replace('telegram-', 'TG-').replace('@telegramuser.com', '');
+  }
+
+  return input; // Regular email
+}
+
 const AccountMenu = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -74,7 +87,7 @@ const AccountMenu = () => {
         <DropdownMenuSeparator className="bg-crypto-card" />
         
         <DropdownMenuItem className="cursor-pointer text-crypto-muted hover:bg-crypto-bg">
-          {user.email}
+          {formatUserIdentifier(user.email)}
         </DropdownMenuItem>
         
         <DropdownMenuSeparator className="bg-crypto-card" />

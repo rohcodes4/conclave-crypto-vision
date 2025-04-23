@@ -33,6 +33,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { formatUserIdentifier } from "@/components/auth/AccountMenu";
 
 const Settings = () => {
   const { user, getSignedInProvider, signOut } = useAuth();
@@ -221,7 +222,7 @@ const Settings = () => {
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
-                  value={user.email || ""}
+                  value={formatUserIdentifier(user.email) || ""}
                   disabled
                   className="bg-crypto-bg border-crypto-card"
                 />

@@ -17,6 +17,7 @@ type SplashScreenProps = {
   handleSplashComplete: () => void;
 };
 
+
 const ProtectedRoute:  React.FC<SplashScreenProps> = ({ handleSplashComplete }) => {
   const { user, loading, signInWithDiscord } = useAuth();
 
