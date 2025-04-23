@@ -46,12 +46,13 @@ const TelegramLogin = () => {
 
   useEffect(() => {
     if (window.tgAuthHandled) return;
-
+  
     const hash = window.location.hash;
     if (hash.startsWith('#tgAuthResult=')) {
       try {
-        const json = decodeURIComponent(hash.replace('#tgAuthResult=', ''));
-        const userData = JSON.parse(json);
+        const encoded = hash.replace('#tgAuthResult=', '');
+        const decoded = atob(encoded); // 🔥 decode base64
+        const userData = JSON.parse(decoded); // ✅ parse JSON
         window.tgAuthHandled = true;
         handleTelegramAuth(userData);
       } catch (err) {
