@@ -2,31 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { ExternalLink } from 'lucide-react';
 import { useCallback, useEffect } from 'react';
 
-function onTelegramAuth(user) {
-  fetch(`${import.meta.env.VITE_RENDER_URL}/auth/telegram`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(user),
-  })
-    .then((res) => res.json())
-    .then(async (data) => {
-      if (data.success && data.login_url) {
-        window.location.href = data.login_url;
-      }
 
-      if (data.success && data.session?.access_token && data.session?.refresh_token) {
-        await supabase.auth.setSession({
-          access_token: data.session.access_token,
-          refresh_token: data.session.refresh_token,
-        });
-
-        const { data: { user }, error } = await supabase.auth.getUser();
-        console.log('✅ Refetched user:', user);
-      } else {
-        console.error('❌ Invalid session returned from server:', data);
-      }
-    });
-}
 
 const TelegramLogin = () => {
   const handleLogin = useCallback(() => {
@@ -38,6 +14,32 @@ const TelegramLogin = () => {
     window.location.href = telegramLoginUrl;
   }, []);
 
+  function onTelegramAuth(user) {
+    fetch(`${import.meta.env.VITE_RENDER_URL}/auth/telegram`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(user),
+    })
+      .then((res) => res.json())
+      .then(async (data) => {
+        if (data.success && data.login_url) {
+          window.location.href = data.login_url;
+        }
+  
+        if (data.success && data.session?.access_token && data.session?.refresh_token) {
+          await supabase.auth.setSession({
+            access_token: data.session.access_token,
+            refresh_token: data.session.refresh_token,
+          });
+  
+          const { data: { user }, error } = await supabase.auth.getUser();
+          console.log('✅ Refetched user:', user);
+        } else {
+          console.error('❌ Invalid session returned from server:', data);
+        }
+      });
+  }
+  
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tgUser = {
@@ -53,22 +55,24 @@ const TelegramLogin = () => {
       onTelegramAuth(tgUser);
     }
 
-    useEffect(() => {
-      const hash = window.location.hash;
-  
-      if (hash.startsWith('#tgAuthResult=')) {
-        try {
-          const encoded = hash.replace('#tgAuthResult=', '');
-          const jsonStr = decodeURIComponent(encoded);
-          const user = JSON.parse(jsonStr);
-          console.log('🔐 Telegram user:', user);
-          onTelegramAuth(user);
-        } catch (err) {
-          console.error('❌ Failed to parse tgAuthResult:', err);
-        }
-      }
-    }, []);
+   
   }, [window.location.href]);
+
+  useEffect(() => {
+    const hash = window.location.hash;
+
+    if (hash.startsWith('#tgAuthResult=')) {
+      try {
+        const encoded = hash.replace('#tgAuthResult=', '');
+        const jsonStr = decodeURIComponent(encoded);
+        const user = JSON.parse(jsonStr);
+        console.log('🔐 Telegram user:', user);
+        onTelegramAuth(user);
+      } catch (err) {
+        console.error('❌ Failed to parse tgAuthResult:', err);
+      }
+    }
+  }, []);
   
 
   return (
