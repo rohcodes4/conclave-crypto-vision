@@ -45,22 +45,34 @@ const TelegramLogin = () => {
   };
 
   useEffect(() => {
-    if (window.tgAuthHandled) return;
+    console.log('Checking for tgAuthResult in URL...');
+    if (window.tgAuthHandled) {
+      console.log('Auth already handled. Skipping.');
+      return;
+    }
   
     const hash = window.location.hash;
+    console.log('Current hash:', hash);
+  
     if (hash.startsWith('#tgAuthResult=')) {
       try {
         const encoded = hash.replace('#tgAuthResult=', '');
-        const decoded = atob(encoded); // 🔥 decode base64
-        const userData = JSON.parse(decoded); // ✅ parse JSON
+        console.log('Encoded:', encoded);
+        const decoded = atob(encoded);
+        console.log('Decoded:', decoded);
+        const userData = JSON.parse(decoded);
+        console.log('Parsed user data:', userData);
         window.tgAuthHandled = true;
         window.history.replaceState(null, '', window.location.pathname);
         handleTelegramAuth(userData);
       } catch (err) {
         console.error('❌ Failed to parse tgAuthResult', err);
       }
+    } else {
+      console.log('No tgAuthResult in URL');
     }
   }, []);
+  
   
 
   return (
