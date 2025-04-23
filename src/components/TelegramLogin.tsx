@@ -51,7 +51,23 @@ const TelegramLogin = () => {
     if (tgUser.id && tgUser.hash) {
       onTelegramAuth(tgUser);
     }
-  }, []);
+
+    useEffect(() => {
+      const hash = window.location.hash;
+  
+      if (hash.startsWith('#tgAuthResult=')) {
+        try {
+          const encoded = hash.replace('#tgAuthResult=', '');
+          const jsonStr = decodeURIComponent(encoded);
+          const user = JSON.parse(jsonStr);
+          console.log('🔐 Telegram user:', user);
+          onTelegramAuth(user);
+        } catch (err) {
+          console.error('❌ Failed to parse tgAuthResult:', err);
+        }
+      }
+    }, []);
+  }, [window.location.href]);
   
 
   return (
