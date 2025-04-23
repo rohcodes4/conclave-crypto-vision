@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { ExternalLink } from 'lucide-react';
 import { useCallback, useEffect } from 'react';
@@ -38,7 +39,7 @@ const TelegramLogin = () => {
   const triggerTelegramLogin = () => {
     const bot = 'paperTrader_bot'; // without @
     const origin = encodeURIComponent(window.location.origin);
-    const url = `https://oauth.telegram.org/auth?bot=${bot}&origin=${origin}&embed=0&request_access=write`;
+    const url = `https://oauth.telegram.org/auth?bot=${bot}&bot_id=8086922089&origin=${origin}&embed=0&request_access=write`;
 
     window.open(url, '_blank', 'width=500,height=500');
   };
