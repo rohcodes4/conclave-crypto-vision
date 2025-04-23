@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Wallet, Mail, ExternalLink } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { formatUserIdentifier } from "./AccountMenu";
 
 const AccountSettings = () => {
   const { balance, updateBalance } = useTradeStore();
@@ -94,7 +95,7 @@ const AccountSettings = () => {
                 <AvatarFallback>{getInitials()}</AvatarFallback>
               </Avatar>
               <div>
-                <div className="font-medium">{user?.email || user?.user_metadata?.full_name || "User"}</div>
+                <div className="font-medium">{formatUserIdentifier(user?.email) || formatUserIdentifier(user?.user_metadata?.full_name) || "User"}</div>
                 <div className="text-xs text-crypto-muted flex items-center">
                   {getLoginProvider() === "Discord" ? (
                     <>

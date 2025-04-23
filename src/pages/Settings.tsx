@@ -219,7 +219,9 @@ const Settings = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                {user.email.includes("telegram") && <Label htmlFor="email">Telegram</Label>}
+                {user.email.includes("wallet") && <Label htmlFor="email">Wallet:</Label>}
+                {(!user.email.includes("telegram") || !user.email.includes("wallet")) && <Label htmlFor="email">Email</Label>}
                 <Input
                   id="email"
                   value={formatUserIdentifier(user.email) || ""}
@@ -391,7 +393,7 @@ const Settings = () => {
                     </div>
                     <div>
                       <p className="font-medium">{capitalize(provider)}</p>
-                      <p className="text-xs text-crypto-muted">{user.email}</p>
+                      <p className="text-xs text-crypto-muted">{formatUserIdentifier(user.email)}</p>
                     </div>
                   </div>
                   <Button variant="outline" size="sm" className="border-crypto-card">
