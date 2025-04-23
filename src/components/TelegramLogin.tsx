@@ -71,6 +71,41 @@ const TelegramLogin = () => {
       console.log('No tgAuthResult in URL');
     }
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const userData: any = {};
+    for (const [key, value] of params.entries()) {
+      userData[key] = value;
+    }
+
+    console.log('Received Telegram User Data:', userData);
+
+    // 🔥 Call your backend
+    fetch(`${import.meta.env.VITE_RENDER_URL}/auth/telegram`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData),
+    })
+    .then(res => res.json())
+    .then(async data => {
+      if (data.success && data.login_url) {
+        window.location.href = data.login_url;
+      }
+
+      if (data.success && data.session?.access_token && data.session?.refresh_token) {
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+
+        const { data: { user } } = await supabase.auth.getUser();
+        console.log('✅ Refetched user:', user);
+      } else {
+        console.error('❌ Invalid session returned from server:', data);
+      }
+    });
+  }, []);
   
   
 
