@@ -1,7 +1,13 @@
 'use client';
 
+import { supabase } from '@/integrations/supabase/client';
 import { ExternalLink } from 'lucide-react';
-
+import { useEffect } from 'react';
+declare global {
+  interface Window {
+    tgAuthHandled?: boolean;
+  }
+}
 const TelegramLogin = () => {
   const handleLogin = () => {
     const botUsername = 'paperTrader_bot'; // without @
@@ -11,6 +17,61 @@ const TelegramLogin = () => {
     
     window.location.href = telegramAuthUrl;
   };
+
+  const handleTelegramAuth = async (userData: any) => {
+    const res = await fetch(`${import.meta.env.VITE_RENDER_URL}/auth/telegram`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await res.json();
+
+    if (data.success && data.login_url) {
+      window.location.href = data.login_url;
+    }
+
+    if (data.success && data.session?.access_token && data.session?.refresh_token) {
+      await supabase.auth.setSession({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      });
+
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('✅ Refetched user:', user);
+    } else {
+      console.error('❌ Invalid session returned from server:', data);
+    }
+  };
+
+  useEffect(() => {
+    console.log('Checking for tgAuthResult in URL...');
+    if (window.tgAuthHandled) {
+      console.log('Auth already handled. Skipping.');
+      return;
+    }
+  
+    const hash = window.location.hash;
+    console.log('Current hash:', hash);
+  
+    if (hash.startsWith('#tgAuthResult=')) {
+      try {
+        const encoded = hash.replace('#tgAuthResult=', '');
+        console.log('Encoded:', encoded);
+        const decoded = atob(encoded);
+        console.log('Decoded:', decoded);
+        const userData = JSON.parse(decoded);
+        console.log('Parsed user data:', userData);
+        window.tgAuthHandled = true;
+        // window.history.replaceState(null, '', window.location.pathname);
+        handleTelegramAuth(userData);
+      } catch (err) {
+        console.error('❌ Failed to parse tgAuthResult', err);
+      }
+    } else {
+      console.log('No tgAuthResult in URL');
+    }
+  }, []);
 
   return (
     <div className='flex justify-center mt-6'>
@@ -38,31 +99,31 @@ export default TelegramLogin;
 // }
 
 // const TelegramLogin = () => {
-//   const handleTelegramAuth = async (userData: any) => {
-//     const res = await fetch(`${import.meta.env.VITE_RENDER_URL}/auth/telegram`, {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify(userData),
-//     });
+  // const handleTelegramAuth = async (userData: any) => {
+  //   const res = await fetch(`${import.meta.env.VITE_RENDER_URL}/auth/telegram`, {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify(userData),
+  //   });
 
-//     const data = await res.json();
+  //   const data = await res.json();
 
-//     if (data.success && data.login_url) {
-//       window.location.href = data.login_url;
-//     }
+  //   if (data.success && data.login_url) {
+  //     window.location.href = data.login_url;
+  //   }
 
-//     if (data.success && data.session?.access_token && data.session?.refresh_token) {
-//       await supabase.auth.setSession({
-//         access_token: data.session.access_token,
-//         refresh_token: data.session.refresh_token,
-//       });
+  //   if (data.success && data.session?.access_token && data.session?.refresh_token) {
+  //     await supabase.auth.setSession({
+  //       access_token: data.session.access_token,
+  //       refresh_token: data.session.refresh_token,
+  //     });
 
-//       const { data: { user } } = await supabase.auth.getUser();
-//       console.log('✅ Refetched user:', user);
-//     } else {
-//       console.error('❌ Invalid session returned from server:', data);
-//     }
-//   };
+  //     const { data: { user } } = await supabase.auth.getUser();
+  //     console.log('✅ Refetched user:', user);
+  //   } else {
+  //     console.error('❌ Invalid session returned from server:', data);
+  //   }
+  // };
 
 //   const triggerTelegramLogin = () => {
 //     const bot = 'paperTrader_bot'; // without @
@@ -72,34 +133,34 @@ export default TelegramLogin;
 //     window.open(url, '_blank', 'width=500,height=500');
 //   };
 
-//   useEffect(() => {
-//     console.log('Checking for tgAuthResult in URL...');
-//     if (window.tgAuthHandled) {
-//       console.log('Auth already handled. Skipping.');
-//       return;
-//     }
+  // useEffect(() => {
+  //   console.log('Checking for tgAuthResult in URL...');
+  //   if (window.tgAuthHandled) {
+  //     console.log('Auth already handled. Skipping.');
+  //     return;
+  //   }
   
-//     const hash = window.location.hash;
-//     console.log('Current hash:', hash);
+  //   const hash = window.location.hash;
+  //   console.log('Current hash:', hash);
   
-//     if (hash.startsWith('#tgAuthResult=')) {
-//       try {
-//         const encoded = hash.replace('#tgAuthResult=', '');
-//         console.log('Encoded:', encoded);
-//         const decoded = atob(encoded);
-//         console.log('Decoded:', decoded);
-//         const userData = JSON.parse(decoded);
-//         console.log('Parsed user data:', userData);
-//         window.tgAuthHandled = true;
-//         // window.history.replaceState(null, '', window.location.pathname);
-//         handleTelegramAuth(userData);
-//       } catch (err) {
-//         console.error('❌ Failed to parse tgAuthResult', err);
-//       }
-//     } else {
-//       console.log('No tgAuthResult in URL');
-//     }
-//   }, []);
+  //   if (hash.startsWith('#tgAuthResult=')) {
+  //     try {
+  //       const encoded = hash.replace('#tgAuthResult=', '');
+  //       console.log('Encoded:', encoded);
+  //       const decoded = atob(encoded);
+  //       console.log('Decoded:', decoded);
+  //       const userData = JSON.parse(decoded);
+  //       console.log('Parsed user data:', userData);
+  //       window.tgAuthHandled = true;
+  //       // window.history.replaceState(null, '', window.location.pathname);
+  //       handleTelegramAuth(userData);
+  //     } catch (err) {
+  //       console.error('❌ Failed to parse tgAuthResult', err);
+  //     }
+  //   } else {
+  //     console.log('No tgAuthResult in URL');
+  //   }
+  // }, []);
 
 //   useEffect(() => {
 //     const params = new URLSearchParams(window.location.search);
