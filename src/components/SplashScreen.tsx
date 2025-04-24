@@ -43,7 +43,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
           ENTER
         </div>
         <div
-        className="font-pixel relative z-10 text-white text-xs md:text-xs font-bold cursor-pointer p-6 pt-7 mx-auto text-center underline"
+        className="font-pixel relative z-10 text-white text-[10px] md:text-[10px] font-bold cursor-pointer p-6 pt-7 mx-auto text-center underline"
         onClick={onComplete}>
           Skip Intro
           </div>
