@@ -8,7 +8,7 @@ export default function Web3Login() {
 
   const loginWithWallet = async () => {
     try {
-      if (!window.ethereum) return alert('MetaMask not detected');
+      if (!window.ethereum) return alert('Open in a Web3 Browser');
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
