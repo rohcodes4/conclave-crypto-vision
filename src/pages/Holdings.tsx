@@ -1,8 +1,8 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowUpRight, ArrowDownRight, ChevronLeft, ChevronRight, Link as LinkIcon, Share2 } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, ChevronLeft, ChevronRight, Link as LinkIcon, Share2, IdCard } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +10,9 @@ import { useTradeStore, TradeStatus } from "@/services/tradeService";
 import { useTrendingTokens } from "@/services/tokenService";
 import { useTokenPricesBatch } from "@/services/solscanService";
 import { toast } from "sonner";
+import PnLCardPopup, { PnLCardHandle } from '@/components/PnLCardPopup';
+import abc from '@/assets/images/abc.png';
+import pnlCard from '@/assets/images/pnlCardPositive1.png';
 
 const TRADES_PER_PAGE = 10;
 
@@ -174,6 +177,28 @@ const Holdings = () => {
   };
 
   console.log(selectedTradeType)
+
+  const popupRefs = useRef<PnLCardHandle[]>([]);
+
+  const triggerPopup = (index: number) => {
+    popupRefs.current[index]?.openPopup();
+  };
+
+  // Define the arrays
+const positiveImages = [
+  pnlCard
+];
+
+const negativeImages = [
+  abc
+];
+
+const getRandomImage = (isPositive: boolean) => {
+  console.log(isPositive)
+  const arr = isPositive ? positiveImages : negativeImages;
+  return arr[Math.floor(Math.random() * arr.length)];
+};
+
 
   return (
     <div className="space-y-6">
@@ -502,11 +527,13 @@ const Holdings = () => {
                         <th className="px-4 py-3">Buy Total</th>
                         <th className="px-4 py-3">Sell Total</th>
                         <th className="px-4 py-3">Profit/Loss</th>
-                        <th className="px-4 py-3">Actions</th>
+                        <th className="px-4 py-3">PnL Card</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-crypto-card">
-                      {realizedPnL.map((item) => (
+                      {realizedPnL.map((item, index) => {
+                          const backgroundUrl = getRandomImage(item.pnlPercentage >= 0);
+                        return(
                         <tr key={item.tokenId} className="hover:bg-crypto-bg/50 transition-colors">
                           <td className="px-4 py-4">
                             <Link to={`/token/${item.tokenId}`} className="flex items-center gap-2">
@@ -534,21 +561,28 @@ const Holdings = () => {
                           <td className="px-4 py-4">
                             <div className="flex gap-1">
                               <Button 
-                                size="sm" 
+                                size="default" 
                                 variant="ghost"
-                                onClick={() => handleShare(item.tokenId, item.token)}
+                                onClick={()=>triggerPopup(index)}
                               >
-                                <Share2 className="h-4 w-4" />
+                                <IdCard className="!h-6 !w-6 text-[#d929ff]" />
+                                {/* <Share2 className="h-4 w-4" /> */}
+                                <PnLCardPopup
+        ref={(el) => (popupRefs.current[index] = el!)}
+        symbol={item.token}
+        pnl={item.pnlPercentage}
+        backgroundUrl={backgroundUrl}
+      />
                               </Button>
-                              <Link to={`/token/${item.tokenId}`}>
+                              {/* <Link to={`/token/${item.tokenId}`}>
                                 <Button variant="ghost" size="sm">
                                   <LinkIcon className="h-4 w-4" />
                                 </Button>
-                              </Link>
+                              </Link> */}
                             </div>
                           </td>
                         </tr>
-                      ))}
+                      )})}
                     </tbody>
                   </table>
                 </div>

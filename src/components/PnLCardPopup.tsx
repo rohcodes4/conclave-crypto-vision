@@ -66,7 +66,7 @@ import React, {
 
 <div
             ref={cardRef}
-            className="w-[577px] h-[433px] p-6 rounded-xl text-white relative overflow-hidden flex"
+            className="w-[577px] h-[433px] p-6 text-white relative overflow-hidden flex bg-black"
             style={{
               backgroundImage: `url(${backgroundUrl})`,
               backgroundSize: 'cover',
@@ -80,7 +80,7 @@ import React, {
             <div>
                 <h2 className="text-3xl font-bold">{symbol}/SOL</h2>
             <p className={`mt-0 font-semibold text-6xl ${isProfit ? 'text-green-400' : 'text-red-400'}`}>
-              {isProfit ? '+' : '-'}{pnl.toFixed(2)}%
+              {isProfit ? '+' : ''}{pnl.toFixed(2)}%
             </p>
             </div>
             </div>
