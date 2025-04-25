@@ -75,10 +75,10 @@ import React, {
               left: '-9999px',
             }}
           >
-            <div className='flex-1'></div>
+            <div className='flex-1 w-1/2'></div>
             <div className='w-1/2 flex flex-col justify-center items-end mr-8 text-right'>
             <div>
-                <h2 className="text-3xl font-bold">{symbol}/SOL</h2>
+                <h2 className={`${symbol.length>10?"text-xl":"text-3xl"} font-bold text-right`}>{symbol}/SOL</h2>
             <p className={`mt-0 font-semibold text-6xl ${isProfit ? 'text-green-400' : 'text-red-400'}`}>
               {isProfit ? '+' : ''}{pnl.toFixed(2)}%
             </p>
@@ -92,7 +92,7 @@ import React, {
               <div className="bg-white rounded-xl p-4 shadow-xl text-center max-w-md w-full">
                 {imageData && (
                   <img src={imageData} alt="PnL Card" className="w-full rounded-md mb-4" />
-                )}
+                )}                
                 <div className="flex justify-center gap-4">
                   <button
                     onClick={downloadImage}
