@@ -91,7 +91,7 @@ const AccountMenu = () => {
         <DropdownMenuSeparator className="bg-crypto-card" />
         
         <DropdownMenuItem className="cursor-pointer text-crypto-muted hover:bg-crypto-bg">
-          {formatUserIdentifier(user.email)}
+          {getDisplayName()}
         </DropdownMenuItem>
         
         <DropdownMenuSeparator className="bg-crypto-card" />
