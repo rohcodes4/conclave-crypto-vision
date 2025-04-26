@@ -28,7 +28,7 @@ export default function Leaderboard() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   const limit = 20; // Number of top users to display
-  const minTrades = 10;
+  const minTrades = 1;
 
   function aggregateTrades(trades: Trade[]): AggregatedResult[] {
     const userMap: Record<string, AggregatedResult> = {}
@@ -41,7 +41,7 @@ export default function Leaderboard() {
     }
 
     for (const [userId, userTrades] of Object.entries(tradesByUser)) {
-      if (userTrades.length < minTrades) continue;
+      if (userTrades.length < minTrades && userId !== currentUserId) continue;
       // Sort by time
       userTrades.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
 
