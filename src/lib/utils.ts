@@ -5,11 +5,12 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-const { user } = useAuth();
-  const email = user?.email;
-  const displayName = user.user_metadata.full_name;
+
 
 export const getDisplayName=()=>{
+  const { user } = useAuth();
+  const email = user?.email;
+  const displayName = user.user_metadata.full_name;
   if (email.startsWith('wallet-') && email.endsWith('@walletuser.com')) {
     const address = email.replace('wallet-', '').replace('@walletuser.com', '');
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
@@ -27,6 +28,9 @@ export const getDisplayName=()=>{
 }
 
 export const getProvider = ()=>{
+  const { user } = useAuth();
+  const email = user?.email;
+  const displayName = user.user_metadata.full_name;
   if (email.startsWith('wallet-') && email.endsWith('@walletuser.com')) {
     return "Wallet";
   }
