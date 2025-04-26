@@ -131,9 +131,9 @@ export default function Leaderboard() {
           <tr className="text-left text-xs text-crypto-muted border-b border-crypto-card">
             <th className="pb-3 px-3">#</th>
             <th className="pb-3 px-3">User</th>
-            <th className="pb-3 px-3 max-md:hidden">Buy Volume</th>
-            <th className="pb-3 px-3 max-md:hidden">Sell Volume</th>
-            <th className="pb-3 px-3 max-md:hidden">Total Volume</th>
+            <th className="pb-3 px-3">Buy Volume</th>
+            <th className="pb-3 px-3">Sell Volume</th>
+            <th className="pb-3 px-3">Total Volume</th>
             <th className="pb-3 px-3">PNL ($)</th>
             <th className="pb-3 px-3">PNL (%)</th>
           </tr>
@@ -152,9 +152,9 @@ export default function Leaderboard() {
                 <td className="py-4 px-3 font-mono text-sm">
                   {isCurrentUser ? 'You' : modifyString(entry.user_id)}
                 </td>
-                <td className="py-4 px-3 font-medium max-md:hidden">${entry.buyVolume.toLocaleString()}</td>
-                <td className="py-4 px-3 font-medium max-md:hidden">${entry.sellVolume.toLocaleString()}</td>
-                <td className="py-4 px-3 font-medium max-md:hidden">${entry.totalVolume.toLocaleString()}</td>
+                <td className="py-4 px-3 font-medium">${entry.buyVolume.toLocaleString()}</td>
+                <td className="py-4 px-3 font-medium">${entry.sellVolume.toLocaleString()}</td>
+                <td className="py-4 px-3 font-medium">${entry.totalVolume.toLocaleString()}</td>
                 <td className={`py-4 px-3 font-medium ${
                   entry.pnlDollar >= 0 ? 'text-crypto-success' : 'text-crypto-danger'
                 }`}>
@@ -180,9 +180,9 @@ export default function Leaderboard() {
             >
               <td className="py-4 px-3 font-bold text-sm">{currentUserIndex + 1}</td>
               <td className="py-4 px-3 font-mono text-sm">You</td>
-              <td className="py-4 px-3 font-medium max-md:hidden">${leaderboard[currentUserIndex].buyVolume.toLocaleString()}</td>
-              <td className="py-4 px-3 font-medium max-md:hidden">${leaderboard[currentUserIndex].sellVolume.toLocaleString()}</td>
-              <td className="py-4 px-3 font-medium max-md:hidden">${leaderboard[currentUserIndex].totalVolume.toLocaleString()}</td>
+              <td className="py-4 px-3 font-medium">${leaderboard[currentUserIndex].buyVolume.toLocaleString()}</td>
+              <td className="py-4 px-3 font-medium">${leaderboard[currentUserIndex].sellVolume.toLocaleString()}</td>
+              <td className="py-4 px-3 font-medium">${leaderboard[currentUserIndex].totalVolume.toLocaleString()}</td>
               <td className={`py-4 px-3 font-medium ${
                 leaderboard[currentUserIndex].pnlDollar >= 0 ? 'text-crypto-success' : 'text-crypto-danger'
               }`}>
