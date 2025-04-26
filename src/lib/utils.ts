@@ -9,17 +9,20 @@ export function cn(...inputs: ClassValue[]) {
 export const getDisplayName=()=>{
   const { user } = useAuth();
   const email = user?.email;
+  const displayName = user.user_metadata.full_name;
   if (email.startsWith('wallet-') && email.endsWith('@walletuser.com')) {
     const address = email.replace('wallet-', '').replace('@walletuser.com', '');
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
   }
 
   if (email.startsWith('telegram-') && email.endsWith('@telegramuser.com')) {
-    return user.user_metadata.full_name;
+    let result = displayName.replace("undefined", "").trim();
+    return result;
     // return input.replace('telegram-', 'TG-').replace('@telegramuser.com', '');
   }
   if(user.app_metadata.provider=="discord"){
-    return user.app_metadata.full_name;
+    let result = displayName.replace("undefined", "").trim();
+    return result;
   }
   return email;
 }
