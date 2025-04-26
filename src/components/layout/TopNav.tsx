@@ -43,8 +43,8 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
     { name: "Explore", path: "/", icon: Search },
     { name: "New Pairs", path: "/new-pairs", icon: Sparkles },
     { name: "Pump Vision", path: "/pump-vision", icon: LineChart },
+    { name: "Leaderboard", path: "/leaderboard", icon: ChartColumnIncreasing },
     { name: "Holdings", path: "/holdings", icon: Wallet },
-    // { name: "Leaderboard", path: "/leaderboard", icon: ChartColumnIncreasing },
     { name: "Settings", path: "/settings", icon: Settings },
   ];
   
