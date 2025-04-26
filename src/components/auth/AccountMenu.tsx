@@ -56,7 +56,8 @@ const AccountMenu = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full overflow-hidden p-0 border-2 border-crypto-accent ">
           <div className="flex h-full w-full items-center justify-center rounded-full text-white">
-            {(!user.email.includes("telegram") || !user.email.includes("wallet") )&& user.email? user.email[0].toUpperCase() : <User className="h-5 w-5" />}
+            {/* {(!user.email.includes("telegram") || !user.email.includes("wallet") )&& user.email? user.email[0].toUpperCase() : <User className="h-5 w-5" />} */}
+            {getDisplayName().charAt(0).toUpperCase() }
           </div>
         </Button>
       </DropdownMenuTrigger>
