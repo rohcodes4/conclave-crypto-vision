@@ -5,11 +5,11 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-
-export const getDisplayName=()=>{
-  const { user } = useAuth();
+const { user } = useAuth();
   const email = user?.email;
   const displayName = user.user_metadata.full_name;
+
+export const getDisplayName=()=>{
   if (email.startsWith('wallet-') && email.endsWith('@walletuser.com')) {
     const address = email.replace('wallet-', '').replace('@walletuser.com', '');
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
@@ -18,11 +18,23 @@ export const getDisplayName=()=>{
   if (email.startsWith('telegram-') && email.endsWith('@telegramuser.com')) {
     let result = displayName.replace("undefined", "").trim();
     return result;
-    // return input.replace('telegram-', 'TG-').replace('@telegramuser.com', '');
   }
   if(user.app_metadata.provider=="discord"){
     let result = displayName.replace("undefined", "").trim();
     return result;
   }
   return email;
+}
+
+export const getProvider = ()=>{
+  if (email.startsWith('wallet-') && email.endsWith('@walletuser.com')) {
+    return "Wallet";
+  }
+
+  if (email.startsWith('telegram-') && email.endsWith('@telegramuser.com')) {
+    return "Telegram";
+  }
+  if(user.app_metadata.provider=="discord"){
+    return "Discord";
+  }  
 }

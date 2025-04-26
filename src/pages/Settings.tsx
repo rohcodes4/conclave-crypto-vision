@@ -34,6 +34,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { formatUserIdentifier } from "@/components/auth/AccountMenu";
+import { getDisplayName, getProvider } from "@/lib/utils";
 
 const Settings = () => {
   const { user, getSignedInProvider, signOut } = useAuth();
@@ -189,7 +190,7 @@ const Settings = () => {
         </Avatar>
         <div>
           <h1 className="text-2xl font-bold">Account Settings</h1>
-          <p className="text-crypto-muted">{formatUserIdentifier(user.email)}</p>
+          <p className="text-crypto-muted">{getDisplayName()}</p>
         </div>
       </div>
 
@@ -224,7 +225,7 @@ const Settings = () => {
                 {(!user.email.includes("telegram") && !user.email.includes("wallet")) && <Label htmlFor="email">Email</Label>}
                 <Input
                   id="email"
-                  value={formatUserIdentifier(user.email) || ""}
+                  value={getDisplayName() || ""}
                   disabled
                   className="bg-crypto-bg border-crypto-card"
                 />
@@ -389,11 +390,11 @@ const Settings = () => {
                 <div className="p-3 bg-crypto-bg rounded-md flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 bg-[#5865F2] rounded-md flex items-center justify-center">
-                      <span className="text-white font-bold text-sm">{provider=="email"?"E":"D"}</span>
+                      <span className="text-white font-bold text-sm">{capitalize(getProvider().slice(0,1))}</span>
                     </div>
                     <div>
-                      <p className="font-medium">{capitalize(provider)}</p>
-                      <p className="text-xs text-crypto-muted">{formatUserIdentifier(user.email)}</p>
+                      <p className="font-medium">{getProvider()}</p>
+                      <p className="text-xs text-crypto-muted">{getDisplayName()}</p>
                     </div>
                   </div>
                   <Button variant="outline" size="sm" className="border-crypto-card">
