@@ -42,3 +42,14 @@ export const getProvider = ()=>{
     return "Discord";
   }  
 }
+
+export const getAvatar = () =>{
+  const { user } = useAuth();
+  const avatar = user.user_metadata.avatar_url;
+  if(avatar){
+    return(
+      `<img src="${avatar}" classname="h-5 w-5"/>`
+    )
+  };
+  return getDisplayName().charAt(0).toUpperCase(); 
+}

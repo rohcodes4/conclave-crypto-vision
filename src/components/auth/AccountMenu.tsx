@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, Settings, User, CreditCard, Shield } from "lucide-react";
-import { getDisplayName } from "@/lib/utils";
+import { getAvatar, getDisplayName } from "@/lib/utils";
 
 export function formatUserIdentifier(input: string): string {
   if (input.startsWith('wallet-') && input.endsWith('@walletuser.com')) {
@@ -55,9 +55,10 @@ const AccountMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full overflow-hidden p-0 border-2 border-crypto-accent ">
-          <div className="flex h-full w-full items-center justify-center rounded-full text-white">
+          <div className="flex h-full w-full items-center justify-center rounded-full text-white" dangerouslySetInnerHTML={{ __html: getAvatar() }} >
+          {/* <User className="h-5 w-5" /> */}
             {/* {(!user.email.includes("telegram") || !user.email.includes("wallet") )&& user.email? user.email[0].toUpperCase() : <User className="h-5 w-5" />} */}
-            {getDisplayName().charAt(0).toUpperCase() }
+            {/* {getAvatar()} */}
           </div>
         </Button>
       </DropdownMenuTrigger>
