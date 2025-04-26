@@ -51,5 +51,7 @@ export const getAvatar = () =>{
       `<img src="${avatar}" classname="h-5 w-5"/>`
     )
   };
+
+  if(user.email.startsWith('wallet-')) return "W";
   return getDisplayName().charAt(0).toUpperCase(); 
 }
