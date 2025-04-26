@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, Settings, User, CreditCard, Shield } from "lucide-react";
+import { getDisplayName } from "@/lib/utils";
 
 export function formatUserIdentifier(input: string): string {
   if (input.startsWith('wallet-') && input.endsWith('@walletuser.com')) {
@@ -29,6 +30,9 @@ export function formatUserIdentifier(input: string): string {
 const AccountMenu = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  console.log("getDisplayName")
+  console.log(getDisplayName())
 
   const handleSignOut = async () => {
     await signOut();
