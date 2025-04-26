@@ -234,7 +234,7 @@ const Settings = () => {
                 <Label htmlFor="auth-provider">Authentication Provider</Label>
                 <Input
                   id="auth-provider"
-                  value={isTelegram?"Telegram":capitalize(provider)}
+                  value={capitalize(getProvider())}
                   disabled
                   className="bg-crypto-bg border-crypto-card"
                 />
