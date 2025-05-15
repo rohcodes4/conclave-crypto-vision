@@ -122,6 +122,13 @@ const TokenDetails = () => {
                         </div>
                       </div>
                       <div className="flex items-center">
+                        <Link2 className="h-5 w-5 text-crypto-accent mr-2" />
+                        <div>
+                          <div className="text-sm text-crypto-muted mb-1">Market Cap</div>
+                          <div className="font-medium text-[#438fff]">{formatNumber(token.marketCap) || "N/A"}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
                         <TrendingUp className="h-5 w-5 text-crypto-accent mr-2" />
                         <div>
                           <div className="text-sm text-crypto-muted mb-1">24h Change</div>
@@ -137,6 +144,10 @@ const TokenDetails = () => {
                           <div className="font-medium">{formatNumber(token.volume24h)}</div>
                         </div>
                       </div>
+                     
+                    </div>
+                    <div className="space-y-4">
+                    
                       { (token.twitter || token.telegram || token.website)  && <div className="flex items-center">
                         <Globe className="h-5 w-5 text-crypto-accent mr-2" />
                         <div>
@@ -154,15 +165,6 @@ const TokenDetails = () => {
                           </div>
                         </div>
                       </div>}
-                    </div>
-                    <div className="space-y-4">
-                      <div className="flex items-center">
-                        <Link2 className="h-5 w-5 text-crypto-accent mr-2" />
-                        <div>
-                          <div className="text-sm text-crypto-muted mb-1">Market Cap</div>
-                          <div className="font-medium text-[#438fff]">{formatNumber(token.marketCap) || "N/A"}</div>
-                        </div>
-                      </div>
                       <div className="flex items-center">
                         <Coins className="h-5 w-5 text-crypto-accent mr-2" />
                         <div>
