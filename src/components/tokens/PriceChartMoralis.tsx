@@ -60,7 +60,7 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
             chainId: 'solana',
             tokenAddress: tokenAddress,
             showHoldersChart: false,
-            defaultInterval: '1D',
+            defaultInterval: '1',
             timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'Etc/UTC',
             theme: 'moralis',
             locale: 'en',
