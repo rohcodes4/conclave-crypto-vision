@@ -558,6 +558,7 @@ export const useTokenDetail = (address: string) => {
     queryKey: ['solana-token-detail', address],
     queryFn: () => fetchTokenDetails(address),
     enabled: !!address && address.length > 10, // Only fetch for valid-looking addresses
+    refetchInterval: 5000, // Fetch every 5 seconds
     retry: 3,
     retryDelay: attempt => Math.min(1000 * 2 ** attempt, 30000),
     meta: {
@@ -573,7 +574,7 @@ export const useTokenPricesBatch = (addresses: string[]) => {
     queryKey: ['token-prices-batch', addresses],
     queryFn: () => fetchTokenPricesBatch(addresses),
     enabled: !!addresses && addresses.length > 0,
-    refetchInterval: 60000, // Refetch every minute
+    refetchInterval: 5000, // Refetch every minute
     retry: 3,
     meta: {
       onError: () => {
