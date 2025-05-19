@@ -1,4 +1,4 @@
-
+import '@solana/wallet-adapter-react-ui/styles.css';
 import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -20,6 +20,29 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { useAuth } from "./contexts/AuthContext";
 import SplashScreen from "./components/SplashScreen";
 import Leaderboard from "./pages/Leaderboard";
+import {
+  ConnectionProvider,
+  WalletProvider
+} from '@solana/wallet-adapter-react';
+import {
+  PhantomWalletAdapter,
+  SolflareWalletAdapter,
+  AlphaWalletAdapter,
+  CloverWalletAdapter,
+  TorusWalletAdapter
+} from '@solana/wallet-adapter-wallets';
+
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+
+const wallets = [
+  new PhantomWalletAdapter(),
+  new SolflareWalletAdapter(),
+  new AlphaWalletAdapter(),
+  new CloverWalletAdapter(),
+  new TorusWalletAdapter()
+];
+
+const endpoint = "https://api.mainnet-beta.solana.com";
 
 const queryClient = new QueryClient();
 
@@ -101,6 +124,9 @@ const AppContent = () => {
 };
 
 const App = () => (
+  <ConnectionProvider endpoint={endpoint}>
+    <WalletProvider wallets={wallets} autoConnect>
+      <WalletModalProvider>
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
@@ -110,6 +136,9 @@ const App = () => (
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
+  </WalletModalProvider>
+    </WalletProvider>
+  </ConnectionProvider>
 );
 
 export default App;
