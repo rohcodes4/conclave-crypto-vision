@@ -16,8 +16,8 @@ interface PriceData {
 }
 
 const dateStrToTime = (dateStr)=>{
-  console.log("dateStr")
-  console.log(dateStr)
+  // console.log("dateStr")
+  // console.log(dateStr)
  // Convert number to string
 const dateAsString = dateStr.toString();
 
@@ -70,10 +70,10 @@ const PriceChart = ({
   currentPrice,
   priceChange,
 }: PriceChartProps) => {
-  console.log(tokenName)
-  console.log(tokenSymbol)
-  console.log(currentPrice)
-  console.log(priceChange)
+  // console.log(tokenName)
+  // console.log(tokenSymbol)
+  // console.log(currentPrice)
+  // console.log(priceChange)
   const [data, setData] = useState<PriceData[]>([]);
   const [interval, setInterval] = useState<string>("1h");
 
@@ -88,8 +88,8 @@ const pathname = window.location.pathname;
 const tokenAddress = pathname.split("/")[2];
     fetchPriceData(tokenAddress, interval).then(setData);
   }, [interval]);
-  console.log("data")
-console.log(data)
+  // console.log("data")
+// console.log(data)
 
   return (
     <Card className="bg-crypto-card border-crypto-card">

@@ -176,7 +176,7 @@ const Holdings = () => {
       .catch(() => toast.error('Failed to copy link'));
   };
 
-  console.log(selectedTradeType)
+  // console.log(selectedTradeType)
 
   const popupRefs = useRef<PnLCardHandle[]>([]);
 
@@ -194,7 +194,7 @@ const negativeImages = [
 ];
 
 const getRandomImage = (isPositive: boolean) => {
-  console.log(isPositive)
+  // console.log(isPositive)
   const arr = isPositive ? positiveImages : negativeImages;
   return arr[Math.floor(Math.random() * arr.length)];
 };

@@ -33,7 +33,150 @@ export interface TokenInfo {
 }
 
 // Fetch token details from Solscan
+// export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => {
+//   try {
+//     const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta?address=${address}`, {
+//       headers: {
+//         "accept": "application/json",
+//         "token": SOLSCAN_API_KEY
+//       }
+//     });
+
+//     if (!response.ok) {
+//       throw new Error(`Failed to fetch token details: ${response.statusText}`);
+//     }
+    
+//     const data = (await response.json()).data;
+//     const currentDate = new Date();
+    
+//     return {
+//       id: data.address || address,
+//       name: data.name || "Unknown Token",
+//       symbol: data.symbol || "UNKNOWN",
+//       price: data.price || 0,
+//       change24h: data.price_change_24h || 0,
+//       volume24h: data.volume_24h || 0,
+//       marketCap: data.market_cap,
+//       description: `${data?.metadata?.description != "" && data?.metadata?.description != undefined ? data?.metadata?.description : `${data.name || "Unknown"} (${data.symbol || "UNKNOWN"}) is a Solana token.`}`,
+//       twitter: data?.metadata?.twitter?data?.metadata?.twitter:undefined,
+//       website: data?.metadata?.website?data?.metadata?.website:undefined,
+//       telegram: data?.metadata?.telegram?data?.metadata?.telegram:undefined,
+//       logoUrl: data.icon,
+//       totalSupply: data.supply ? parseFloat(data.supply) : undefined,
+//       launchDate: data.created_time,
+//       holder: data.holder,
+
+//     };
+//   } catch (error) {
+//     console.error("Error fetching token details:", error);
+//     throw error;
+//   }
+// };
+
+
+// export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => {
+//   try {
+//     const response = await fetch(`https://solana-gateway.moralis.io/token/mainnet/${address}/price`, {
+//       headers: {
+//         'accept': 'application/json',
+//         'X-API-Key': MORALIS_API_KEY // Replace with your Moralis API key
+//       }
+//     });
+
+//     if (response.ok) {
+//       const data = await response.json();
+
+//       return {
+//         id: address,
+//         name: data.name || "Unknown Token",
+//         symbol: data.symbol || "UNKNOWN",
+//         price: data.usdPrice || 0,
+//         change24h: data.usdPrice_24hr_percent_change || 0,
+//         volume24h: 0, // Not provided by Moralis
+//         marketCap: data.usdPrice * 1000000000,
+//         description: `${data.name || "Unknown"} (${data.symbol || "UNKNOWN"}) is a Solana token.`,
+//         twitter: undefined,
+//         website: undefined,
+//         telegram: undefined,
+//         logoUrl: data.logo || undefined,
+//         totalSupply: data.totalSupply ? parseFloat(data.totalSupply) : undefined,
+//         launchDate: undefined,
+//         holder: undefined,
+//       };
+//     } else {
+//       console.warn("Moralis API responded with error:", response.statusText);
+//     }
+//   } catch (e) {
+//     console.warn("Moralis fetch failed, falling back to Solscan.", e);
+//   }
+
+//   // Fallback to Solscan
+//   try {
+//     const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta?address=${address}`, {
+//       headers: {
+//         "accept": "application/json",
+//         "token": SOLSCAN_API_KEY
+//       }
+//     });
+
+//     if (!response.ok) {
+//       throw new Error(`Failed to fetch token details from Solscan: ${response.statusText}`);
+//     }
+
+//     const data = (await response.json()).data;
+
+//     return {
+//       id: data.address || address,
+//       name: data.name || "Unknown Token",
+//       symbol: data.symbol || "UNKNOWN",
+//       price: data.price || 0,
+//       change24h: data.price_change_24h || 0,
+//       volume24h: data.volume_24h || 0,
+//       marketCap: data.market_cap,
+//       description: data?.metadata?.description !== "" && data?.metadata?.description !== undefined
+//         ? data.metadata.description
+//         : `${data.name || "Unknown"} (${data.symbol || "UNKNOWN"}) is a Solana token.`,
+//       twitter: data?.metadata?.twitter || undefined,
+//       website: data?.metadata?.website || undefined,
+//       telegram: data?.metadata?.telegram || undefined,
+//       logoUrl: data.icon,
+//       totalSupply: data.supply ? parseFloat(data.supply) : undefined,
+//       launchDate: data.created_time,
+//       holder: data.holder,
+//     };
+//   } catch (error) {
+//     console.error("Error fetching token details from Solscan:", error);
+//     throw error;
+//   }
+// };
+
 export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => {
+  let moralisPrice: number | undefined;
+  let moralisMarketCap: number | undefined;
+  let moralisPriceChange: number | undefined;
+
+  // 1. Fetch from Moralis first
+  try {
+    const response = await fetch(`https://solana-gateway.moralis.io/token/mainnet/${address}/price`, {
+      headers: {
+        'accept': 'application/json',
+        'X-API-Key': MORALIS_API_KEY
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      moralisPrice = data.usdPrice || undefined;
+      moralisMarketCap = moralisPrice * 1000000000; // example multiplier
+      moralisPriceChange = data.usdPrice24hrPercentChange;
+    } else {
+      console.warn("Moralis API responded with error:", response.statusText);
+    }
+  } catch (e) {
+    console.warn("Moralis fetch failed.", e);
+  }
+
+  // 2. Always return Solscan response
   try {
     const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta?address=${address}`, {
       headers: {
@@ -43,35 +186,36 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch token details: ${response.statusText}`);
+      throw new Error(`Failed to fetch token details from Solscan: ${response.statusText}`);
     }
-    
+
     const data = (await response.json()).data;
-    const currentDate = new Date();
-    
+
     return {
       id: data.address || address,
       name: data.name || "Unknown Token",
       symbol: data.symbol || "UNKNOWN",
-      price: data.price || 0,
-      change24h: data.price_change_24h || 0,
+      price: moralisPrice ?? data.price ?? 0,
+      change24h: moralisPriceChange ?? data.price_change_24h ?? 0,
       volume24h: data.volume_24h || 0,
-      marketCap: data.market_cap,
-      description: `${data?.metadata?.description != "" && data?.metadata?.description != undefined ? data?.metadata?.description : `${data.name || "Unknown"} (${data.symbol || "UNKNOWN"}) is a Solana token.`}`,
-      twitter: data?.metadata?.twitter?data?.metadata?.twitter:undefined,
-      website: data?.metadata?.website?data?.metadata?.website:undefined,
-      telegram: data?.metadata?.telegram?data?.metadata?.telegram:undefined,
+      marketCap: moralisMarketCap ?? data.market_cap,
+      description: data?.metadata?.description !== "" && data?.metadata?.description !== undefined
+        ? data.metadata.description
+        : `${data.name || "Unknown"} (${data.symbol || "UNKNOWN"}) is a Solana token.`,
+      twitter: data?.metadata?.twitter || undefined,
+      website: data?.metadata?.website || undefined,
+      telegram: data?.metadata?.telegram || undefined,
       logoUrl: data.icon,
       totalSupply: data.supply ? parseFloat(data.supply) : undefined,
       launchDate: data.created_time,
       holder: data.holder,
-
     };
   } catch (error) {
-    console.error("Error fetching token details:", error);
+    console.error("Error fetching token details from Solscan:", error);
     throw error;
   }
 };
+
 
 export const searchSolanaTokens = async (query: string): Promise<TokenInfo[]> => {
   try {
@@ -211,43 +355,119 @@ export const fetchTrendingTokens = async (limit:number=20): Promise<TokenInfo[]>
 };
 
 // Fetch token prices in batch for holdings
+// export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record<string, number>> => {
+//   if (!addresses || addresses.length === 0) return {};
+  
+//   try {
+//     const addressParams = addresses.map(addr => `address[]=${addr}`).join('&');
+    
+//     const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta/multi?${addressParams}`, {
+//       headers: {
+//         "accept": "application/json",
+//         "token": SOLSCAN_API_KEY
+//       }
+//     });
+    
+//     if (!response.ok) {
+//       throw new Error(`Failed to fetch token prices: ${response.statusText}`);
+//     }
+    
+//     const data = await response.json();
+    
+//     if (!data.data || !Array.isArray(data.data)) {
+//       return {};
+//     }
+    
+//     const pricesMap: Record<string, number> = {};
+    
+//     data.data.forEach((token: any) => {
+//       if (token && token.address && token.price) {
+//         pricesMap[token.address] = token.price;
+//       }
+//     });
+    
+//     return pricesMap;
+//   } catch (error) {
+//     console.error("Error fetching token prices:", error);
+//     return {};
+//   }
+// };
+
 export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record<string, number>> => {
   if (!addresses || addresses.length === 0) return {};
-  
+
+  const pricesMap: Record<string, number> = {};
+
+  // Fetch from Solscan first
   try {
     const addressParams = addresses.map(addr => `address[]=${addr}`).join('&');
-    
     const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta/multi?${addressParams}`, {
       headers: {
         "accept": "application/json",
         "token": SOLSCAN_API_KEY
       }
     });
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch token prices: ${response.statusText}`);
-    }
-    
-    const data = await response.json();
-    
-    if (!data.data || !Array.isArray(data.data)) {
-      return {};
-    }
-    
-    const pricesMap: Record<string, number> = {};
-    
-    data.data.forEach((token: any) => {
-      if (token && token.address && token.price) {
-        pricesMap[token.address] = token.price;
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.data && Array.isArray(data.data)) {
+        data.data.forEach((token: any) => {
+          if (token && token.address && token.price) {
+            pricesMap[token.address] = token.price;
+          }
+        });
       }
-    });
-    
-    return pricesMap;
+    } else {
+      console.warn("Solscan API error:", response.statusText);
+    }
   } catch (error) {
-    console.error("Error fetching token prices:", error);
-    return {};
+    console.error("Error fetching from Solscan:", error);
   }
+
+  // Fetch from Moralis and override
+  try {
+    const moralisResponse = await fetch(`https://solana-gateway.moralis.io/token/mainnet/prices`, {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'content-type': 'application/json',
+        'X-API-Key': MORALIS_API_KEY
+      },
+      body: JSON.stringify({ addresses })
+    });
+
+    console.log("Moralis status:", moralisResponse.status);
+
+    const moralisRaw = await moralisResponse.text();
+    console.log("Raw Moralis response:", moralisRaw);
+
+    let moralisData: any;
+    try {
+      moralisData = JSON.parse(moralisRaw);
+    } catch (jsonErr) {
+      console.error("Failed to parse Moralis JSON:", jsonErr);
+      return pricesMap;
+    }
+
+    if (moralisData && typeof moralisData === 'object') {
+      for (const [address, token] of Object.entries<any>(moralisData)) {
+        if (token && typeof token.usdPrice === 'number') {
+          console.log(`Overriding price for ${token.tokenAddress} with Moralis price:`, token.usdPrice);
+          pricesMap[token.tokenAddress] = token.usdPrice;
+        }
+      }
+    } else {
+      console.warn("Unexpected Moralis data shape:", moralisData);
+    }
+  } catch (error) {
+    console.error("Error fetching from Moralis:", error);
+  }
+  console.log("priceMap", pricesMap)
+  return pricesMap;
 };
+
+
+
 
 // Fetch new pairs from DexScreener token profiles API
 export const fetchNewPairs = async (): Promise<TokenInfo[]> => {
@@ -477,7 +697,7 @@ export const fetchPumpVisionTokens = async (): Promise<{
         const address = item.tokenAddress;
         let solscanData = await fetchSolscanData(address);
         solscanData = solscanData.data;
-    console.log(solscanData)
+    // console.log(solscanData)
         return {
           id: address || crypto.randomUUID(),
           name: item.name || solscanData?.name || "Unknown Token",
@@ -541,6 +761,7 @@ export const fetchPumpVisionTokens = async (): Promise<{
 export const useTrendingSolanaTokens = () => {
   return useQuery({
     queryKey: ['trending-solana-tokens'],
+    // @ts-ignore
     queryFn: fetchTrendingTokens,
     refetchInterval: 60000, // Refetch every minute
     retry: 3,

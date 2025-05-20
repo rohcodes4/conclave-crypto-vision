@@ -11,8 +11,8 @@ import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
   const { data: trendingTokens, isLoading: isLoadingTokens } = useTrendingSolanaTokens();
-  console.log("trendingTokens")
-  console.log(trendingTokens)
+  // console.log("trendingTokens")
+  // console.log(trendingTokens)
   const { balance, trades, holdings, calculatePortfolioValue, calculatePnL } = useTradeStore();
   
   const portfolioValue = calculatePortfolioValue();

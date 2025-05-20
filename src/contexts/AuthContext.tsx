@@ -174,7 +174,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
     // Accessing the provider from identities
     const provider = user?.identities?.[0]?.provider;
-    console.log("Signed-in provider:", provider); // e.g., 'google', 'github', 'email', etc.
+    // console.log("Signed-in provider:", provider); // e.g., 'google', 'github', 'email', etc.
   
     return provider;
   }

@@ -34,7 +34,7 @@ const TokenGrid = ({
   onLoadMore,
   hasMoreData = false
 }: TokenGridProps) => {
-  console.log("TOKENS: ",tokens)
+  // console.log("TOKENS: ",tokens)
   const [displayedTokens, setDisplayedTokens] = useState<Token[]>([]);
   const loaderRef = useRef<HTMLDivElement>(null);
   
@@ -92,7 +92,7 @@ const TokenGrid = ({
   
   // Debug display tokens
   useEffect(() => {
-    console.log("TokenGrid displayedTokens:", displayedTokens);
+    // console.log("TokenGrid displayedTokens:", displayedTokens);
   }, [displayedTokens]);
 
   return (

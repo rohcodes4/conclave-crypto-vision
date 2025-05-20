@@ -30,8 +30,8 @@ interface TopNavProps {
 
 const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
   const { user } = useAuth();
-  console.log("user")
-  console.log(user)
+  // console.log("user")
+  // console.log(user)
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");

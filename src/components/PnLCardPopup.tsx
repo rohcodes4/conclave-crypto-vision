@@ -18,7 +18,7 @@ import React, {
   
   const PnLCardPopup = forwardRef<PnLCardHandle, PnLCardProps>(
     ({ symbol, pnl, backgroundUrl }, ref) => {
-        console.log(backgroundUrl)
+        // console.log(backgroundUrl)
       const cardRef = useRef<HTMLDivElement>(null);
       const [imageData, setImageData] = useState<string | null>(null);
       const [showPopup, setShowPopup] = useState(false);

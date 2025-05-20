@@ -31,8 +31,8 @@ const AccountMenu = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  console.log("getDisplayName")
-  console.log(getDisplayName())
+  // console.log("getDisplayName")
+  // console.log(getDisplayName())
 
   const handleSignOut = async () => {
     await signOut();

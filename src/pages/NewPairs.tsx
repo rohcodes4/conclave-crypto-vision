@@ -17,7 +17,7 @@ const NewPairs = () => {
   const { data: newTokens, isLoading, error } = useNewPairs();
 
   // console.log("newTokens")
-  console.log(newTokens)
+  // console.log(newTokens)
   // Filter tokens if needed
   const allTokens = newTokens || [];
   const hasMore = displayedTokens.length < allTokens.length;

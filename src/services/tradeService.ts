@@ -200,7 +200,7 @@ export const useTradeStore = create<TradeState>()(
         
         // Start transaction
         try {
-          console.log("Executing trade with token:", trade.token);
+          // console.log("Executing trade with token:", trade.token);
           
           // First, check if the token exists in the database by address
           let { data: tokenData, error: tokenError } = await supabase
@@ -209,7 +209,7 @@ export const useTradeStore = create<TradeState>()(
             .eq('id', trade.token)
             .maybeSingle();
             
-          console.log("Token data from DB:", tokenData, "Error:", tokenError);
+          // console.log("Token data from DB:", tokenData, "Error:", tokenError);
           
           // Use the token address as the ID
           const tokenId = trade.token;
@@ -217,7 +217,7 @@ export const useTradeStore = create<TradeState>()(
           // If token doesn't exist, create a new one
           if (tokenError || !tokenData) {
             // Token doesn't exist, create a new one
-            console.log("Creating new token:", trade.token, trade.symbol);
+            // console.log("Creating new token:", trade.token, trade.symbol);
             
             const { data: newToken, error: newTokenError } = await supabase
               .from('tokens')
@@ -284,7 +284,7 @@ export const useTradeStore = create<TradeState>()(
             }
           }
           
-          console.log("About to insert trade record for token:", tokenData);
+          // console.log("About to insert trade record for token:", tokenData);
           
           // Generate a new trade
           const newTrade = {
@@ -309,7 +309,7 @@ export const useTradeStore = create<TradeState>()(
             throw tradeError;
           }
           
-          console.log("Trade inserted successfully:", tradeResult);
+          // console.log("Trade inserted successfully:", tradeResult);
           
           // Update balance
           const newBalance = trade.type === 'buy'

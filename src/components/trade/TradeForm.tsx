@@ -33,8 +33,8 @@ symbol: ""
   const [dialogOpen, setDialogOpen] = useState(false);
   
   const { balance, holdings, executeTrade, updateBalance } = useTradeStore();
-  console.log("holdings")
-  console.log(holdings)
+  // console.log("holdings")
+  // console.log(holdings)
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setAmount(value);
