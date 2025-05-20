@@ -10,6 +10,7 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
   const containerRef = useRef<HTMLDivElement>(null);
   const [isTelegramBrowser, setIsTelegramBrowser] = useState(false);
   const [hasChartError, setHasChartError] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -49,6 +50,7 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
     if (isUserOnTelegram()) {
       // alert("TG browser")
       setHasChartError(true);
+      setLoading(false)
       return;
     }
 
@@ -73,6 +75,7 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
             hideTopToolbar: false,
             hideBottomToolbar: false
           });
+          setLoading(false)
         } catch (err) {
           console.error('Chart initialization failed:', err);
           setHasChartError(true);
@@ -109,6 +112,7 @@ export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) =
 
   return (
     <div className={`w-full ${hasChartError?"h-[100px]":"max-md:h-[600px] h-[500px]"} flex flex-col`}>
+      {loading?<div className='w-full h-full flex justify-center items-center text-[30px]'><p>LOADING...</p></div>:<></>}
       {hasChartError ? (
         <div className="text-center text-yellow-500 p-4 bg-[#0d2035] rounded-lg">
           Charts might not work in Telegram’s in-app browser.
