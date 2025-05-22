@@ -5,12 +5,21 @@ import { toast } from "sonner";
 
 const SOLSCAN_API_URL = "https://public-api.solscan.io/v2";
 const SOLSCAN_PRO_API_URL = "https://pro-api.solscan.io/v2.0";
-export const SOLSCAN_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkQXQiOjE3MjM2Nzk3MDgxOTgsImVtYWlsIjoiZHJlYW15dGdib3RAZ21haWwuY29tIiwiYWN0aW9uIjoidG9rZW4tYXBpIiwiYXBpVmVyc2lvbiI6InYyIiwiaWF0IjoxNzIzNjc5NzA4fQ.qEG3q2DSX_i60f8eNhAZ_XEQgmbRHZmQPgY4_7RhZQU";
+// export const SOLSCAN_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkQXQiOjE3MjM2Nzk3MDgxOTgsImVtYWlsIjoiZHJlYW15dGdib3RAZ21haWwuY29tIiwiYWN0aW9uIjoidG9rZW4tYXBpIiwiYXBpVmVyc2lvbiI6InYyIiwiaWF0IjoxNzIzNjc5NzA4fQ.qEG3q2DSX_i60f8eNhAZ_XEQgmbRHZmQPgY4_7RhZQU";
+export const SOLSCAN_API_KEY= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkQXQiOjE3MzkwNDI4NDY3MjQsImVtYWlsIjoicm9oaXRwYXJha2g0QGdtYWlsLmNvbSIsImFjdGlvbiI6InRva2VuLWFwaSIsImFwaVZlcnNpb24iOiJ2MiIsImlhdCI6MTczOTA0Mjg0Nn0.agSChroYiwNthnH9ER1UBNZUErAMXpiHTRcmMWKnYyM"
 const DEXSCREENER_API_URL = "https://api.dexscreener.com";
 const BITQUERY_API_URL = "https://graphql.bitquery.io";
 const BITQUERY_API_KEY = "BQYoPCljQdkDjr3Dk7LkRdRrnFsYlkOQ";
-const MORALIS_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImVmYzkwNmU4LTA1NWUtNGE4OC04OWM4LWQ4NDgyOTA0YWVjNCIsIm9yZ0lkIjoiNDExMTIyIiwidXNlcklkIjoiNDIyNDg3IiwidHlwZUlkIjoiZTM1NGU1MWYtNzE1NS00YjU3LWI4YjMtN2EzOTlmM2E0NjQ0IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3Mjg0OTQ4MjUsImV4cCI6NDg4NDI1NDgyNX0.xc_F5PAg6FEt-mqFxMfGw26hdiO5D5AnydK9qAq8yiw";
+const MORALIS_API_KEY = "L2RCjJqapuhCylzNb7esHJH18oXoNU0CLyNWKM9SwGeTOu3FAGDYe10GvctbWrSA";
+// const MORALIS_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IjAwYzM0YmQzLTI2MjAtNDVkNy1iMjY2LWFhYjY3M2I3NThlMSIsIm9yZ0lkIjoiNDk4NjYiLCJ1c2VySWQiOiI0OTUyNCIsInR5cGVJZCI6IjEyYTEwNmUyLWE5ODgtNGE2Ny04NTYzLWI2ZmJiMmVkNjU4MiIsInR5cGUiOiJQUk9KRUNUIiwiaWF0IjoxNzM0NTkxODU3LCJleHAiOjQ4OTAzNTE4NTd9.x194htbKsuSEILxDdKfKlA7JYv0hkRm18jwM7Ir59VA";
+// const MORALIS_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImVmYzkwNmU4LTA1NWUtNGE4OC04OWM4LWQ4NDgyOTA0YWVjNCIsIm9yZ0lkIjoiNDExMTIyIiwidXNlcklkIjoiNDIyNDg3IiwidHlwZUlkIjoiZTM1NGU1MWYtNzE1NS00YjU3LWI4YjMtN2EzOTlmM2E0NjQ0IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3Mjg0OTQ4MjUsImV4cCI6NDg4NDI1NDgyNX0.xc_F5PAg6FEt-mqFxMfGw26hdiO5D5AnydK9qAq8yiw";
 // const BITQUERY_API_KEY = "bd849c74-c73a-41b0-9ba3-7af18605db15";
+const MORALIS_API_KEYS = [
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImVmYzkwNmU4LTA1NWUtNGE4OC04OWM4LWQ4NDgyOTA0YWVjNCIsIm9yZ0lkIjoiNDExMTIyIiwidXNlcklkIjoiNDIyNDg3IiwidHlwZUlkIjoiZTM1NGU1MWYtNzE1NS00YjU3LWI4YjMtN2EzOTlmM2E0NjQ0IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3Mjg0OTQ4MjUsImV4cCI6NDg4NDI1NDgyNX0.xc_F5PAg6FEt-mqFxMfGw26hdiO5D5AnydK9qAq8yiw",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6Ijg5YjZhODAyLTc0M2QtNDYxNy04NGYzLWQyMThjNDk2YTUyOSIsIm9yZ0lkIjoiNDQ4MzEwIiwidXNlcklkIjoiNDYxMjU0IiwidHlwZUlkIjoiMWY2NzcyNGQtMDlmMy00MzEzLTg0NmUtYzRmOTYxYWZiM2UyIiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3NDc4MjMxODEsImV4cCI6NDkwMzU4MzE4MX0.B-mcmTbxheNa_LMArPzNDWu_bw8_jZAPkjRoouvQaNg",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImZhNGNmNTQ0LTQ1NmQtNGY3ZC04NTVlLTU0NzM4Y2Y5YjE5NSIsIm9yZ0lkIjoiNDQ4MzExIiwidXNlcklkIjoiNDYxMjU1IiwidHlwZUlkIjoiMDJlOTgzMzctMjQ2ZC00ZTY1LTg4ODktMTUyZmRmZWExYjRiIiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3NDc4MjMyNTYsImV4cCI6NDkwMzU4MzI1Nn0.KRmgCll0KmX3pRyHYQRwldblvIMIZzdNaC8Z_z_xe8o"
+];
+
 
 export interface TokenInfo {
   id: string;
@@ -216,6 +225,75 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
   }
 };
 
+// This is for multiple api keys for moralis 
+// export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => {
+//   let moralisPrice: number | undefined;
+//   let moralisMarketCap: number | undefined;
+//   let moralisPriceChange: number | undefined;
+
+//   // Try each Moralis API key in order
+//   for (const key of MORALIS_API_KEYS) {
+//     try {
+//       const response = await fetch(`https://solana-gateway.moralis.io/token/mainnet/${address}/price`, {
+//         headers: {
+//           'accept': 'application/json',
+//           'X-API-Key': key
+//         }
+//       });
+
+//       if (response.ok) {
+//         const data = await response.json();
+//         moralisPrice = data.usdPrice || undefined;
+//         moralisMarketCap = moralisPrice * 1000000000; // example multiplier
+//         moralisPriceChange = data.usdPrice24hrPercentChange;
+//         break; // Stop after successful response
+//       } else {
+//         console.warn(`Moralis API key failed with status ${response.status}: ${response.statusText}`);
+//       }
+//     } catch (e) {
+//       console.warn("Error using Moralis key:", e);
+//     }
+//   }
+
+//   // Solscan fallback (always used)
+//   try {
+//     const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta?address=${address}`, {
+//       headers: {
+//         "accept": "application/json",
+//         "token": SOLSCAN_API_KEY
+//       }
+//     });
+
+//     if (!response.ok) {
+//       throw new Error(`Failed to fetch token details from Solscan: ${response.statusText}`);
+//     }
+
+//     const data = (await response.json()).data;
+
+//     return {
+//       id: data.address || address,
+//       name: data.name || "Unknown Token",
+//       symbol: data.symbol || "UNKNOWN",
+//       price: moralisPrice ?? data.price ?? 0,
+//       change24h: moralisPriceChange ?? data.price_change_24h ?? 0,
+//       volume24h: data.volume_24h || 0,
+//       marketCap: moralisMarketCap ?? data.market_cap,
+//       description: data?.metadata?.description !== "" && data?.metadata?.description !== undefined
+//         ? data.metadata.description
+//         : `${data.name || "Unknown"} (${data.symbol || "UNKNOWN"}) is a Solana token.`,
+//       twitter: data?.metadata?.twitter || undefined,
+//       website: data?.metadata?.website || undefined,
+//       telegram: data?.metadata?.telegram || undefined,
+//       logoUrl: data.icon,
+//       totalSupply: data.supply ? parseFloat(data.supply) : undefined,
+//       launchDate: data.created_time,
+//       holder: data.holder,
+//     };
+//   } catch (error) {
+//     console.error("Error fetching token details from Solscan:", error);
+//     throw error;
+//   }
+// };
 
 export const searchSolanaTokens = async (query: string): Promise<TokenInfo[]> => {
   try {
@@ -354,6 +432,7 @@ export const fetchTrendingTokens = async (limit:number=20): Promise<TokenInfo[]>
   }
 };
 
+
 // Fetch token prices in batch for holdings
 // export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record<string, number>> => {
 //   if (!addresses || addresses.length === 0) return {};
@@ -465,6 +544,89 @@ export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record
   console.log("priceMap", pricesMap)
   return pricesMap;
 };
+
+// This is for multiple api keys for moralis 
+// export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record<string, number>> => {
+//   if (!addresses || addresses.length === 0) return {};
+
+//   const pricesMap: Record<string, number> = {};
+
+//   // Fetch from Solscan first
+//   try {
+//     const addressParams = addresses.map(addr => `address[]=${addr}`).join('&');
+//     const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta/multi?${addressParams}`, {
+//       headers: {
+//         "accept": "application/json",
+//         "token": SOLSCAN_API_KEY
+//       }
+//     });
+
+//     if (response.ok) {
+//       const data = await response.json();
+//       if (data.data && Array.isArray(data.data)) {
+//         data.data.forEach((token: any) => {
+//           if (token && token.address && token.price) {
+//             pricesMap[token.address] = token.price;
+//           }
+//         });
+//       }
+//     } else {
+//       console.warn("Solscan API error:", response.statusText);
+//     }
+//   } catch (error) {
+//     console.error("Error fetching from Solscan:", error);
+//   }
+
+//   // Try each Moralis key in order until success
+//   for (const apiKey of MORALIS_API_KEYS) {
+//     try {
+//       const moralisResponse = await fetch(`https://solana-gateway.moralis.io/token/mainnet/prices`, {
+//         method: 'POST',
+//         headers: {
+//           'accept': 'application/json',
+//           'content-type': 'application/json',
+//           'X-API-Key': apiKey
+//         },
+//         body: JSON.stringify({ addresses })
+//       });
+
+//       console.log("Moralis status:", moralisResponse.status);
+
+//       if (moralisResponse.status !== 200) {
+//         console.warn("Moralis key failed:", apiKey);
+//         continue;
+//       }
+
+//       const moralisRaw = await moralisResponse.text();
+//       let moralisData: any;
+//       try {
+//         moralisData = JSON.parse(moralisRaw);
+//       } catch (jsonErr) {
+//         console.error("Failed to parse Moralis JSON:", jsonErr);
+//         return pricesMap;
+//       }
+
+//       if (moralisData && typeof moralisData === 'object') {
+//         for (const [address, token] of Object.entries<any>(moralisData)) {
+//           if (token && typeof token.usdPrice === 'number') {
+//             console.log(`Overriding price for ${token.tokenAddress} with Moralis price:`, token.usdPrice);
+//             pricesMap[token.tokenAddress] = token.usdPrice;
+//           }
+//         }
+//       } else {
+//         console.warn("Unexpected Moralis data shape:", moralisData);
+//       }
+
+//       break; // Exit loop on successful response
+
+//     } catch (error) {
+//       console.error("Error fetching from Moralis with key:", apiKey, error);
+//     }
+//   }
+
+//   console.log("priceMap", pricesMap);
+//   return pricesMap;
+// };
 
 
 
