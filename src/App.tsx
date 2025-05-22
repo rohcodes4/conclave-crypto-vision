@@ -33,6 +33,7 @@ import {
 } from '@solana/wallet-adapter-wallets';
 
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import Maintainance from './pages/Maintainance';
 
 const wallets = [
   new PhantomWalletAdapter(),
@@ -104,14 +105,17 @@ const AppContent = () => {
             {/* Protected routes */}
             <Route element={<ProtectedRoute handleSplashComplete={handleSplashComplete}/>}>
               <Route element={<Layout />}>
-                <Route path="/" element={<Dashboard />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="*" element={<Maintainance />} />
+                {/* <Route path="/" element={<Dashboard />} />
                 <Route path="/new-pairs" element={<NewPairs />} />
                 <Route path="/trending" element={<Trending />} />
                 <Route path="/pump-vision" element={<PumpVision />} />
                 <Route path="/holdings" element={<Holdings />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
-                <Route path="/token/:id" element={<TokenDetails />} />
+                <Route path="/token/:id" element={<TokenDetails />} /> */}
               </Route>
             </Route>
             
