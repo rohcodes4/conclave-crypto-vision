@@ -181,7 +181,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
             )}
             
             {showResults && searchResults && searchResults.length > 0 && (
-              <div className="absolute top-full left-0 w-full mt-1 bg-crypto-card border border-crypto-card rounded-md shadow-lg z-40 max-h-80 overflow-auto">
+              <div className="absolute top-full left-0 w-full max-md:mt-0 mt-1 bg-crypto-card border border-crypto-card rounded-md shadow-lg z-40 max-h-80 overflow-auto">
                 {searchResults.map((token) => (
                   <Link 
                     to={`/token/${token.id}`} 
