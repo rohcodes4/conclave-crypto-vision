@@ -6,6 +6,7 @@ import { WalletModalContext } from '@solana/wallet-adapter-react-ui';
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { Wallet } from 'lucide-react';
 import { useCallback, useContext, useEffect, useState } from 'react';
+import { Buffer } from 'buffer';
 
 const Web3Login = () => {
   const { publicKey, signMessage, connected, connect, disconnect } = useWallet();
