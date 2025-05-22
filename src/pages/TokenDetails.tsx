@@ -141,7 +141,7 @@ const TokenDetails = () => {
                         <Landmark className="h-5 w-5 text-crypto-accent mr-2" />
                         <div>
                           <div className="text-sm text-crypto-muted mb-1">24h Volume</div>
-                          <div className="font-medium">{formatNumber(token.volume24h)}</div>
+                          <div className="font-medium">{token.volume24h>0?formatNumber(token.volume24h):"N/A"}</div>
                         </div>
                       </div>
                      
