@@ -21,6 +21,8 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
         className="absolute inset-0 w-full h-full object-contain lg:object-cover opacity-40"
         muted
         playsInline
+        preload="none"
+        poster="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAFklEQVR42mP8z/C/HwAEsAJ/fHJ1BgAAAABJRU5ErkJggg=="
         onEnded={onComplete}
         onError={(e) => {
           console.error("Video failed to load:", e);
