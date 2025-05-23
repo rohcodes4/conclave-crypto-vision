@@ -245,14 +245,11 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Moralis Key success:", key);
-        console.log("Moralis Data:", data);
         moralisPrice = data.usdPrice || undefined;
         moralisMarketCap = moralisPrice * 1000000000; // example multiplier
         moralisPriceChange = data.usdPrice24hrPercentChange;
         break; // Stop after successful response
       } else {
-        console.log("Moralis Key failed:", key);
         console.warn(`Moralis API key failed with status ${response.status}: ${response.statusText}`);
       }
     } catch (e) {
@@ -599,7 +596,6 @@ export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record
       console.log("Moralis status:", moralisResponse.status);
 
       if (moralisResponse.status !== 200) {
-        console.warn("Moralis key failed:", apiKey);
         continue;
       }
 
@@ -834,7 +830,6 @@ export const fetchPumpVisionTokens = async (): Promise<{
           });
     
           if (response.ok) {
-            console.log(`${apiKey} success`)
             return await response.json();
           } else {
             console.log(`${apiKey} failed`)
