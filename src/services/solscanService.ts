@@ -593,7 +593,7 @@ export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record
         body: JSON.stringify({ addresses })
       });
 
-      console.log("Moralis status:", moralisResponse.status);
+      // console.log("Moralis status:", moralisResponse.status);
 
       if (moralisResponse.status !== 200) {
         continue;
@@ -611,7 +611,7 @@ export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record
       if (moralisData && typeof moralisData === 'object') {
         for (const [address, token] of Object.entries<any>(moralisData)) {
           if (token && typeof token.usdPrice === 'number') {
-            console.log(`Overriding price for ${token.tokenAddress} with Moralis price:`, token.usdPrice);
+            // console.log(`Overriding price for ${token.tokenAddress} with Moralis price:`, token.usdPrice);
             pricesMap[token.tokenAddress] = token.usdPrice;
           }
         }
@@ -626,7 +626,7 @@ export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record
     }
   }
 
-  console.log("priceMap", pricesMap);
+  // console.log("priceMap", pricesMap);
   return pricesMap;
 };
 
