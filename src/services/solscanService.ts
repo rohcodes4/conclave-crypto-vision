@@ -823,19 +823,29 @@ export const fetchPumpVisionTokens = async (): Promise<{
     // `;
 
     const executeMoralisQuery = async (url: string) => {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'accept': 'application/json',
-          'X-API-Key': MORALIS_API_KEY,
-        }
-      });
+      for (const apiKey of MORALIS_API_KEYS) {
+        try {
+          const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+              'accept': 'application/json',
+              'X-API-Key': apiKey,
+            }
+          });
     
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+          if (response.ok) {
+            console.log(`${apiKey} success`)
+            return await response.json();
+          } else {
+            console.log(`${apiKey} failed`)
+            console.warn(`Moralis API key failed (status ${response.status}): ${response.statusText}`);
+          }
+        } catch (error) {
+          console.warn(`Error with Moralis API key:`, error);
+        }
       }
     
-      return await response.json();
+      throw new Error("All Moralis API keys failed to fetch data.");
     };
     
     const fetchSolscanData = async (tokenAddress: string) => {
