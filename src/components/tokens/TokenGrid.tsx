@@ -17,6 +17,10 @@ interface Token {
   circulatingSupply?: number;
   launchDate?: string;
   holder?: number;
+  description?: string;
+  website?:string,
+  twitter?:string,
+  telegram?:string
 }
 
 interface TokenGridProps {

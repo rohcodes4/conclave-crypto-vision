@@ -15,6 +15,7 @@ const MORALIS_API_KEY = "L2RCjJqapuhCylzNb7esHJH18oXoNU0CLyNWKM9SwGeTOu3FAGDYe10
 // const MORALIS_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImVmYzkwNmU4LTA1NWUtNGE4OC04OWM4LWQ4NDgyOTA0YWVjNCIsIm9yZ0lkIjoiNDExMTIyIiwidXNlcklkIjoiNDIyNDg3IiwidHlwZUlkIjoiZTM1NGU1MWYtNzE1NS00YjU3LWI4YjMtN2EzOTlmM2E0NjQ0IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3Mjg0OTQ4MjUsImV4cCI6NDg4NDI1NDgyNX0.xc_F5PAg6FEt-mqFxMfGw26hdiO5D5AnydK9qAq8yiw";
 // const BITQUERY_API_KEY = "bd849c74-c73a-41b0-9ba3-7af18605db15";
 const MORALIS_API_KEYS = [
+  "L2RCjJqapuhCylzNb7esHJH18oXoNU0CLyNWKM9SwGeTOu3FAGDYe10GvctbWrSA",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImVmYzkwNmU4LTA1NWUtNGE4OC04OWM4LWQ4NDgyOTA0YWVjNCIsIm9yZ0lkIjoiNDExMTIyIiwidXNlcklkIjoiNDIyNDg3IiwidHlwZUlkIjoiZTM1NGU1MWYtNzE1NS00YjU3LWI4YjMtN2EzOTlmM2E0NjQ0IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3Mjg0OTQ4MjUsImV4cCI6NDg4NDI1NDgyNX0.xc_F5PAg6FEt-mqFxMfGw26hdiO5D5AnydK9qAq8yiw",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6Ijg5YjZhODAyLTc0M2QtNDYxNy04NGYzLWQyMThjNDk2YTUyOSIsIm9yZ0lkIjoiNDQ4MzEwIiwidXNlcklkIjoiNDYxMjU0IiwidHlwZUlkIjoiMWY2NzcyNGQtMDlmMy00MzEzLTg0NmUtYzRmOTYxYWZiM2UyIiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3NDc4MjMxODEsImV4cCI6NDkwMzU4MzE4MX0.B-mcmTbxheNa_LMArPzNDWu_bw8_jZAPkjRoouvQaNg",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImZhNGNmNTQ0LTQ1NmQtNGY3ZC04NTVlLTU0NzM4Y2Y5YjE5NSIsIm9yZ0lkIjoiNDQ4MzExIiwidXNlcklkIjoiNDYxMjU1IiwidHlwZUlkIjoiMDJlOTgzMzctMjQ2ZC00ZTY1LTg4ODktMTUyZmRmZWExYjRiIiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3NDc4MjMyNTYsImV4cCI6NDkwMzU4MzI1Nn0.KRmgCll0KmX3pRyHYQRwldblvIMIZzdNaC8Z_z_xe8o"
@@ -159,103 +160,34 @@ export interface TokenInfo {
 //   }
 // };
 
-export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => {
-  let moralisPrice: number | undefined;
-  let moralisMarketCap: number | undefined;
-  let moralisPriceChange: number | undefined;
-
-  // 1. Fetch from Moralis first
-  try {
-    const response = await fetch(`https://solana-gateway.moralis.io/token/mainnet/${address}/price`, {
-      headers: {
-        'accept': 'application/json',
-        'X-API-Key': MORALIS_API_KEY
-      }
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      moralisPrice = data.usdPrice || undefined;
-      moralisMarketCap = moralisPrice * 1000000000; // example multiplier
-      moralisPriceChange = data.usdPrice24hrPercentChange;
-    } else {
-      console.warn("Moralis API responded with error:", response.statusText);
-    }
-  } catch (e) {
-    console.warn("Moralis fetch failed.", e);
-  }
-
-  // 2. Always return Solscan response
-  try {
-    const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta?address=${address}`, {
-      headers: {
-        "accept": "application/json",
-        "token": SOLSCAN_API_KEY
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch token details from Solscan: ${response.statusText}`);
-    }
-
-    const data = (await response.json()).data;
-
-    return {
-      id: data.address || address,
-      name: data.name || "Unknown Token",
-      symbol: data.symbol || "UNKNOWN",
-      price: moralisPrice ?? data.price ?? 0,
-      change24h: moralisPriceChange ?? data.price_change_24h ?? 0,
-      volume24h: data.volume_24h || 0,
-      marketCap: moralisMarketCap ?? data.market_cap,
-      description: data?.metadata?.description !== "" && data?.metadata?.description !== undefined
-        ? data.metadata.description
-        : `${data.name || "Unknown"} (${data.symbol || "UNKNOWN"}) is a Solana token.`,
-      twitter: data?.metadata?.twitter || undefined,
-      website: data?.metadata?.website || undefined,
-      telegram: data?.metadata?.telegram || undefined,
-      logoUrl: data.icon,
-      totalSupply: data.supply ? parseFloat(data.supply) : undefined,
-      launchDate: data.created_time,
-      holder: data.holder,
-    };
-  } catch (error) {
-    console.error("Error fetching token details from Solscan:", error);
-    throw error;
-  }
-};
-
-// This is for multiple api keys for moralis 
+// This is for single api keys for moralis 
 // export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => {
 //   let moralisPrice: number | undefined;
 //   let moralisMarketCap: number | undefined;
 //   let moralisPriceChange: number | undefined;
 
-//   // Try each Moralis API key in order
-//   for (const key of MORALIS_API_KEYS) {
-//     try {
-//       const response = await fetch(`https://solana-gateway.moralis.io/token/mainnet/${address}/price`, {
-//         headers: {
-//           'accept': 'application/json',
-//           'X-API-Key': key
-//         }
-//       });
-
-//       if (response.ok) {
-//         const data = await response.json();
-//         moralisPrice = data.usdPrice || undefined;
-//         moralisMarketCap = moralisPrice * 1000000000; // example multiplier
-//         moralisPriceChange = data.usdPrice24hrPercentChange;
-//         break; // Stop after successful response
-//       } else {
-//         console.warn(`Moralis API key failed with status ${response.status}: ${response.statusText}`);
+//   // 1. Fetch from Moralis first
+//   try {
+//     const response = await fetch(`https://solana-gateway.moralis.io/token/mainnet/${address}/price`, {
+//       headers: {
+//         'accept': 'application/json',
+//         'X-API-Key': MORALIS_API_KEY
 //       }
-//     } catch (e) {
-//       console.warn("Error using Moralis key:", e);
+//     });
+
+//     if (response.ok) {
+//       const data = await response.json();
+//       moralisPrice = data.usdPrice || undefined;
+//       moralisMarketCap = moralisPrice * 1000000000; // example multiplier
+//       moralisPriceChange = data.usdPrice24hrPercentChange;
+//     } else {
+//       console.warn("Moralis API responded with error:", response.statusText);
 //     }
+//   } catch (e) {
+//     console.warn("Moralis fetch failed.", e);
 //   }
 
-//   // Solscan fallback (always used)
+//   // 2. Always return Solscan response
 //   try {
 //     const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta?address=${address}`, {
 //       headers: {
@@ -294,6 +226,79 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
 //     throw error;
 //   }
 // };
+
+// This is for multiple api keys for moralis 
+export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => {
+  let moralisPrice: number | undefined;
+  let moralisMarketCap: number | undefined;
+  let moralisPriceChange: number | undefined;
+
+  // Try each Moralis API key in order
+  for (const key of MORALIS_API_KEYS) {
+    try {
+      const response = await fetch(`https://solana-gateway.moralis.io/token/mainnet/${address}/price`, {
+        headers: {
+          'accept': 'application/json',
+          'X-API-Key': key
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Moralis Key success:", key);
+        console.log("Moralis Data:", data);
+        moralisPrice = data.usdPrice || undefined;
+        moralisMarketCap = moralisPrice * 1000000000; // example multiplier
+        moralisPriceChange = data.usdPrice24hrPercentChange;
+        break; // Stop after successful response
+      } else {
+        console.log("Moralis Key failed:", key);
+        console.warn(`Moralis API key failed with status ${response.status}: ${response.statusText}`);
+      }
+    } catch (e) {
+      console.warn("Error using Moralis key:", e);
+    }
+  }
+
+  // Solscan fallback (always used)
+  try {
+    const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta?address=${address}`, {
+      headers: {
+        "accept": "application/json",
+        "token": SOLSCAN_API_KEY
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch token details from Solscan: ${response.statusText}`);
+    }
+
+    const data = (await response.json()).data;
+
+    return {
+      id: data.address || address,
+      name: data.name || "Unknown Token",
+      symbol: data.symbol || "UNKNOWN",
+      price: moralisPrice ?? data.price ?? 0,
+      change24h: moralisPriceChange ?? data.price_change_24h ?? 0,
+      volume24h: data.volume_24h || 0,
+      marketCap: moralisMarketCap ?? data.market_cap,
+      description: data?.metadata?.description !== "" && data?.metadata?.description !== undefined
+        ? data.metadata.description
+        : `${data.name || "Unknown"} (${data.symbol || "UNKNOWN"}) is a Solana token.`,
+      twitter: data?.metadata?.twitter || undefined,
+      website: data?.metadata?.website || undefined,
+      telegram: data?.metadata?.telegram || undefined,
+      logoUrl: data.icon,
+      totalSupply: data.supply ? parseFloat(data.supply) : undefined,
+      launchDate: data.created_time,
+      holder: data.holder,
+    };
+  } catch (error) {
+    console.error("Error fetching token details from Solscan:", error);
+    throw error;
+  }
+};
 
 export const searchSolanaTokens = async (query: string): Promise<TokenInfo[]> => {
   try {
@@ -472,80 +477,7 @@ export const fetchTrendingTokens = async (limit:number=20): Promise<TokenInfo[]>
 //   }
 // };
 
-export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record<string, number>> => {
-  if (!addresses || addresses.length === 0) return {};
-
-  const pricesMap: Record<string, number> = {};
-
-  // Fetch from Solscan first
-  try {
-    const addressParams = addresses.map(addr => `address[]=${addr}`).join('&');
-    const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta/multi?${addressParams}`, {
-      headers: {
-        "accept": "application/json",
-        "token": SOLSCAN_API_KEY
-      }
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      if (data.data && Array.isArray(data.data)) {
-        data.data.forEach((token: any) => {
-          if (token && token.address && token.price) {
-            pricesMap[token.address] = token.price;
-          }
-        });
-      }
-    } else {
-      console.warn("Solscan API error:", response.statusText);
-    }
-  } catch (error) {
-    console.error("Error fetching from Solscan:", error);
-  }
-
-  // Fetch from Moralis and override
-  try {
-    const moralisResponse = await fetch(`https://solana-gateway.moralis.io/token/mainnet/prices`, {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'content-type': 'application/json',
-        'X-API-Key': MORALIS_API_KEY
-      },
-      body: JSON.stringify({ addresses })
-    });
-
-    console.log("Moralis status:", moralisResponse.status);
-
-    const moralisRaw = await moralisResponse.text();
-    console.log("Raw Moralis response:", moralisRaw);
-
-    let moralisData: any;
-    try {
-      moralisData = JSON.parse(moralisRaw);
-    } catch (jsonErr) {
-      console.error("Failed to parse Moralis JSON:", jsonErr);
-      return pricesMap;
-    }
-
-    if (moralisData && typeof moralisData === 'object') {
-      for (const [address, token] of Object.entries<any>(moralisData)) {
-        if (token && typeof token.usdPrice === 'number') {
-          console.log(`Overriding price for ${token.tokenAddress} with Moralis price:`, token.usdPrice);
-          pricesMap[token.tokenAddress] = token.usdPrice;
-        }
-      }
-    } else {
-      console.warn("Unexpected Moralis data shape:", moralisData);
-    }
-  } catch (error) {
-    console.error("Error fetching from Moralis:", error);
-  }
-  console.log("priceMap", pricesMap)
-  return pricesMap;
-};
-
-// This is for multiple api keys for moralis 
+// This is for single api keys for moralis 
 // export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record<string, number>> => {
 //   if (!addresses || addresses.length === 0) return {};
 
@@ -577,56 +509,130 @@ export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record
 //     console.error("Error fetching from Solscan:", error);
 //   }
 
-//   // Try each Moralis key in order until success
-//   for (const apiKey of MORALIS_API_KEYS) {
+//   // Fetch from Moralis and override
+//   try {
+//     const moralisResponse = await fetch(`https://solana-gateway.moralis.io/token/mainnet/prices`, {
+//       method: 'POST',
+//       headers: {
+//         'accept': 'application/json',
+//         'content-type': 'application/json',
+//         'X-API-Key': MORALIS_API_KEY
+//       },
+//       body: JSON.stringify({ addresses })
+//     });
+
+//     console.log("Moralis status:", moralisResponse.status);
+
+//     const moralisRaw = await moralisResponse.text();
+//     console.log("Raw Moralis response:", moralisRaw);
+
+//     let moralisData: any;
 //     try {
-//       const moralisResponse = await fetch(`https://solana-gateway.moralis.io/token/mainnet/prices`, {
-//         method: 'POST',
-//         headers: {
-//           'accept': 'application/json',
-//           'content-type': 'application/json',
-//           'X-API-Key': apiKey
-//         },
-//         body: JSON.stringify({ addresses })
-//       });
-
-//       console.log("Moralis status:", moralisResponse.status);
-
-//       if (moralisResponse.status !== 200) {
-//         console.warn("Moralis key failed:", apiKey);
-//         continue;
-//       }
-
-//       const moralisRaw = await moralisResponse.text();
-//       let moralisData: any;
-//       try {
-//         moralisData = JSON.parse(moralisRaw);
-//       } catch (jsonErr) {
-//         console.error("Failed to parse Moralis JSON:", jsonErr);
-//         return pricesMap;
-//       }
-
-//       if (moralisData && typeof moralisData === 'object') {
-//         for (const [address, token] of Object.entries<any>(moralisData)) {
-//           if (token && typeof token.usdPrice === 'number') {
-//             console.log(`Overriding price for ${token.tokenAddress} with Moralis price:`, token.usdPrice);
-//             pricesMap[token.tokenAddress] = token.usdPrice;
-//           }
-//         }
-//       } else {
-//         console.warn("Unexpected Moralis data shape:", moralisData);
-//       }
-
-//       break; // Exit loop on successful response
-
-//     } catch (error) {
-//       console.error("Error fetching from Moralis with key:", apiKey, error);
+//       moralisData = JSON.parse(moralisRaw);
+//     } catch (jsonErr) {
+//       console.error("Failed to parse Moralis JSON:", jsonErr);
+//       return pricesMap;
 //     }
-//   }
 
-//   console.log("priceMap", pricesMap);
+//     if (moralisData && typeof moralisData === 'object') {
+//       for (const [address, token] of Object.entries<any>(moralisData)) {
+//         if (token && typeof token.usdPrice === 'number') {
+//           console.log(`Overriding price for ${token.tokenAddress} with Moralis price:`, token.usdPrice);
+//           pricesMap[token.tokenAddress] = token.usdPrice;
+//         }
+//       }
+//     } else {
+//       console.warn("Unexpected Moralis data shape:", moralisData);
+//     }
+//   } catch (error) {
+//     console.error("Error fetching from Moralis:", error);
+//   }
+//   console.log("priceMap", pricesMap)
 //   return pricesMap;
 // };
+
+// This is for multiple api keys for moralis 
+export const fetchTokenPricesBatch = async (addresses: string[]): Promise<Record<string, number>> => {
+  if (!addresses || addresses.length === 0) return {};
+
+  const pricesMap: Record<string, number> = {};
+
+  // Fetch from Solscan first
+  try {
+    const addressParams = addresses.map(addr => `address[]=${addr}`).join('&');
+    const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta/multi?${addressParams}`, {
+      headers: {
+        "accept": "application/json",
+        "token": SOLSCAN_API_KEY
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.data && Array.isArray(data.data)) {
+        data.data.forEach((token: any) => {
+          if (token && token.address && token.price) {
+            pricesMap[token.address] = token.price;
+          }
+        });
+      }
+    } else {
+      console.warn("Solscan API error:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error fetching from Solscan:", error);
+  }
+
+  // Try each Moralis key in order until success
+  for (const apiKey of MORALIS_API_KEYS) {
+    try {
+      const moralisResponse = await fetch(`https://solana-gateway.moralis.io/token/mainnet/prices`, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'content-type': 'application/json',
+          'X-API-Key': apiKey
+        },
+        body: JSON.stringify({ addresses })
+      });
+
+      console.log("Moralis status:", moralisResponse.status);
+
+      if (moralisResponse.status !== 200) {
+        console.warn("Moralis key failed:", apiKey);
+        continue;
+      }
+
+      const moralisRaw = await moralisResponse.text();
+      let moralisData: any;
+      try {
+        moralisData = JSON.parse(moralisRaw);
+      } catch (jsonErr) {
+        console.error("Failed to parse Moralis JSON:", jsonErr);
+        return pricesMap;
+      }
+
+      if (moralisData && typeof moralisData === 'object') {
+        for (const [address, token] of Object.entries<any>(moralisData)) {
+          if (token && typeof token.usdPrice === 'number') {
+            console.log(`Overriding price for ${token.tokenAddress} with Moralis price:`, token.usdPrice);
+            pricesMap[token.tokenAddress] = token.usdPrice;
+          }
+        }
+      } else {
+        console.warn("Unexpected Moralis data shape:", moralisData);
+      }
+
+      break; // Exit loop on successful response
+
+    } catch (error) {
+      console.error("Error fetching from Moralis with key:", apiKey, error);
+    }
+  }
+
+  console.log("priceMap", pricesMap);
+  return pricesMap;
+};
 
 
 

@@ -70,7 +70,7 @@ symbol: ""
       const holding = holdings.find(h => h.id === tokenId);
       const tokenAmount = holding.amount * (percentage / 100);
       const total = tokenAmount * currentPrice; // USD
-      setAmount(tokenAmount);
+      setAmount(tokenAmount+"");
       setTotal(total);
     }
   };
