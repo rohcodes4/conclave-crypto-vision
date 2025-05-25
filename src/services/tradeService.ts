@@ -156,7 +156,7 @@ export const useTradeStore = create<TradeState>()(
           
           // Update state
           set({
-            balance: walletData?.balance || 10000,
+            balance: walletData?.balance,
             holdings: formattedHoldings,
             trades: formattedTrades,
             isLoading: false
