@@ -231,7 +231,7 @@ const TokenDetails = () => {
                     {token.launchDate && (
                       <div>
                         <div className="text-sm text-crypto-muted mb-1">Launch Date</div>
-                        <div className="font-medium">{new Date(token.launchDate * 1000).toLocaleDateString()}</div>
+                        <div className="font-medium">{new Date(token.launchDate * 1000).toLocaleString()}</div>
                       </div>
                     )}
                     
