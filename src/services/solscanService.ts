@@ -262,8 +262,9 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
 
       if (response.ok) {
         const data = await response.json();
+        console.log({data})
         moralisPrice = data.usdPrice || undefined;
-        moralisMarketCap = moralisPrice * 1000000000; // example multiplier
+        // moralisMarketCap = moralisPrice * 1000000000; // example multiplier
         moralisPriceChange = data.usdPrice24hrPercentChange;
         break; // Stop after successful response
       } else {
@@ -288,7 +289,7 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
     }
 
     const data = (await response.json()).data;
-
+    moralisMarketCap = moralisPrice * (parseFloat(data.supply) / Math.pow(10, data.decimals));
     return {
       id: data.address || address,
       name: data.name || "Unknown Token",
@@ -304,7 +305,8 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
       website: data?.metadata?.website || undefined,
       telegram: data?.metadata?.telegram || undefined,
       logoUrl: data.icon,
-      totalSupply: data.supply ? parseFloat(data.supply) : undefined,
+      // totalSupply: data.supply ? parseFloat(data.supply) : undefined,
+      totalSupply: data.supply && data.decimals != null ? parseFloat(data.supply) / Math.pow(10, data.decimals): undefined,
       launchDate: data.created_time,
       holder: data.holder,
     };
