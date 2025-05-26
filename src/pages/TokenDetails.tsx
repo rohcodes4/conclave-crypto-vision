@@ -72,18 +72,39 @@ const TokenDetails = () => {
           )}
           <span>{token.name} ({token.symbol})</span>
         </h1>
+        <div className="mt-0 pt-1">
+                    <div className="flex items-center gap-2">
+                      <code className="bg-crypto-bg p-2 rounded text-xs w-max overflow-x-auto whitespace-nowrap">
+                        {token.id.slice(0,4)}...{token.id.slice(-4)}
+                      </code>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="shrink-0" 
+                        onClick={() => {
+                          navigator.clipboard.writeText(token.id);
+                          toast.success("Copied to clipboard!");
+                          // You could add a toast notification here
+                        }}
+                      >
+                        <Clipboard className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
         <div className="md:ml-auto flex gap-2">
           {/* <Button variant="ghost" size="sm" className="text-crypto-muted">
             <Share2 className="h-4 w-4 mr-2" /> Share
           </Button> */}
-          <Button 
+          {/* <Button 
             variant="outline" 
             size="sm" 
             className="text-crypto-muted"
             onClick={() => window.open(`https://solscan.io/token/${token.id}`, '_blank')}
           >
             <ExternalLink className="h-4 w-4 mr-2" /> View on Explorer
-          </Button>
+          </Button> */}
+
+          
         </div>
       </div>
       
