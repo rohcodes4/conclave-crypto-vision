@@ -432,7 +432,7 @@ export const fetchTrendingTokens = async (limit:number=20): Promise<TokenInfo[]>
       if(token.name=="USDT" || token.name=="USDC" || token.name=="Wrapped SOL") return false;
       const address = token.address || token.mintAddress;
       const tokenDetails = tokenDetailsMap[address] || {};
-      
+      if(tokenDetails.market_cap>15000000000) return false;
       return {
         id: address,
         name: token.name || tokenDetails.name || "Unknown Token",
@@ -884,6 +884,7 @@ export const fetchPumpVisionTokens = async (): Promise<{
     
     const enrichTokensWithSolscan = async (tokens: any[]) => {
       return await Promise.all(tokens.map(async (item) => {
+        if(item.market_cap>15000000000) return false;
         const address = item.tokenAddress;
         let solscanData = await fetchSolscanData(address);
         solscanData = solscanData.data;
