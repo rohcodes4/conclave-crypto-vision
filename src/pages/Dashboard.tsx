@@ -107,6 +107,7 @@ const Dashboard = () => {
         tokens={sortedTokens} 
         title="" 
         isLoading={isLoadingTokens}
+        shouldCreateHasMoreData={false}
       />
       </CardContent>
       </Card>

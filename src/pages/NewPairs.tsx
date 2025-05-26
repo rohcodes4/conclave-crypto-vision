@@ -137,9 +137,11 @@ const NewPairs = () => {
               tokens={sortedTokens} 
               title="" 
               // title="Latest Pairs" 
-              isLoading={isLoading}
+              // isLoading={isLoading}
               onLoadMore={loadMoreTokens}
               hasMoreData={hasMore}
+              isLoading={false} 
+              shouldCreateHasMoreData={true}
             />
             
             {/* <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -714,7 +714,7 @@ export const fetchNewPairs = async (): Promise<TokenInfo[]> => {
         console.error("❌ Error fetching token details:", detailsError);
       }
     }
-
+    
     return solanaPairs.map((pair: any) => {
       const address = pair.tokenAddress.toLowerCase();
       const tokenDetails = tokenDetailsMap[address] || {};
@@ -915,7 +915,6 @@ export const fetchPumpVisionTokens = async (): Promise<{
     
     const aboutToMigrate: TokenInfo[] = await enrichTokensWithSolscan(aboutToMigrateData?.result || []);
     const migrated: TokenInfo[] = await enrichTokensWithSolscan(migratedData?.result || []);
-    
 
     return {
       // newTokens,

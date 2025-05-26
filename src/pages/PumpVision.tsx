@@ -78,10 +78,10 @@ const PumpVision = () => {
              <TokenGrid tokens={newTokens} title="Newly Deployed Contracts" />
            </TabsContent> */}
            <TabsContent value="migrating">
-             <TokenGrid tokens={aboutToMigrate} title="Preparing for Migration" />
+             <TokenGrid tokens={aboutToMigrate} title="Preparing for Migration" isLoading={false} shouldCreateHasMoreData={true}/>
            </TabsContent>
            <TabsContent value="migrated">
-             <TokenGrid tokens={migrated} title="Recently Migrated" />
+             <TokenGrid tokens={migrated} title="Recently Migrated" isLoading={false} shouldCreateHasMoreData={true}/>
            </TabsContent>
          </Tabs>}
       

@@ -32,6 +32,8 @@ const Trending = () => {
     });
   }, [data, sortBy, sortOrder]);
 
+
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -103,7 +105,7 @@ const Trending = () => {
           <CardTitle>Trending Solana Tokens</CardTitle>
         </CardHeader> */}
         <CardContent>
-          <TokenGrid tokens={sortedTokens} title="" />
+          <TokenGrid tokens={sortedTokens} title=""  isLoading={false} shouldCreateHasMoreData={true}/>
         </CardContent>
       </Card>
     </div>
