@@ -297,7 +297,7 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
       price: moralisPrice ?? data.price ?? 0,
       change24h: moralisPriceChange ?? data.price_change_24h ?? 0,
       volume24h: data.volume_24h || 0,
-      marketCap: data.market_cap,
+      marketCap: moralisMarketCap ?? data.market_cap,
       description: data?.metadata?.description !== "" && data?.metadata?.description !== undefined
         ? data.metadata.description
         : `${data.name || "Unknown"} (${data.symbol || "UNKNOWN"}) is a Solana token.`,
