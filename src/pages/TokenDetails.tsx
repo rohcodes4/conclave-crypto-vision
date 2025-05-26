@@ -21,21 +21,22 @@ const TokenDetails = () => {
   // Find current holding for this token
   const currentHolding = holdings.find(h => h.id === id);
 
-  // Format number with appropriate suffix
   const formatNumber = (num: number | undefined) => {
-    if (num === undefined) return 'N/A';
-    
-    if (num >= 1_000_000_000_000) {
-      return `$${(num / 1_000_000_000).toFixed(2)}T`;
-    }else if (num >= 1_000_000_000) {
-      return `$${(num / 1_000_000_000).toFixed(2)}B`;
-    } else if (num >= 1_000_000) {
-      return `$${(num / 1_000_000).toFixed(2)}M`;
-    } else if (num >= 1_000) {
-      return `$${(num / 1_000).toFixed(2)}K`;
-    }
-    return `$${num.toFixed(2)}`;
-  };
+  if (num === undefined) return 'N/A';
+
+  if (num >= 1_000_000_000_000) {
+    return `$${(num / 1_000_000_000_000).toFixed(2)}T`;
+  } else if (num >= 1_000_000_000) {
+    return `$${(num / 1_000_000_000).toFixed(2)}B`;
+  } else if (num >= 1_000_000) {
+    return `$${(num / 1_000_000).toFixed(2)}M`;
+  } else if (num >= 1_000) {
+    return `$${(num / 1_000).toFixed(2)}K`;
+  }
+
+  return `$${num.toFixed(2)}`;
+};
+
   
   if (isLoading) {
     return <TokenDetailsSkeleton />;
