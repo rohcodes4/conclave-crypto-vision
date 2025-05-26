@@ -245,37 +245,126 @@ export interface TokenInfo {
 // };
 
 // This is for multiple api keys for moralis 
+// export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => {
+//   let moralisPrice: number | undefined;
+//   let moralisMarketCap: number | undefined;
+//   let moralisPriceChange: number | undefined;
+
+//   // Try each Moralis API key in order
+//   for (const key of MORALIS_API_KEYS) {
+//     try {
+//       const response = await fetch(`https://solana-gateway.moralis.io/token/mainnet/${address}/price`, {
+//         headers: {
+//           'accept': 'application/json',
+//           'X-API-Key': key
+//         }
+//       });
+
+//       if (response.ok) {
+//         const data = await response.json();
+//         console.log({data})
+//         moralisPrice = data.usdPrice || undefined;
+//         // moralisMarketCap = moralisPrice * 1000000000; // example multiplier
+//         moralisPriceChange = data.usdPrice24hrPercentChange;
+//         break; // Stop after successful response
+//       } else {
+//         console.warn(`Moralis API key failed with status ${response.status}: ${response.statusText}`);
+//       }
+//     } catch (e) {
+//       console.warn("Error using Moralis key:", e);
+//     }
+//   }
+
+//   // Solscan fallback (always used)
+//   try {
+//     const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta?address=${address}`, {
+//       headers: {
+//         "accept": "application/json",
+//         "token": SOLSCAN_API_KEY
+//       }
+//     });
+
+//     if (!response.ok) {
+//       throw new Error(`Failed to fetch token details from Solscan: ${response.statusText}`);
+//     }
+
+//     const data = (await response.json()).data;
+//     moralisMarketCap = moralisPrice * (parseFloat(data.supply) / Math.pow(10, data.decimals));
+//     return {
+//       id: data.address || address,
+//       name: data.name || "Unknown Token",
+//       symbol: data.symbol || "UNKNOWN",
+//       price: moralisPrice ?? data.price ?? 0,
+//       change24h: moralisPriceChange ?? data.price_change_24h ?? 0,
+//       volume24h: data.volume_24h || 0,
+//       marketCap: moralisMarketCap ?? data.market_cap,
+//       description: data?.metadata?.description !== "" && data?.metadata?.description !== undefined
+//         ? data.metadata.description
+//         : `${data.name || "Unknown"} (${data.symbol || "UNKNOWN"}) is a Solana token.`,
+//       twitter: data?.metadata?.twitter || undefined,
+//       website: data?.metadata?.website || undefined,
+//       telegram: data?.metadata?.telegram || undefined,
+//       logoUrl: data.icon,
+//       // totalSupply: data.supply ? parseFloat(data.supply) : undefined,
+//       totalSupply: data.supply && data.decimals != null ? parseFloat(data.supply) / Math.pow(10, data.decimals): undefined,
+//       launchDate: data.created_time,
+//       holder: data.holder,
+//     };
+//   } catch (error) {
+//     console.error("Error fetching token details from Solscan:", error);
+//     throw error;
+//   }
+// };
+
 export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => {
-  let moralisPrice: number | undefined;
-  let moralisMarketCap: number | undefined;
-  let moralisPriceChange: number | undefined;
+  let price: number | undefined;
+  let marketCap: number | undefined;
+  let priceChange: number | undefined;
 
-  // Try each Moralis API key in order
-  for (const key of MORALIS_API_KEYS) {
-    try {
-      const response = await fetch(`https://solana-gateway.moralis.io/token/mainnet/${address}/price`, {
-        headers: {
-          'accept': 'application/json',
-          'X-API-Key': key
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log({data})
-        moralisPrice = data.usdPrice || undefined;
-        // moralisMarketCap = moralisPrice * 1000000000; // example multiplier
-        moralisPriceChange = data.usdPrice24hrPercentChange;
-        break; // Stop after successful response
-      } else {
-        console.warn(`Moralis API key failed with status ${response.status}: ${response.statusText}`);
+  // --- 1. Try Dexscreener ---
+  try {
+    const dexResponse = await fetch(`https://api.dexscreener.com/token-pairs/v1/solana/${address}`);
+    if (dexResponse.ok) {
+      const dexData = await dexResponse.json();
+      if (Array.isArray(dexData) && dexData.length > 0) {
+        const pair = dexData[0];
+        price = parseFloat(pair.priceUsd) || undefined;
+        marketCap = parseFloat(pair.marketCap) || undefined;
+        // Dexscreener doesn't provide 24h price change reliably, so we skip it
       }
-    } catch (e) {
-      console.warn("Error using Moralis key:", e);
+    } else {
+      console.warn(`Dexscreener fetch failed with status ${dexResponse.status}`);
+    }
+  } catch (e) {
+    console.warn("Dexscreener fetch error:", e);
+  }
+
+  // --- 2. Try Moralis (only if Dexscreener failed or price missing) ---
+  if (!price) {
+    for (const key of MORALIS_API_KEYS) {
+      try {
+        const response = await fetch(`https://solana-gateway.moralis.io/token/mainnet/${address}/price`, {
+          headers: {
+            'accept': 'application/json',
+            'X-API-Key': key,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          price = data.usdPrice || price;
+          priceChange = data.usdPrice24hrPercentChange;
+          break;
+        } else {
+          console.warn(`Moralis key failed with status ${response.status}: ${response.statusText}`);
+        }
+      } catch (e) {
+        console.warn("Error using Moralis key:", e);
+      }
     }
   }
 
-  // Solscan fallback (always used)
+  // --- 3. Fetch Solscan metadata (always) ---
   try {
     const response = await fetch(`${SOLSCAN_PRO_API_URL}/token/meta?address=${address}`, {
       headers: {
@@ -289,15 +378,20 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
     }
 
     const data = (await response.json()).data;
-    moralisMarketCap = moralisPrice * (parseFloat(data.supply) / Math.pow(10, data.decimals));
+
+    // Calculate market cap if still missing
+    if (!marketCap && price && data.supply && data.decimals != null) {
+      marketCap = price * (parseFloat(data.supply) / Math.pow(10, data.decimals));
+    }
+
     return {
       id: data.address || address,
       name: data.name || "Unknown Token",
       symbol: data.symbol || "UNKNOWN",
-      price: moralisPrice ?? data.price ?? 0,
-      change24h: moralisPriceChange ?? data.price_change_24h ?? 0,
+      price: price ?? data.price ?? 0,
+      change24h: priceChange ?? data.price_change_24h ?? 0,
       volume24h: data.volume_24h || 0,
-      marketCap: moralisMarketCap ?? data.market_cap,
+      marketCap: marketCap ?? data.market_cap,
       description: data?.metadata?.description !== "" && data?.metadata?.description !== undefined
         ? data.metadata.description
         : `${data.name || "Unknown"} (${data.symbol || "UNKNOWN"}) is a Solana token.`,
@@ -305,8 +399,9 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
       website: data?.metadata?.website || undefined,
       telegram: data?.metadata?.telegram || undefined,
       logoUrl: data.icon,
-      // totalSupply: data.supply ? parseFloat(data.supply) : undefined,
-      totalSupply: data.supply && data.decimals != null ? parseFloat(data.supply) / Math.pow(10, data.decimals): undefined,
+      totalSupply: data.supply && data.decimals != null
+        ? parseFloat(data.supply) / Math.pow(10, data.decimals)
+        : undefined,
       launchDate: data.created_time,
       holder: data.holder,
     };
@@ -315,6 +410,7 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
     throw error;
   }
 };
+
 
 export const searchSolanaTokens = async (query: string): Promise<TokenInfo[]> => {
   try {
@@ -430,28 +526,113 @@ export const fetchTrendingTokens = async (limit:number=20): Promise<TokenInfo[]>
       }
     }
     
-    return data.data.map((token: any) => {
-      if(token.name=="USDT" || token.name=="USDC" || token.name=="Wrapped SOL") return false;
-      const address = token.address || token.mintAddress;
-      const tokenDetails = tokenDetailsMap[address] || {};
-      if(tokenDetails.market_cap>15000000000) return false;
-      return {
-        id: address,
-        name: token.name || tokenDetails.name || "Unknown Token",
-        symbol: token.symbol || tokenDetails.symbol || "UNKNOWN",
-        price: tokenDetails.price || token.price?.value || 0,
-        change24h: tokenDetails.price_change_24h || token.price?.priceChange || 0,
-        volume24h: tokenDetails.volume_24h || token.volume24h || 0,
-        marketCap: tokenDetails.market_cap || token.marketCap || 0,
-        logoUrl: tokenDetails.icon,
-        holder: tokenDetails.holder,
-      };
-    });
+    const results = await Promise.all(
+      data.data.map(async (token: any) => {
+        const address = token.address || token.mintAddress;
+        const tokenDetails = tokenDetailsMap[address] || {};
+
+        if (
+          token.name === "USDT" ||
+          token.name === "USDC" ||
+          token.name === "Wrapped SOL" ||
+          (tokenDetails.market_cap && tokenDetails.market_cap > 15000000000)
+        ) {
+          return false;
+        }
+
+        let price = 0;
+        let marketCap = 0;
+
+        try {
+          const dexRes = await fetch(`https://api.dexscreener.com/token-pairs/v1/solana/${address}`);
+          if (dexRes.ok) {
+            const dexData = await dexRes.json();
+            if (Array.isArray(dexData) && dexData.length > 0) {
+              const pair = dexData[0];
+              price = parseFloat(pair.priceUsd) || 0;
+              marketCap = parseFloat(pair.marketCap) || 0;
+              // console.log({price,marketCap,tokenDetails,token})
+            }
+          }
+        } catch (e) {
+          console.warn(`Dexscreener failed for token ${address}, falling back to Solscan`);
+        }
+
+        // Fallback to Solscan data if Dexscreener fails
+        if (!price) {
+          price = tokenDetails.price || token.price?.value || 0;
+        }
+        if (!marketCap) {
+          marketCap = tokenDetails.market_cap || token.marketCap || 0;
+        }
+
+        return {
+          id: address,
+          name: token.name || tokenDetails.name || "Unknown Token",
+          symbol: token.symbol || tokenDetails.symbol || "UNKNOWN",
+          price,
+          change24h: tokenDetails?.price_change_24h || token?.price?.priceChange || 0,
+          volume24h: tokenDetails?.volume_24h || token?.volume24h || 0,
+          marketCap,
+          logoUrl: tokenDetails.icon,
+          holder: tokenDetails.holder,
+        };
+      })
+    );
+// console.log({results})
+    return results;
+
+    // return data.data.map((token: any) => {
+    //   if(token.name=="USDT" || token.name=="USDC" || token.name=="Wrapped SOL") return false;
+    //   const address = token.address || token.mintAddress;
+    //   const tokenDetails = tokenDetailsMap[address] || {};
+    //   if(tokenDetails.market_cap>15000000000) return false;
+    //   return {
+    //     id: address,
+    //     name: token.name || tokenDetails.name || "Unknown Token",
+    //     symbol: token.symbol || tokenDetails.symbol || "UNKNOWN",
+    //     price: tokenDetails.price || token.price?.value || 0,
+    //     change24h: tokenDetails.price_change_24h || token.price?.priceChange || 0,
+    //     volume24h: tokenDetails.volume_24h || token.volume24h || 0,
+    //     marketCap: tokenDetails.market_cap || token.marketCap || 0,
+    //     logoUrl: tokenDetails.icon,
+    //     holder: tokenDetails.holder,
+    //   };
+    // });
   } catch (error) {
     console.error("Error fetching trending tokens:", error);
     throw error;
   }
 };
+
+
+// change24h
+// : 
+// -39.2729
+// holder
+// : 
+// 11371
+// id
+// : 
+// "HUMA1821qVDKta3u2ovmfDQeW2fSQouSKE8fkF44wvGw"
+// logoUrl
+// : 
+// "https://meta.huma.finance/huma.svg"
+// marketCap
+// : 
+// 118193446
+// name
+// : 
+// "Huma Finance"
+// price
+// : 
+// 0.06666
+// symbol
+// : 
+// "HUMA"
+// volume24h
+// : 
+// 401049798
 
 
 // Fetch token prices in batch for holdings
