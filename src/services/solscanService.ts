@@ -328,7 +328,7 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
       const dexData = await dexResponse.json();
       if (Array.isArray(dexData) && dexData.length > 0) {
         const pair = dexData[0];
-        price = parseFloat(pair.priceUsd) || undefined;
+        // price = parseFloat(pair.priceUsd) || undefined;
         marketCap = parseFloat(pair.marketCap) || undefined;
         // Dexscreener doesn't provide 24h price change reliably, so we skip it
       }
