@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ExternalLink, Share2, Link2, Clock, Users, Landmark, Coins, DollarSign, TrendingUp, Clipboard, Globe } from "lucide-react";
+import { ArrowLeft, ExternalLink, Share2, Link2, Clock, Users, Landmark, Coins, DollarSign, TrendingUp, Clipboard, Globe, Copy } from "lucide-react";
 import PriceChart from "@/components/tokens/PriceChart";
 import TradeForm from "@/components/trade/TradeForm";
 import { useTokenDetail } from "@/services/solscanService";
@@ -74,7 +74,7 @@ const TokenDetails = () => {
         </h1>
         <div className="mt-0 pt-1">
                     <div className="flex items-center gap-2">
-                      <code className="bg-crypto-bg p-2 rounded text-xs w-max overflow-x-auto whitespace-nowrap">
+                      <code className="bg-[#14100d] border-[1px] border-[#ff7229] p-2 rounded text-xs w-max overflow-x-auto whitespace-nowrap">
                         {token.id.slice(0,4)}...{token.id.slice(-4)}
                       </code>
                       <Button 
@@ -87,7 +87,7 @@ const TokenDetails = () => {
                           // You could add a toast notification here
                         }}
                       >
-                        <Clipboard className="h-4 w-4" />
+                        <Copy className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
@@ -283,7 +283,7 @@ const TokenDetails = () => {
                           // You could add a toast notification here
                         }}
                       >
-                        <Clipboard className="h-4 w-4" />
+                        <Copy className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
