@@ -22,7 +22,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
         muted
         playsInline
         preload="none"
-        poster="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAFhgJ/qf1xsgAAAABJRU5ErkJggg=="
+        poster="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNgYGAAAAAEAAH2FzhVAAAAAElFTkSuQmCC"
         onEnded={onComplete}
         onError={(e) => {
           console.error("Video failed to load:", e);
