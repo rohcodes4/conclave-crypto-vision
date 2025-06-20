@@ -97,16 +97,18 @@ const AppContent = () => {
       
       {splashCompleted && (
         <BrowserRouter>
-          <PostAuthRedirect />
+        <Routes>
+        <Route path="*" element={<Maintainance />} />
+        </Routes>
+          {/* <PostAuthRedirect />
           <Routes>
-            {/* Add Auth route */}
+            
             <Route path="/auth" element={<Auth handleSplashComplete={handleSplashComplete}/>} />
             
-            {/* Protected routes */}
+            
             <Route element={<ProtectedRoute handleSplashComplete={handleSplashComplete}/>}>
               <Route element={<Layout />}>
-              <Route path="*" element={<Maintainance />} />
-              {/* <Route path="/settings" element={<Settings />} />
+              <Route path="/settings" element={<Settings />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="*" element={<Maintainance />} />
                 <Route path="/" element={<Dashboard />} />
@@ -116,12 +118,12 @@ const AppContent = () => {
                 <Route path="/holdings" element={<Holdings />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
-                <Route path="/token/:id" element={<TokenDetails />} /> */}
+                <Route path="/token/:id" element={<TokenDetails />} />
               </Route>
             </Route>
             
             <Route path="*" element={<NotFound />} />
-          </Routes>
+          </Routes> */}
         </BrowserRouter>
       )}
     </>
