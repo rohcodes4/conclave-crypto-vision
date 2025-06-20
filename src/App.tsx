@@ -98,7 +98,9 @@ const AppContent = () => {
       {splashCompleted && (
         <BrowserRouter>
         <Routes>
+        <Route element={<Layout />}>
         <Route path="*" element={<Maintainance />} />
+        </Route>
         </Routes>
           {/* <PostAuthRedirect />
           <Routes>
