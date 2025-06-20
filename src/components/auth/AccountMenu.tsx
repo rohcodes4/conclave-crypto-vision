@@ -15,6 +15,7 @@ import { LogOut, Settings, User, CreditCard, Shield } from "lucide-react";
 import { getAvatar, getDisplayName } from "@/lib/utils";
 
 export function formatUserIdentifier(input: string): string {
+  if(!input) return null;
   if (input.startsWith('wallet-') && input.endsWith('@walletuser.com')) {
     const address = input.replace('wallet-', '').replace('@walletuser.com', '');
     return `${address.slice(0, 4)}...${address.slice(-4)}`;

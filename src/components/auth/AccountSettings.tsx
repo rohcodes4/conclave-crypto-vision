@@ -97,15 +97,15 @@ const AccountSettings = () => {
               <div>
                 <div className="font-medium">{formatUserIdentifier(user?.email) || formatUserIdentifier(user?.user_metadata?.full_name) || "User"}</div>
                 <div className="text-xs text-crypto-muted flex items-center">
-                  {user.email.includes("telegram") && <>
+                  {user?.email?.includes("telegram") && <>
                       <ExternalLink className="h-3 w-3 mr-1" />
                       Connected with Telegram
                     </>}
-                  {user.email.includes("wallet") && <>
+                  {user?.email?.includes("wallet") && <>
                       <Wallet className="h-3 w-3 mr-1" />
                       Connected with Wallet
                     </>}
-                  {!user.email.includes("telegram") && !user.email.includes("wallet")  && <>
+                  {!user?.email?.includes("telegram") && !user?.email?.includes("wallet")  && <>
                       <ExternalLink className="h-3 w-3 mr-1" />
                       Connected with Discord
                     </>}
