@@ -105,9 +105,10 @@ const AppContent = () => {
             {/* Protected routes */}
             <Route element={<ProtectedRoute handleSplashComplete={handleSplashComplete}/>}>
               <Route element={<Layout />}>
+              <Route path="*" element={<Maintainance />} />
               {/* <Route path="/settings" element={<Settings />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
-              <Route path="*" element={<Maintainance />} /> */}
+              <Route path="*" element={<Maintainance />} />
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/new-pairs" element={<NewPairs />} />
                 <Route path="/trending" element={<Trending />} />
@@ -115,7 +116,7 @@ const AppContent = () => {
                 <Route path="/holdings" element={<Holdings />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
-                <Route path="/token/:id" element={<TokenDetails />} />
+                <Route path="/token/:id" element={<TokenDetails />} /> */}
               </Route>
             </Route>
             
