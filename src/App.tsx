@@ -96,39 +96,38 @@ const AppContent = () => {
       {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       
       {splashCompleted && (
+      //   <BrowserRouter>
+      //   <Routes>
+      //     <Route element={<Layout />}>
+      //       <Route path="*" element={<Maintainance />} />
+      //     </Route>
+      //   </Routes>
+      // </BrowserRouter>
         <BrowserRouter>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="*" element={<Maintainance />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-        // <BrowserRouter>
-        //   <PostAuthRedirect />
-        //   <Routes>
-        //     {/* Add Auth route */}
-        //     <Route path="/auth" element={<Auth handleSplashComplete={handleSplashComplete}/>} />
+          <PostAuthRedirect />
+          <Routes>
+            {/* Add Auth route */}
+            <Route path="/auth" element={<Auth handleSplashComplete={handleSplashComplete}/>} />
             
-        //     {/* Protected routes */}
-        //     <Route element={<ProtectedRoute handleSplashComplete={handleSplashComplete}/>}>
-        //       <Route element={<Layout />}>
-        //       <Route path="/settings" element={<Settings />} />
-        //       <Route path="/leaderboard" element={<Leaderboard />} />
-        //       <Route path="*" element={<Maintainance />} />
-        //         <Route path="/" element={<Dashboard />} />
-        //         <Route path="/new-pairs" element={<NewPairs />} />
-        //         <Route path="/trending" element={<Trending />} />
-        //         <Route path="/pump-vision" element={<PumpVision />} />
-        //         <Route path="/holdings" element={<Holdings />} />
-        //         <Route path="/settings" element={<Settings />} />
-        //         <Route path="/leaderboard" element={<Leaderboard />} />
-        //         <Route path="/token/:id" element={<TokenDetails />} />
-        //       </Route>
-        //     </Route>
+            {/* Protected routes */}
+            <Route element={<ProtectedRoute handleSplashComplete={handleSplashComplete}/>}>
+              <Route element={<Layout />}>
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/new-pairs" element={<NewPairs />} />
+                <Route path="/trending" element={<Trending />} />
+                <Route path="/pump-vision" element={<PumpVision />} />
+                <Route path="/holdings" element={<Holdings />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/token/:id" element={<TokenDetails />} />
+              </Route>
+            </Route>
             
-        //     <Route path="*" element={<NotFound />} />
-        //   </Routes>
-        // </BrowserRouter>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
       )}
     </>
   );
