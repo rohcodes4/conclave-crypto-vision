@@ -40,7 +40,7 @@
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
     "@react-spring/three": "^9.7.5",
-    "@react-three/fiber": "^9.1.2",
+    "@react-three/fiber": "^8.16.8",
     "@shadergradient/react": "^2.0.25",
     "@solana/wallet-adapter-react": "^0.15.38",
     "@solana/wallet-adapter-react-ui": "^0.9.38",

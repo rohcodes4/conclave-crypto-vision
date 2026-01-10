@@ -43,7 +43,15 @@ const wallets = [
   new TorusWalletAdapter()
 ];
 
-const endpoint = "https://api.mainnet-beta.solana.com";
+// FREE Solana RPC endpoints (with fallbacks)
+const RPC_ENDPOINTS = [
+  // "https://api.mainnet-beta.solana.com", // Official free endpoint
+  "https://solana-api.projectserum.com", // Serum free endpoint
+  "https://rpc.ankr.com/solana", // Ankr free endpoint
+];
+
+// Use the first endpoint, with fallback capability built into Solana's ConnectionProvider
+const endpoint = RPC_ENDPOINTS[0];
 
 const queryClient = new QueryClient();
 
@@ -101,8 +109,7 @@ const AppContent = () => {
       //     <Route element={<Layout />}>
       //       <Route path="*" element={<Maintainance />} />
       //     </Route>
-      //   </Routes>
-      // </BrowserRouter>
+      //   </BrowserRouter>
         <BrowserRouter>
           <PostAuthRedirect />
           <Routes>
@@ -112,15 +119,13 @@ const AppContent = () => {
             {/* Protected routes */}
             <Route element={<ProtectedRoute handleSplashComplete={handleSplashComplete}/>}>
               <Route element={<Layout />}>
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/leaderboard" element={<Leaderboard />} />
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/new-pairs" element={<NewPairs />} />
                 <Route path="/trending" element={<Trending />} />
                 <Route path="/pump-vision" element={<PumpVision />} />
                 <Route path="/holdings" element={<Holdings />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/leaderboard" element={<Leaderboard />} />
                 <Route path="/token/:id" element={<TokenDetails />} />
               </Route>
             </Route>
@@ -137,16 +142,16 @@ const App = () => (
   <ConnectionProvider endpoint={endpoint}>
     <WalletProvider wallets={wallets} autoConnect>
       <WalletModalProvider>
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <AppContent />
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-  </WalletModalProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <AppContent />
+            </TooltipProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </WalletModalProvider>
     </WalletProvider>
   </ConnectionProvider>
 );

@@ -110,7 +110,7 @@ const Settings = () => {
       // const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       // if (sessionError || !session?.access_token) throw new Error("Unable to retrieve session.");
   
-  //     const res = await fetch('https://pulzjmzhbqunbjfqehmd.supabase.co/auth/v1/user', {
+  //     const res = await fetch('https://nqibrtuxmslqdjnrpjvd.supabase.co/auth/v1/user', {
   //       method: 'DELETE',
   //       headers: {
   //         Authorization: `Bearer ${session.access_token}`,
