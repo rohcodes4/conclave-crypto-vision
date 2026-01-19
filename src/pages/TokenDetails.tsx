@@ -25,10 +25,13 @@ interface HeliusTokenData {
 const TokenDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { data: token, isLoading, error } = useTokenDetail(id || "");
+console.log('lcc',token)
   const { holdings } = useTradeStore();
   const [heliusData, setHeliusData] = useState<HeliusTokenData>({});
   const [heliusLoading, setHeliusLoading] = useState(false);
-  
+  const [dexData, setDexData] = useState<any>(token);
+  const [dexLoading, setDexLoading] = useState(false);
+
   const currentHolding = holdings.find(h => h.id === id);
 
   const formatNumber = (num: number | undefined) => {
@@ -43,6 +46,31 @@ const TokenDetails = () => {
       return `$${(num / 1_000).toFixed(2)}K`;
     }
     return `$${num.toFixed(8)}`;
+  };
+
+  const fetchDexData = async (tokenAddress: string) => {
+    if (!tokenAddress) return;
+    if(token?.pairs) {
+      setDexData(token.pairs)
+      return;
+    };
+    
+    setDexLoading(true);
+    try {
+      const response = await fetch(
+        `https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        setDexData(data);  // Full pairs data
+        console.log('DexScreener data loaded:', data);
+      }
+    } catch (error) {
+      console.error('DexScreener fetch failed:', error);
+    } finally {
+      setDexLoading(false);
+    }
   };
 
   const fetchHeliusData = async (tokenAddress: string) => {
@@ -90,6 +118,7 @@ const TokenDetails = () => {
 
   useEffect(() => {
     if (id && token) {
+      fetchDexData(id);
       fetchHeliusData(id);
     }
   }, [id, token]);
@@ -109,6 +138,8 @@ const TokenDetails = () => {
       </div>
     );
   }
+
+  const primaryPairAddress = dexData?.pairs?.[0]?.pairAddress;
 
   return (
     <div className="space-y-6">
@@ -169,7 +200,10 @@ const TokenDetails = () => {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <PriceChartMoralis tokenAddress={token.id} />
+          <PriceChartMoralis 
+            tokenAddress={token.id}
+            pairAddress={primaryPairAddress} 
+          />
           
           <Tabs defaultValue="overview" className="w-full">
             <div className="border border-[#ff7229] rounded-md mb-4">
@@ -237,7 +271,12 @@ const TokenDetails = () => {
                         Liquidity
                       </div>
                       <div className="text-xl font-bold text-crypto-success">
-                        {formatNumber(heliusData.liquidity)}
+                        {dexData?.pairs?.[0]?.liquidity?.usd 
+                            ? formatNumber(dexData.pairs[0].liquidity.usd) 
+                            : heliusData.liquidity 
+                              ? formatNumber(heliusData.liquidity) 
+                              : 'N/A'
+                        }
                       </div>
                     </div>
                   </div>
@@ -345,7 +384,12 @@ const TokenDetails = () => {
                         </div>
                         <div className="flex justify-between py-2">
                           <span className="text-sm text-crypto-muted">Liquidity</span>
-                          <span className="font-medium text-crypto-success">{formatNumber(heliusData.liquidity)}</span>
+                          <span className="font-medium text-crypto-success">{dexData?.pairs?.[0]?.liquidity?.usd 
+                            ? formatNumber(dexData.pairs[0].liquidity.usd) 
+                            : heliusData.liquidity 
+                              ? formatNumber(heliusData.liquidity) 
+                              : 'N/A'
+                          }</span>
                         </div>
                       </div>
                     </div>
@@ -367,7 +411,7 @@ const TokenDetails = () => {
                         {token.launchDate && token.launchDate > 0 && (
                           <div className="flex justify-between py-2">
                             <span className="text-sm text-crypto-muted">Launch Date</span>
-                            <span className="font-medium">{new Date(token.launchDate * 1000).toLocaleDateString()}</span>
+                            <span className="font-medium">{new Date(token.launchDate).toLocaleString()}</span>
                           </div>
                         )}
                       </div>

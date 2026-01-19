@@ -1,80 +1,88 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 interface PriceChartProps {
   tokenAddress: string;
+  pairAddress?: string;
   height?: string;
 }
 
 const PriceChartMoralis: React.FC<PriceChartProps> = ({ 
-  tokenAddress, 
+  tokenAddress,
+  pairAddress,
   height = '500px' 
 }) => {
   const [chartUrl, setChartUrl] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchPairAndEmbed = useCallback(async (tokenAddr: string) => {
+    try {
+      console.log('Fetching DexScreener pairs (fallback):', tokenAddr);
+      
+      const response = await fetch(
+        `https://api.dexscreener.com/latest/dex/tokens/${tokenAddr}`
+      );
+      
+      if (!response.ok) return null;
+
+      const data = await response.json();
+      const primaryPair = data.pairs?.[0];
+      
+      return primaryPair?.pairAddress || null;
+    } catch (error) {
+      console.error('DexScreener error:', error);
+      return null;
+    }
+  }, []);
 
   useEffect(() => {
-    if (!tokenAddress) {
-      setChartUrl('');
-      return;
-    }
-
-    let timeoutId: NodeJS.Timeout;
-
-    const fetchPairAndEmbed = async () => {
-      try {
-        console.log('Fetching DexScreener data for DexTools widget:', tokenAddress);
-        
-        const response = await fetch(
-          `https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`
-        );
-        
-        if (!response.ok) {
-          console.warn('DexScreener API failed:', response.status);
-          return;
-        }
-
-        const data = await response.json();
-        console.log('DexScreener pairs:', data.pairs);
-
-        // ✅ Use first pair → DexTools CHART WIDGET (not full page)
-        const primaryPair = data.pairs?.[0];
-        if (primaryPair?.pairAddress) {
-          const dextoolsWidgetUrl = `https://www.dextools.io/widget-chart/en/solana/pe-light/${primaryPair.pairAddress}?theme=dark&chartType=0&chartResolution=1&drawingToolbars=true&tvPlatformColor=1f2128&tvPaneColor=1f2128&headerColor=1f2128&chartInUsd=true`;
-          setChartUrl(dextoolsWidgetUrl);
-          console.log('DexTools widget URL:', dextoolsWidgetUrl);
-          return;
-        }
-
-        // Fallback: DexTools token search widget
-        const searchWidgetUrl = `https://www.dextools.io/widget-chart/en/solana/pe-light/search?q=${tokenAddress}&theme=dark&chartType=0&chartResolution=1`;
-        setChartUrl(searchWidgetUrl);
-      } catch (error) {
-        console.error('DexTools widget fetch error:', error);
-        // Final fallback: token search widget
-        setChartUrl(`https://www.dextools.io/widget-chart/en/solana/pe-light/search?q=${tokenAddress}&theme=dark&chartType=0&chartResolution=1`);
+    const initializeChart = async () => {
+      if (!tokenAddress) {
+        setChartUrl('');
+        setIsLoading(false);
+        return;
       }
+
+      setIsLoading(true);
+
+      let finalPairAddress: string | null = null;
+
+      // ✅ PRIORITY 1: Use pairAddress if provided (NO API CALL)
+      if (pairAddress) {
+        console.log('Using provided pairAddress (no API):', pairAddress);
+        finalPairAddress = pairAddress;
+      } 
+      // ✅ PRIORITY 2: Fetch pairs ONLY if no pairAddress
+      // else if (tokenAddress) {
+      //   console.log('No pairAddress → fetching DexScreener');
+      //   finalPairAddress = await fetchPairAndEmbed(tokenAddress);
+      // }
+
+      if (finalPairAddress) {
+        const widgetUrl = `https://www.dextools.io/widget-chart/en/solana/pe-light/${finalPairAddress}?theme=dark&chartType=0&chartResolution=1&drawingToolbars=true&tvPlatformColor=1f2128&tvPaneColor=1f2128&headerColor=1f2128&chartInUsd=true`;
+        setChartUrl(widgetUrl);
+        console.log('DexTools widget:', widgetUrl);
+      } else {
+        // Fallback
+        const fallbackUrl = `https://www.dextools.io/widget-chart/en/solana/pe-light/search?q=${tokenAddress}&theme=dark&chartType=0&chartResolution=1`;
+        setChartUrl(fallbackUrl);
+        console.log('DexTools fallback:', fallbackUrl);
+      }
+
+      setIsLoading(false);
     };
 
-    fetchPairAndEmbed();
+    initializeChart();
+  }, [tokenAddress, pairAddress, fetchPairAndEmbed]);
 
-    // 10s timeout
-    timeoutId = setTimeout(() => {
-      if (!chartUrl) {
-        setChartUrl(`https://www.dextools.io/widget-chart/en/solana/pe-light/search?q=${tokenAddress}&theme=dark&chartType=0&chartResolution=1`);
-      }
-    }, 10000);
-
-    return () => clearTimeout(timeoutId);
-  }, [tokenAddress]);
-
-  if (!chartUrl) {
+  if (isLoading) {
     return (
       <div 
         className="w-full flex items-center justify-center bg-gradient-to-br from-orange-500/10 to-orange-600/20 rounded-xl border border-orange-500/50 shadow-2xl backdrop-blur-sm"
         style={{ height }}
       >
         <div className="text-orange-300 text-lg animate-pulse">
-          <div>📈 Loading DexTools Chart</div>
-          <div className="text-sm mt-1 opacity-80">Fetching pair data...</div>
+          <div>📈 Loading DexTools</div>
+          <div className="text-sm mt-1 opacity-80">Chart Widget</div>
         </div>
       </div>
     );
@@ -85,7 +93,7 @@ const PriceChartMoralis: React.FC<PriceChartProps> = ({
       src={chartUrl}
       className="w-full rounded-xl border-0 bg-gray-900 shadow-2xl"
       style={{ height }}
-      title={`DexTools Chart Widget for ${tokenAddress.slice(0, 8)}...`}
+      title="DexTools Chart Widget"
       allowTransparency
       sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
       loading="lazy"

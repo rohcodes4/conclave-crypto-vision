@@ -29,6 +29,7 @@ export interface TokenInfo {
   change24h: number;
   volume24h: number;
   marketCap?: number;
+  pairs?: object;
   description?: string;
   logoUrl?: string;
   totalSupply?: number;
@@ -113,6 +114,7 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
   let metadata: any = {};
   let supply: number | undefined;
   let decimals: number | undefined;
+  let pairs: object;
 
   // 1. Get metadata from your own helper (no Jupiter here)
   // try {
@@ -141,6 +143,7 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
     } else {
       const dexData = await dexResponse.json();
       console.log("[fetchTokenDetails] DexScreener raw data:", dexData);
+      pairs = dexData??null;
 
       if (dexData.pairs && dexData.pairs.length > 0) {
         const pair = dexData.pairs[0];
@@ -172,6 +175,8 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
             name: pair.baseToken?.name,
             symbol: pair.baseToken?.symbol,
             logoURI: pair.info?.imageUrl,
+            launchDate: pair?.pairCreatedAt,
+
           };
           console.log("[fetchTokenDetails] metadata filled from DexScreener", metadata);
         }
@@ -263,7 +268,6 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
       decimals,
     });
   }
-
   const result: TokenInfo = {
     id: address,
     name: metadata?.name || "Unknown Token",
@@ -283,8 +287,9 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
       supply && decimals != null
         ? supply / Math.pow(10, decimals)
         : undefined,
-    launchDate: Date.now(),
+    launchDate: metadata.launchDate,
     holder: 0,
+    pairs: pairs
   };
 
   console.log("[fetchTokenDetails] final result", result);
