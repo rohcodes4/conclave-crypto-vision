@@ -9,31 +9,73 @@ const PriceChartMoralis: React.FC<PriceChartProps> = ({
   tokenAddress, 
   height = '500px' 
 }) => {
-  const [chartUrl, setChartUrl] = useState('');
+  const [chartUrl, setChartUrl] = useState<string>('');
 
   useEffect(() => {
-    if (!tokenAddress) return;
+    if (!tokenAddress) {
+      setChartUrl('');
+      return;
+    }
 
-    // Priority 1: Birdeye (direct token chart)
-    // setChartUrl(`https://public-api.birdeye.so/defi/chart/apollo?address=${tokenAddress}&type=1D`);
+    let timeoutId: NodeJS.Timeout;
 
-    // Fallback: GeckoTerminal (auto-find DEX pool)
-    const findPool = async () => {
+    const fetchPairAndEmbed = async () => {
       try {
-        const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`);
-        const data = await res.json();
-        if (data.pairs?.[0]?.pairAddress) {
-          setChartUrl(`https://www.dextools.io/widget-chart/en/solana/pe-light/${tokenAddress}?theme=dark&chartType=0&chartResolution=1&drawingToolbars=true&tvPlatformColor=1f2128&tvPaneColor=1f2128&headerColor=1f2128&chartInUsd=true`);
+        console.log('Fetching DexScreener data for DexTools chart:', tokenAddress);
+        
+        const response = await fetch(
+          `https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`
+        );
+        
+        if (!response.ok) {
+          console.warn('DexScreener API failed:', response.status);
+          return;
         }
-      } catch {}
+
+        const data = await response.json();
+        console.log('DexScreener pairs:', data.pairs);
+
+        // ✅ Use first pair (most liquid) → DexTools Solana chart
+        const primaryPair = data.pairs?.[0];
+        if (primaryPair?.pairAddress) {
+          // DexTools Solana pair chart embed
+          const dextoolsUrl = `https://www.dextools.io/app/en/solana/pair-explorer/${primaryPair.pairAddress}`;
+          setChartUrl(dextoolsUrl);
+          console.log('Using DexTools embed:', dextoolsUrl);
+          return;
+        }
+
+        // Fallback: DexTools token search page
+        setChartUrl(`https://www.dextools.io/app/en/solana/pair-explorer/search?q=${tokenAddress}`);
+      } catch (error) {
+        console.error('DexTools chart fetch error:', error);
+        // Final fallback: DexTools Solana search
+        setChartUrl(`https://www.dextools.io/app/en/solana/pair-explorer/search?q=${tokenAddress}`);
+      }
     };
-    findPool();
+
+    fetchPairAndEmbed();
+
+    // 10s timeout 
+    timeoutId = setTimeout(() => {
+      if (!chartUrl) {
+        setChartUrl(`https://www.dextools.io/app/en/solana/pair-explorer/search?q=${tokenAddress}`);
+      }
+    }, 10000);
+
+    return () => clearTimeout(timeoutId);
   }, [tokenAddress]);
 
   if (!chartUrl) {
     return (
-      <div className="w-full h-[500px] flex items-center justify-center bg-gray-900 rounded-xl border border-gray-800">
-        <div className="text-gray-400 animate-pulse text-lg">Loading chart...</div>
+      <div 
+        className="w-full flex items-center justify-center bg-gradient-to-br from-orange-500/10 to-orange-600/20 rounded-xl border border-orange-500/50 shadow-2xl backdrop-blur-sm"
+        style={{ height }}
+      >
+        <div className="text-orange-300 text-lg animate-pulse">
+          <div>📈 Loading DexTools Chart</div>
+          <div className="text-sm mt-1 opacity-80">Fetching pair data...</div>
+        </div>
       </div>
     );
   }
@@ -41,11 +83,11 @@ const PriceChartMoralis: React.FC<PriceChartProps> = ({
   return (
     <iframe
       src={chartUrl}
-      className="w-full rounded-xl border-0 bg-black shadow-2xl"
+      className="w-full rounded-xl border-0 bg-gray-900 shadow-2xl"
       style={{ height }}
-      title="Price Chart"
+      title={`DexTools Chart for ${tokenAddress.slice(0, 8)}...`}
       allowTransparency
-      sandbox="allow-scripts allow-same-origin allow-popups"
+      sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation"
       loading="lazy"
     />
   );
