@@ -107,7 +107,7 @@ console.log('lcc',token)
         marketCap: priceData?.data?.[tokenAddress]?.marketcap || token?.marketCap || 0,
         volume24h: priceData?.data?.[tokenAddress]?.volume?.h24 || token?.volume24h || 0,
         liquidity: priceData?.data?.[tokenAddress]?.liquidity || 0,
-        holders: metadataData.result?.ownership?.ownerAccounts?.length || token?.holder || 0,
+        holders: token?.holder?.totalHolders || 0,
       });
     } catch (error) {
       console.error('Helius API error:', error);

@@ -34,7 +34,7 @@ export interface TokenInfo {
   logoUrl?: string;
   totalSupply?: number;
   launchDate: number;
-  holder: number;
+  holder: object;
   fullyDilutedValuation?: number;
   circulatingSupply?: number;
   website?: string;
@@ -103,7 +103,6 @@ const getTokenSupplyData = async (address: string) => {
 };
 
 // Fetch token details using FREE APIs ONLY
-// Fetch token details using FREE APIs ONLY (no Jupiter)
 export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => {
   console.log("[fetchTokenDetails] start", { address });
 
@@ -114,19 +113,11 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
   let metadata: any = {};
   let supply: number | undefined;
   let decimals: number | undefined;
-  let pairs: object;
+  let pairs: any = null;  // ✅ DexScreener full data
+  let holders: object = null;  // ✅ Holders count
 
-  // 1. Get metadata from your own helper (no Jupiter here)
-  // try {
-  //   console.log("[fetchTokenDetails] metadata step: calling getJupiterTokenMetadata (REMOVE THIS CALL IF YOU WANT ZERO JUPITER)");
-  //   // If you truly want zero Jupiter, delete this try/catch block
-  //   metadata = await getJupiterTokenMetadata(address);
-  //   console.log("[fetchTokenDetails] metadata success", metadata);
-  // } catch (e) {
-  //   console.warn("[fetchTokenDetails] metadata fetch failed:", e);
-  // }
-
-  // 2. Try DexScreener first (most reliable free source)
+  // 2. DexScreener (price + metadata + pairs)
+  let dexResponseData: any = null;
   try {
     const url = `${DEXSCREENER_API_URL}/latest/dex/tokens/${address}`;
     console.log("[fetchTokenDetails] DexScreener URL:", url);
@@ -141,12 +132,12 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
         body: text,
       });
     } else {
-      const dexData = await dexResponse.json();
-      console.log("[fetchTokenDetails] DexScreener raw data:", dexData);
-      pairs = dexData??null;
+      dexResponseData = await dexResponse.json();
+      pairs = dexResponseData;  // ✅ Full pairs data
+      console.log("[fetchTokenDetails] DexScreener raw data:", dexResponseData);
 
-      if (dexData.pairs && dexData.pairs.length > 0) {
-        const pair = dexData.pairs[0];
+      if (dexResponseData.pairs && dexResponseData.pairs.length > 0) {
+        const pair = dexResponseData.pairs[0];
         console.log("[fetchTokenDetails] DexScreener using pair:", pair);
 
         price = pair?.priceUsd ? parseFloat(pair.priceUsd) : undefined;
@@ -169,29 +160,25 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
           volume24h,
         });
 
-        // Get token info from pair if metadata is missing
+        // Metadata + launchDate from DexScreener
         if (!metadata?.name) {
           metadata = {
             name: pair.baseToken?.name,
             symbol: pair.baseToken?.symbol,
             logoURI: pair.info?.imageUrl,
-            launchDate: pair?.pairCreatedAt,
-
+            launchDate: pair?.pairCreatedAt ? pair.pairCreatedAt / 1000 : Date.now() / 1000,  // ✅ Unix timestamp
           };
-          console.log("[fetchTokenDetails] metadata filled from DexScreener", metadata);
+          console.log("[fetchTokenDetails] metadata from DexScreener:", metadata);
         }
       } else {
-        console.warn(
-          "[fetchTokenDetails] DexScreener returned no pairs for address",
-          address
-        );
+        console.warn("[fetchTokenDetails] No DexScreener pairs:", address);
       }
     }
   } catch (e) {
     console.warn("[fetchTokenDetails] DexScreener fetch failed:", e);
   }
 
-  // 3. Fallback to Moralis if still no price
+  // 3. Moralis price fallback (unchanged)
   if (!price) {
     console.log("[fetchTokenDetails] No price from DexScreener, trying Moralis");
     for (const key of MORALIS_API_KEYS) {
@@ -244,30 +231,44 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
     }
   }
 
-  // 4. Get on-chain supply data
+  // 4. On-chain supply (unchanged)
   try {
-    console.log("[fetchTokenDetails] getting supply data");
     const supplyData = await getTokenSupplyData(address);
-    console.log("[fetchTokenDetails] supplyData:", supplyData);
-
     if (supplyData) {
       supply = supplyData.supply;
       decimals = supplyData.decimals;
     }
   } catch (e) {
-    console.warn("[fetchTokenDetails] getTokenSupplyData failed:", e);
+    console.warn("[fetchTokenDetails] supply failed:", e);
   }
 
-  // 5. Calculate market cap if we have price and supply
+  // 5. Market cap calculation (unchanged)
   if (!marketCap && price && supply && decimals != null) {
     marketCap = price * (supply / Math.pow(10, decimals));
-    console.log("[fetchTokenDetails] calculated marketCap from supply", {
-      marketCap,
-      price,
-      supply,
-      decimals,
-    });
   }
+
+  // ✅ 6. Helius holders (getAsset RPC)
+  try {
+    console.log("[fetchTokenDetails] Fetching holders via Helius");
+    const response = await fetch(
+      `https://solana-gateway.moralis.io/token/mainnet/holders/${address}`,
+      {
+      headers: { 'X-API-Key': MORALIS_API_KEYS[0] }
+      }
+      );
+      // const data = await response.json();
+      console.log('[fetch] data',response)
+    if (response) {
+      const holderData = await response.json();
+      holders = holderData;
+      console.log("[fetchTokenDetails] Helius holders:", holderData);
+    } else {
+      console.warn("[fetchTokenDetails] Helius holders failed");
+    }
+  } catch (e) {
+    console.warn("[fetchTokenDetails] Helius holders error:", e);
+  }
+
   const result: TokenInfo = {
     id: address,
     name: metadata?.name || "Unknown Token",
@@ -276,25 +277,22 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
     change24h: priceChange || 0,
     volume24h: volume24h || 0,
     marketCap: marketCap,
-    description:
-      metadata?.description ||
+    description: metadata?.description ||
       `${metadata?.name || "Unknown"} (${metadata?.symbol || "UNKNOWN"}) is a Solana token.`,
     twitter: metadata?.extensions?.twitter,
     website: metadata?.extensions?.website,
     telegram: metadata?.extensions?.telegram,
     logoUrl: metadata?.logoURI || metadata?.image,
-    totalSupply:
-      supply && decimals != null
-        ? supply / Math.pow(10, decimals)
-        : undefined,
-    launchDate: metadata.launchDate,
-    holder: 0,
-    pairs: pairs
+    totalSupply: supply && decimals != null ? supply / Math.pow(10, decimals) : undefined,
+    launchDate: metadata.launchDate || Date.now() / 1000,  // ✅ From DexScreener pairCreatedAt
+    holder: holders,  // ✅ Dynamic from Helius
+    pairs: pairs      // ✅ Full DexScreener data
   };
 
-  console.log("[fetchTokenDetails] final result", result);
+  console.log("[fetchTokenDetails] final result:", result);
   return result;
 };
+
 
 
 // Search tokens using Jupiter token list

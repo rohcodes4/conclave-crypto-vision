@@ -16,7 +16,7 @@ interface TokenCardProps {
   logoUrl?: string;
   marketCap?: number;
   fullyDilutedValuation?: number;
-  holder?: number;
+  holder?: object;
   totalSupply?: number;
   circulatingSupply?: number;
   launchDate?: string;
@@ -105,9 +105,9 @@ const TokenCard = ({
               </div>
             )}
             
-            {holder >= 0 && <div className={`flex ${marketCap >= 0 ? "justify-end" : ""} text-[#42b192]`}>
+            {holder.totalHolders >= 0 && <div className={`flex ${marketCap >= 0 ? "justify-end" : ""} text-[#42b192]`}>
               <span className="mr-2">Holders:</span>
-              <span>{holder}</span>
+              <span>{holder.totalHolders}</span>
             </div>}
             
             {/* {launchDate && (

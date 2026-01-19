@@ -15,7 +15,7 @@ interface Token {
   totalSupply?: number;
   circulatingSupply?: number;
   launchDate?: string;
-  holder?: number;
+  holder?: object;
   description?: string;
   website?: string;
   twitter?: string;
@@ -49,7 +49,7 @@ const TokenGrid = ({
           token.id &&
           token.name &&
           token.symbol &&
-          token.holder > -1 &&
+          token.holder.totalHolders > -1 &&
           token.marketCap > -1
       );
 
