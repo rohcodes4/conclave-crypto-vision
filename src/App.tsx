@@ -34,6 +34,9 @@ import {
 
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import Maintainance from './pages/Maintainance';
+import RugCheck from './pages/RugCheck';
+import WalletAnalysis from './pages/WalletAnalysis';
+import LayoutNew from './components/layout/LayoutNew';
 
 const wallets = [
   new PhantomWalletAdapter(),
@@ -127,6 +130,10 @@ const AppContent = () => {
                 <Route path="/pump-vision" element={<PumpVision />} />
                 <Route path="/holdings" element={<Holdings />} />
                 <Route path="/token/:id" element={<TokenDetails />} />
+                </Route>
+              <Route element={<LayoutNew />}>
+                <Route path="/rug-check" element={<RugCheck />} />
+                <Route path="/wallet-analysis" element={<WalletAnalysis />} />
               </Route>
             </Route>
             

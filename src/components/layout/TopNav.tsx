@@ -14,6 +14,9 @@ import {
   X,
   Clipboard,
   ChartColumnIncreasing,
+  MoreVertical,
+  ShieldAlert,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,7 +41,14 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
   const [showResults, setShowResults] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
-  
+  const [showAppMenu, setShowAppMenu] = useState(false);
+  const appMenuRef = useRef<HTMLDivElement>(null);
+
+  const handleRugCheckerClick = () => {
+    navigate("/rug");
+    setShowAppMenu(false);
+  };
+
   const navItems = [
     { name: "Explore", path: "/", icon: Search },
     { name: "New Pairs", path: "/new-pairs", icon: Sparkles },
@@ -92,9 +102,49 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 h-44 md:h-[8.5rem] border-b border-crypto-card bg-crypto-bg/90 backdrop-blur-sm">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className="mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo and Mobile Menu Button */}
+        <div className="flex items-center gap-4">
+          <div className="relative" ref={appMenuRef}>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-9 w-9 mr-2"
+              onClick={() => setShowAppMenu(!showAppMenu)}
+            >
+              <MoreVertical className="h-5 w-5" />
+            </Button>
+            
+            {showAppMenu && (
+              <div className="absolute top-full left-0 mt-1 bg-crypto-card border border-crypto-card rounded-md shadow-xl z-50 min-w-[250px]">
+                <Link 
+                  to="/rug-check" 
+                  className="flex items-center gap-3 p-4 hover:bg-crypto-bg/50 transition-colors w-full text-left"
+                  onClick={handleRugCheckerClick}
+                >
+                  <ShieldAlert className="h-5 w-5 flex-shrink-0 text-crypto-warning" />
+                  <div>
+                    <div className="font-medium">Token Rug Checker</div>
+                    <div className="text-xs text-crypto-muted">Audit & risk analysis</div>
+                  </div>
+                </Link>
+                <Link 
+                  to="/wallet-analysis" 
+                  className="flex items-center gap-3 p-4 hover:bg-crypto-bg/50 transition-colors w-full text-left"
+                  onClick={() => setShowAppMenu(false)}
+                >
+                  <ShieldCheck className="h-5 w-5 flex-shrink-0 text-crypto-success" />
+                  <div>
+                    <div className="font-medium">Wallet Analysis</div>
+                    <div className="text-xs text-crypto-muted">Portfolio & holdings</div>
+                  </div>
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
         <div className="flex items-center">
+          
        
           <Link to="/" className="mr-4 flex items-center">
             <h1 className="text-md font-bold text-gradient whitespace-pre font-pixel">PAPER TRADER</h1>
