@@ -3,8 +3,8 @@ import { toast } from "sonner";
 
 // FREE API ENDPOINTS - NO SOLSCAN!
 const JUPITER_API_URL = "https://price.jup.ag/v6";
-const JUPITER_TOKENS_URL = "https://tokens.jup.ag/tokens?tags=verified";
-const HELIUS_RPC_URL = "https://api.mainnet-beta.solana.com";
+const JUPITER_TOKENS_URL = "https://api.jup.ag/tokens/v2/tag?query=verified";
+const HELIUS_RPC_URL = `https://mainnet.helius-rpc.com/?api-key=030284bd-e184-40c2-a80e-2b0b3cd57667`;
 const DEXSCREENER_API_URL = "https://api.dexscreener.com";
 const BIRDEYE_API_URL = "https://public-api.birdeye.so";
 
@@ -102,7 +102,10 @@ const getTokenSupplyData = async (address: string) => {
 };
 
 // Fetch token details using FREE APIs ONLY
+// Fetch token details using FREE APIs ONLY (no Jupiter)
 export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => {
+  console.log("[fetchTokenDetails] start", { address });
+
   let price: number | undefined;
   let marketCap: number | undefined;
   let priceChange: number | undefined;
@@ -111,25 +114,58 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
   let supply: number | undefined;
   let decimals: number | undefined;
 
-  // 1. Get metadata from Jupiter token list
-  try {
-    metadata = await getJupiterTokenMetadata(address);
-  } catch (e) {
-    console.warn("Jupiter metadata fetch failed:", e);
-  }
+  // 1. Get metadata from your own helper (no Jupiter here)
+  // try {
+  //   console.log("[fetchTokenDetails] metadata step: calling getJupiterTokenMetadata (REMOVE THIS CALL IF YOU WANT ZERO JUPITER)");
+  //   // If you truly want zero Jupiter, delete this try/catch block
+  //   metadata = await getJupiterTokenMetadata(address);
+  //   console.log("[fetchTokenDetails] metadata success", metadata);
+  // } catch (e) {
+  //   console.warn("[fetchTokenDetails] metadata fetch failed:", e);
+  // }
 
   // 2. Try DexScreener first (most reliable free source)
   try {
-    const dexResponse = await fetch(`${DEXSCREENER_API_URL}/latest/dex/tokens/${address}`);
-    if (dexResponse.ok) {
+    const url = `${DEXSCREENER_API_URL}/latest/dex/tokens/${address}`;
+    console.log("[fetchTokenDetails] DexScreener URL:", url);
+
+    const dexResponse = await fetch(url);
+    console.log("[fetchTokenDetails] DexScreener status:", dexResponse.status);
+
+    if (!dexResponse.ok) {
+      const text = await dexResponse.text().catch(() => "");
+      console.warn("[fetchTokenDetails] DexScreener not ok", {
+        status: dexResponse.status,
+        body: text,
+      });
+    } else {
       const dexData = await dexResponse.json();
+      console.log("[fetchTokenDetails] DexScreener raw data:", dexData);
+
       if (dexData.pairs && dexData.pairs.length > 0) {
         const pair = dexData.pairs[0];
-        price = parseFloat(pair.priceUsd) || undefined;
-        marketCap = parseFloat(pair.fdv || pair.marketCap) || undefined;
-        priceChange = parseFloat(pair.priceChange?.h24) || undefined;
-        volume24h = parseFloat(pair.volume?.h24) || undefined;
-        
+        console.log("[fetchTokenDetails] DexScreener using pair:", pair);
+
+        price = pair?.priceUsd ? parseFloat(pair.priceUsd) : undefined;
+        marketCap = pair?.fdv
+          ? parseFloat(pair.fdv)
+          : pair?.marketCap
+          ? parseFloat(pair.marketCap)
+          : undefined;
+        priceChange = pair?.priceChange?.h24
+          ? parseFloat(pair.priceChange.h24)
+          : undefined;
+        volume24h = pair?.volume?.h24
+          ? parseFloat(pair.volume.h24)
+          : undefined;
+
+        console.log("[fetchTokenDetails] Dex parsed", {
+          price,
+          marketCap,
+          priceChange,
+          volume24h,
+        });
+
         // Get token info from pair if metadata is missing
         if (!metadata?.name) {
           metadata = {
@@ -137,67 +173,98 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
             symbol: pair.baseToken?.symbol,
             logoURI: pair.info?.imageUrl,
           };
+          console.log("[fetchTokenDetails] metadata filled from DexScreener", metadata);
         }
+      } else {
+        console.warn(
+          "[fetchTokenDetails] DexScreener returned no pairs for address",
+          address
+        );
       }
     }
   } catch (e) {
-    console.warn("DexScreener fetch failed:", e);
+    console.warn("[fetchTokenDetails] DexScreener fetch failed:", e);
   }
 
-  // 3. Get price from Jupiter if DexScreener failed
+  // 3. Fallback to Moralis if still no price
   if (!price) {
-    try {
-      const priceResponse = await fetch(`${JUPITER_API_URL}/price?ids=${address}`);
-      if (priceResponse.ok) {
-        const priceData = await priceResponse.json();
-        if (priceData.data && priceData.data[address]) {
-          price = priceData.data[address].price;
-        }
-      }
-    } catch (e) {
-      console.warn("Jupiter price fetch failed:", e);
-    }
-  }
-
-  // 4. Fallback to Moralis if still no price
-  if (!price) {
+    console.log("[fetchTokenDetails] No price from DexScreener, trying Moralis");
     for (const key of MORALIS_API_KEYS) {
+      console.log("[fetchTokenDetails] Trying Moralis key");
       try {
-        const response = await fetch(
-          `https://solana-gateway.moralis.io/token/mainnet/${address}/price`,
-          {
-            headers: {
-              accept: "application/json",
-              "X-API-Key": key,
-            },
-          }
-        );
+        const url = `https://solana-gateway.moralis.io/token/mainnet/${address}/price`;
+        console.log("[fetchTokenDetails] Moralis URL:", url);
 
-        if (response.ok) {
-          const data = await response.json();
-          price = data.usdPrice || price;
-          priceChange = data.usdPrice24hrPercentChange;
+        const response = await fetch(url, {
+          headers: {
+            accept: "application/json",
+            "X-API-Key": key,
+          },
+        });
+
+        console.log("[fetchTokenDetails] Moralis status:", response.status);
+
+        if (!response.ok) {
+          const text = await response.text().catch(() => "");
+          console.warn("[fetchTokenDetails] Moralis not ok", {
+            status: response.status,
+            body: text,
+          });
+          continue;
+        }
+
+        const data = await response.json();
+        console.log("[fetchTokenDetails] Moralis raw data:", data);
+
+        if (typeof data.usdPrice === "number") {
+          price = data.usdPrice;
+          priceChange =
+            typeof data.usdPrice24hrPercentChange === "number"
+              ? data.usdPrice24hrPercentChange
+              : priceChange;
+          console.log("[fetchTokenDetails] Moralis parsed", {
+            price,
+            priceChange,
+          });
           break;
+        } else {
+          console.warn(
+            "[fetchTokenDetails] Moralis returned no numeric usdPrice"
+          );
         }
       } catch (e) {
+        console.warn("[fetchTokenDetails] Moralis fetch error, trying next key:", e);
         continue;
       }
     }
   }
 
-  // 5. Get on-chain supply data
-  const supplyData = await getTokenSupplyData(address);
-  if (supplyData) {
-    supply = supplyData.supply;
-    decimals = supplyData.decimals;
+  // 4. Get on-chain supply data
+  try {
+    console.log("[fetchTokenDetails] getting supply data");
+    const supplyData = await getTokenSupplyData(address);
+    console.log("[fetchTokenDetails] supplyData:", supplyData);
+
+    if (supplyData) {
+      supply = supplyData.supply;
+      decimals = supplyData.decimals;
+    }
+  } catch (e) {
+    console.warn("[fetchTokenDetails] getTokenSupplyData failed:", e);
   }
 
-  // Calculate market cap if we have price and supply
+  // 5. Calculate market cap if we have price and supply
   if (!marketCap && price && supply && decimals != null) {
     marketCap = price * (supply / Math.pow(10, decimals));
+    console.log("[fetchTokenDetails] calculated marketCap from supply", {
+      marketCap,
+      price,
+      supply,
+      decimals,
+    });
   }
 
-  return {
+  const result: TokenInfo = {
     id: address,
     name: metadata?.name || "Unknown Token",
     symbol: metadata?.symbol || "UNKNOWN",
@@ -205,16 +272,25 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
     change24h: priceChange || 0,
     volume24h: volume24h || 0,
     marketCap: marketCap,
-    description: metadata?.description || `${metadata?.name || "Unknown"} (${metadata?.symbol || "UNKNOWN"}) is a Solana token.`,
+    description:
+      metadata?.description ||
+      `${metadata?.name || "Unknown"} (${metadata?.symbol || "UNKNOWN"}) is a Solana token.`,
     twitter: metadata?.extensions?.twitter,
     website: metadata?.extensions?.website,
     telegram: metadata?.extensions?.telegram,
     logoUrl: metadata?.logoURI || metadata?.image,
-    totalSupply: supply && decimals != null ? supply / Math.pow(10, decimals) : undefined,
+    totalSupply:
+      supply && decimals != null
+        ? supply / Math.pow(10, decimals)
+        : undefined,
     launchDate: Date.now(),
     holder: 0,
   };
+
+  console.log("[fetchTokenDetails] final result", result);
+  return result;
 };
+
 
 // Search tokens using Jupiter token list
 export const searchSolanaTokens = async (query: string): Promise<TokenInfo[]> => {
@@ -563,7 +639,8 @@ export const useTokenDetail = (address: string) => {
     queryKey: ["solana-token-detail", address],
     queryFn: () => fetchTokenDetails(address),
     enabled: !!address && address.length > 10,
-    refetchInterval: 5000,
+    // refetchInterval: 5000,
+    refetchInterval: false,
     retry: 3,
     retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 30000),
     meta: {
