@@ -80,7 +80,6 @@ const Holdings = () => {
     
     // Group trades by token
     const tradesByToken: Record<string, any[]> = {};
-    
     trades.forEach(trade => {
       if (!tradesByToken[trade.token]) {
         tradesByToken[trade.token] = [];
@@ -88,51 +87,59 @@ const Holdings = () => {
       tradesByToken[trade.token].push(trade);
     });
     
-    // Calculate realized PnL for each token
+    // Calculate realized PnL for tokens with COMPLETE sell cycles
     const realizedPnLData: RealizedPnL[] = [];
     
     Object.keys(tradesByToken).forEach(tokenId => {
       const tokenTrades = tradesByToken[tokenId];
       
-      // Skip tokens that still have holdings
-      const hasHolding = holdings.some(h => h.id === tokenId);
+      // MUST have both buys AND sells
+      const hasBuys = tokenTrades.some(t => t.type === 'buy');
+      const hasSells = tokenTrades.some(t => t.type === 'sell');
       
-      // Only calculate for tokens that have been fully sold
-      if (!hasHolding && tokenTrades.some(t => t.type === 'sell')) {
-        let buyTotal = 0;
-        let sellTotal = 0;
-        let lastSymbol = '';
-        let lastName = '';
+      if (hasBuys && hasSells) {
+        // Check if holding is truly zero (use exact match, not just absence)
+        const holding = holdings.find(h => h.id === tokenId);
+        const holdingAmount = holding?.amount || 0;
         
-        tokenTrades.forEach(trade => {
-          if (trade.type === 'buy') {
-            buyTotal += trade.total;
-          } else {
-            sellTotal += trade.total;
-          }
-          lastSymbol = trade.symbol;
-          lastName = trade.name || trade.symbol;
-        });
-        
-        if (buyTotal > 0) {
-          const pnl = sellTotal - buyTotal;
-          const pnlPercentage = (pnl / buyTotal) * 100;
+        // Only show if fully sold out (amount === 0)
+        if (holdingAmount === 0) {
+          let buyTotal = 0;
+          let sellTotal = 0;
+          let lastSymbol = '';
+          let lastName = '';
           
-          realizedPnLData.push({
-            token: lastName,
-            tokenId,
-            symbol: lastSymbol,
-            buyTotal,
-            sellTotal,
-            pnl,
-            pnlPercentage
+          tokenTrades.forEach(trade => {
+            if (trade.type === 'buy') {
+              buyTotal += trade.total;
+            } else {
+              sellTotal += trade.total;
+            }
+            lastSymbol = trade.symbol;
+            lastName = trade.name || trade.symbol;
           });
+          
+          if (buyTotal > 0) {
+            const pnl = sellTotal - buyTotal;
+            const pnlPercentage = (pnl / buyTotal) * 100;
+            
+            realizedPnLData.push({
+              token: lastName,
+              tokenId,
+              symbol: lastSymbol,
+              buyTotal,
+              sellTotal,
+              pnl,
+              pnlPercentage
+            });
+          }
         }
       }
     });
     
     setRealizedPnL(realizedPnLData);
   }, [trades, holdings]);
+  
   
   // Filter trades based on tab
   const filteredTrades = selectedTradeType === "all" 

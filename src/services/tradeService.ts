@@ -101,7 +101,8 @@ export const useTradeStore = create<TradeState>()(
                 price
               )
             `)
-            .eq('user_id', userData.data.user.id);
+            .eq('user_id', userData.data.user.id)
+            .gt('amount', 0);
           
           if (holdingsError) throw holdingsError;
           
@@ -363,34 +364,53 @@ export const useTradeStore = create<TradeState>()(
               if (newHoldingError) throw newHoldingError;
             }
           } else { // sell
-            // Get current holding
+            // Get current holding - must exist after validation
             const { data: existingHolding, error: holdingError } = await supabase
               .from('holdings')
               .select('*')
               .eq('user_id', userData.data.user.id)
               .eq('token_id', trade.token)
-              .single();
+              .maybeSingle();
               
             if (holdingError) throw holdingError;
             
-            const newAmount = existingHolding?.amount - trade.amount;
+            // Safety check (shouldn't happen after earlier validation)
+            if (!existingHolding) {
+              toast.error("No holding found for this token");
+              throw new Error("No holding found");
+            }
+            
+            const currentAmount = existingHolding.amount;
+            const newAmount = currentAmount - trade.amount;
+            
+            console.log(`Selling ${existingHolding.id} ${trade.amount} from ${currentAmount} = ${newAmount}`); // Debug
             
             if (newAmount <= 0) {
-              // Remove holding if sold all
-              const { error: deleteHoldingError } = await supabase
+              console.log('deleting holding completely ...')
+              // Delete holding completely
+              const { error: deleteError } = await supabase
                 .from('holdings')
                 .delete()
-                .eq('id', existingHolding?.id);
+                .eq('id', existingHolding.id);  // Guaranteed to exist!
                 
-              if (deleteHoldingError) throw deleteHoldingError;
+              if (deleteError) {
+                console.error('Delete error:', deleteError);
+                throw deleteError;
+              }
+              console.log('Holding deleted successfully');
             } else {
-              // Update holding
-              const { error: updateHoldingError } = await supabase
+              console.log('deleting holding partially ...')
+              // Update remaining amount
+              const { error: updateError } = await supabase
                 .from('holdings')
                 .update({ amount: newAmount })
-                .eq('id', existingHolding?.id);
+                .eq('id', existingHolding.id);  // Guaranteed to exist!
                 
-              if (updateHoldingError) throw updateHoldingError;
+              if (updateError) {
+                console.error('Update error:', updateError);
+                throw updateError;
+              }
+              console.log('Holding updated successfully');
             }
           }
           
