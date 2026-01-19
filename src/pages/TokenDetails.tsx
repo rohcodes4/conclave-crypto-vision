@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ExternalLink, Copy, DollarSign, TrendingUp, Landmark, Users, Coins, Clock, Globe } from "lucide-react";
+import { ArrowLeft, ExternalLink, Copy, DollarSign, TrendingUp, Landmark, Users, Coins, Clock, Globe, Shield, AlertTriangle, ShieldAlert, BarChart3 } from "lucide-react";
 import PriceChartMoralis from "@/components/tokens/PriceChartMoralis";
 import TradeForm from "@/components/trade/TradeForm";
 import { useTokenDetail } from "@/services/solscanService";
@@ -22,13 +22,35 @@ interface HeliusTokenData {
   holders?: number;
 }
 
+interface RugcheckData {
+  score?: number;
+  score_normalised?: number;
+  price?: number;
+  totalHolders?: number;
+  totalMarketLiquidity?: number;
+  creator?: string;
+  creatorBalance?: number;
+  topHolders?: Array<{
+    address: string;
+    pct: number;
+    uiAmount: number;
+    owner: string;
+  }>;
+  risks?: Array<{ name: string; description: string; level: string }>;
+  markets?: Array<any>;
+  rugged: boolean;
+  launchpad?: { name: string; platform: string };
+}
+
 const TokenDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { data: token, isLoading, error } = useTokenDetail(id || "");
-console.log('lcc',token)
+  console.log('lcc',token)
   const { holdings } = useTradeStore();
   const [heliusData, setHeliusData] = useState<HeliusTokenData>({});
+  const [rugcheckData, setRugcheckData] = useState<RugcheckData>({ rugged: false });
   const [heliusLoading, setHeliusLoading] = useState(false);
+  const [rugcheckLoading, setRugcheckLoading] = useState(false);
   const [dexData, setDexData] = useState<any>(token);
   const [dexLoading, setDexLoading] = useState(false);
 
@@ -47,6 +69,24 @@ console.log('lcc',token)
     }
     return `$${num.toFixed(8)}`;
   };
+  
+  const formatNumberWithoutCurrency = (num: number | undefined) => {
+    if (num === undefined || num === 0) return 'N/A';
+    if (num >= 1_000_000_000_000) {
+      return `${(num / 1_000_000_000_000).toFixed(2)}T`;
+    } else if (num >= 1_000_000_000) {
+      return `${(num / 1_000_000_000).toFixed(2)}B`;
+    } else if (num >= 1_000_000) {
+      return `${(num / 1_000_000).toFixed(2)}M`;
+    } else if (num >= 1_000) {
+      return `${(num / 1_000).toFixed(2)}K`;
+    }
+    return `${num.toFixed(8)}`;
+  };
+
+  const formatPercentage = (pct: number) => {
+    return `${(pct).toFixed(2)}%`;
+  };
 
   const fetchDexData = async (tokenAddress: string) => {
     if (!tokenAddress) return;
@@ -63,7 +103,7 @@ console.log('lcc',token)
       
       if (response.ok) {
         const data = await response.json();
-        setDexData(data);  // Full pairs data
+        setDexData(data);
         console.log('DexScreener data loaded:', data);
       }
     } catch (error) {
@@ -73,14 +113,30 @@ console.log('lcc',token)
     }
   };
 
+  const fetchRugcheckData = async (tokenAddress: string) => {
+    if (!tokenAddress) return;
+    setRugcheckLoading(true);
+    try {
+      const response = await fetch(
+        `https://api.rugcheck.xyz/v1/tokens/${tokenAddress}/report`,
+        { headers: { 'accept': 'application/json' } }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setRugcheckData(data);
+        console.log('Rugcheck data loaded:', data);
+      }
+    } catch (error) {
+      console.error('Rugcheck fetch failed:', error);
+    } finally {
+      setRugcheckLoading(false);
+    }
+  };
+
   const fetchHeliusData = async (tokenAddress: string) => {
     try {
       setHeliusLoading(true);
       
-      // const priceResponse = await fetch(
-      //   `https://api.helius.xyz/v0/prices?api-key=${HELIUS_API_KEY}&ids=${tokenAddress}`
-      // );
-      // const priceData = await priceResponse.json();
       const priceData = null;
 
       const metadataResponse = await fetch(
@@ -120,10 +176,11 @@ console.log('lcc',token)
     if (id && token) {
       fetchDexData(id);
       fetchHeliusData(id);
+      fetchRugcheckData(id);
     }
   }, [id, token]);
 
-  if (isLoading || heliusLoading) {
+  if (isLoading || heliusLoading || rugcheckLoading) {
     return <TokenDetailsSkeleton />;
   }
   
@@ -140,6 +197,12 @@ console.log('lcc',token)
   }
 
   const primaryPairAddress = dexData?.pairs?.[0]?.pairAddress;
+  const getRiskColor = (score?: number) => {
+    if (!score) return 'text-crypto-muted';
+    if (score >= 800) return 'text-crypto-success';
+    if (score >= 500) return 'text-crypto-warning';
+    return 'text-crypto-danger';
+  };
 
   return (
     <div className="space-y-6">
@@ -195,6 +258,14 @@ console.log('lcc',token)
           >
             <ExternalLink className="h-4 w-4 mr-2" /> Birdeye
           </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="text-crypto-muted"
+            onClick={() => window.open(`https://rugcheck.xyz/tokens/${token.id}`, '_blank')}
+          >
+            <Shield className="h-4 w-4 mr-2" /> RugCheck
+          </Button>
         </div>
       </div>
       
@@ -210,6 +281,8 @@ console.log('lcc',token)
               <TabsList className="w-full bg-crypto-card flex">
                 <TabsTrigger value="overview" className="flex-1 data-[state=active]:bg-crypto-border data-[state=active]:text-white">Overview</TabsTrigger>
                 <TabsTrigger value="details" className="flex-1 data-[state=active]:bg-crypto-border data-[state=active]:text-white">Details</TabsTrigger>
+                <TabsTrigger value="security" className="flex-1 data-[state=active]:bg-crypto-border data-[state=active]:text-white">Security</TabsTrigger>
+                <TabsTrigger value="holders" className="flex-1 data-[state=active]:bg-crypto-border data-[state=active]:text-white">Holders</TabsTrigger>
               </TabsList>
             </div>
             
@@ -262,7 +335,7 @@ console.log('lcc',token)
                         Holders
                       </div>
                       <div className="text-xl font-bold text-[#42b192]">
-                        {heliusData.holders?.toLocaleString() || 'N/A'}
+                        {(rugcheckData.totalHolders || heliusData.holders)?.toLocaleString() || 'N/A'}
                       </div>
                     </div>
                     <div className="space-y-2 text-center md:text-left">
@@ -273,13 +346,32 @@ console.log('lcc',token)
                       <div className="text-xl font-bold text-crypto-success">
                         {dexData?.pairs?.[0]?.liquidity?.usd 
                             ? formatNumber(dexData.pairs[0].liquidity.usd) 
-                            : heliusData.liquidity 
-                              ? formatNumber(heliusData.liquidity) 
-                              : 'N/A'
+                            : rugcheckData.totalMarketLiquidity 
+                              ? formatNumber(rugcheckData.totalMarketLiquidity) 
+                              : heliusData.liquidity 
+                                ? formatNumber(heliusData.liquidity) 
+                                : 'N/A'
                         }
                       </div>
                     </div>
                   </div>
+
+                  {rugcheckData.score && (
+                    <div className="mb-6 p-4 bg-gradient-to-r from-crypto-bg to-crypto-card border border-crypto-card rounded-xl">
+                      <div className="flex items-center gap-3 mb-3">
+                        <ShieldAlert className="h-6 w-6 flex-shrink-0" />
+                        <div>
+                          <div className="font-bold text-lg">RugCheck Score</div>
+                          <div className={`text-3xl font-black ${getRiskColor(rugcheckData.score)}`}>
+                            {rugcheckData.score_normalised || rugcheckData.score} / 100
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-sm text-crypto-muted">
+                        Raw Score: {rugcheckData.score}/1000 | {rugcheckData.rugged ? 'RUGGED' : 'Not rugged'}
+                      </div>
+                    </div>
+                  )}
 
                   {(token.twitter || token.telegram || token.website) && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 pt-6 border-t border-crypto-card">
@@ -386,9 +478,11 @@ console.log('lcc',token)
                           <span className="text-sm text-crypto-muted">Liquidity</span>
                           <span className="font-medium text-crypto-success">{dexData?.pairs?.[0]?.liquidity?.usd 
                             ? formatNumber(dexData.pairs[0].liquidity.usd) 
-                            : heliusData.liquidity 
-                              ? formatNumber(heliusData.liquidity) 
-                              : 'N/A'
+                            : rugcheckData.totalMarketLiquidity 
+                              ? formatNumber(rugcheckData.totalMarketLiquidity) 
+                              : heliusData.liquidity 
+                                ? formatNumber(heliusData.liquidity) 
+                                : 'N/A'
                           }</span>
                         </div>
                       </div>
@@ -405,13 +499,19 @@ console.log('lcc',token)
                         <div className="flex justify-between py-2 border-b border-crypto-card">
                           <span className="text-sm text-crypto-muted">Holders</span>
                           <span className="font-medium text-[#42b192]">
-                            {(heliusData.holders || token.holder || 0).toLocaleString()}
+                            {(rugcheckData.totalHolders || heliusData.holders || token.holder || 0).toLocaleString()}
                           </span>
                         </div>
                         {token.launchDate && token.launchDate > 0 && (
                           <div className="flex justify-between py-2">
                             <span className="text-sm text-crypto-muted">Launch Date</span>
                             <span className="font-medium">{new Date(token.launchDate).toLocaleString()}</span>
+                          </div>
+                        )}
+                        {rugcheckData.launchpad && (
+                          <div className="flex justify-between py-2">
+                            <span className="text-sm text-crypto-muted">Launchpad</span>
+                            <span className="font-medium">{rugcheckData.launchpad.name} ({rugcheckData.launchpad.platform})</span>
                           </div>
                         )}
                       </div>
@@ -459,7 +559,131 @@ console.log('lcc',token)
                       <ExternalLink className="h-4 w-4 mr-2" />
                       View on Birdeye
                     </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="flex-1"
+                      onClick={() => window.open(`https://rugcheck.xyz/tokens/${token.id}`, '_blank')}
+                    >
+                      <Shield className="h-4 w-4 mr-2" />
+                      RugCheck
+                    </Button>
                   </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="security" className="mt-0">
+              <Card className="bg-crypto-card border-crypto-card border-[1px] border-[#ff7229]">
+                <CardHeader>
+                  <CardTitle>Security Analysis</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-orange-500/10 to-yellow-500/10 border border-orange-400/30 rounded-xl">
+                        <AlertTriangle className="h-6 w-6 text-orange-500" />
+                        <div>
+                          <div className="font-bold text-lg">Risk Score</div>
+                          <div className={`text-3xl font-black ${getRiskColor(rugcheckData.score)}`}>
+                            {rugcheckData.score_normalised || rugcheckData.score || 'N/A'} / 100
+                          </div>
+                        </div>
+                      </div>
+                      {rugcheckData.risks && rugcheckData.risks.length > 0 && (
+                        <div>
+                          <div className="text-sm font-medium text-crypto-muted mb-3">Risks Found</div>
+                          <div className="space-y-2">
+                            {rugcheckData.risks.map((risk, index) => (
+                              <div key={index} className="flex items-start gap-3 p-3 bg-crypto-bg border border-crypto-card rounded-lg">
+                                <AlertTriangle className="h-5 w-5 text-yellow-500 mt-0.5 flex-shrink-0" />
+                                <div>
+                                  <div className="font-medium">{risk.name}</div>
+                                  <div className="text-sm text-crypto-muted">{risk.description}</div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-crypto-muted mb-4">Creator Info</div>
+                      {rugcheckData.creator && (
+                        <div className="space-y-3 p-4 bg-crypto-bg border border-crypto-card rounded-lg">
+                          <div className="flex justify-between">
+                            <span className="text-sm text-crypto-muted">Creator Address</span>
+                            <code className="text-xs bg-crypto-card px-2 py-1 rounded">
+                              {rugcheckData.creator.slice(0,8)}...{rugcheckData.creator.slice(-8)}
+                            </code>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-sm text-crypto-muted">Creator Balance</span>
+                            <span className="font-medium">{formatPercentage((rugcheckData.creatorBalance || 0) / 1e13)} of supply</span>
+                          </div>
+                        </div>
+                      )}
+                      {rugcheckData.markets && rugcheckData.markets.length > 0 && (
+                        <div className="mt-6">
+                          <div className="text-sm font-medium text-crypto-muted mb-3">Liquidity Pools</div>
+                          <div className="space-y-3">
+                            {rugcheckData.markets.slice(0, 2).map((market: any, index: number) => (
+                              <div key={index} className="p-3 bg-crypto-bg border border-crypto-card rounded-lg">
+                                <div className="flex justify-between items-start">
+                                  <div>
+                                    <div className="font-medium">{market.marketType}</div>
+                                    <div className="text-xs text-crypto-muted">{market.pubkey.slice(0,8)}...</div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="font-bold">{formatNumber(market.lp?.baseUSD || 0)}</div>
+                                    <div className="text-xs text-crypto-muted">
+                                      {market.lp?.lpLockedPct || 0}% LP Locked
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="holders" className="mt-0">
+              <Card className="bg-crypto-card border-crypto-card border-[1px] border-[#ff7229]">
+                <CardHeader>
+                  <CardTitle>Top Holders</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {rugcheckData.topHolders && rugcheckData.topHolders.length > 0 ? (
+                    <div className="space-y-3">
+                      {rugcheckData.topHolders.slice(0, 10).map((holder: any, index: number) => (
+                        <div key={index} className="flex items-center justify-between py-3 border-b border-crypto-card last:border-b-0">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                              <span className="font-bold text-sm">{index + 1}</span>
+                            </div>
+                            <div>
+                              <div className="font-medium">{holder.address.slice(0,6)}...{holder.address.slice(-4)}</div>
+                              <div className="text-xs text-crypto-muted">{holder.owner.slice(0,6)}...</div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-bold">{formatPercentage(holder.pct)}</div>
+                            <div className="text-sm">{formatNumberWithoutCurrency(holder.uiAmount)}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 text-crypto-muted">
+                      <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <div>No holder data available</div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -471,7 +695,7 @@ console.log('lcc',token)
             tokenId={token.id}
             tokenName={token.name}
             tokenSymbol={token.symbol}
-            currentPrice={heliusData.price || token.price}
+            currentPrice={heliusData.price || token.price || rugcheckData.price}
           />
         </div>
       </div>
@@ -489,6 +713,7 @@ const TokenDetailsSkeleton = () => (
       <div className="ml-auto flex gap-2">
         <Skeleton className="h-9 w-24" />
         <Skeleton className="h-9 w-36" />
+        <Skeleton className="h-9 w-32" />
       </div>
     </div>
     
@@ -497,6 +722,8 @@ const TokenDetailsSkeleton = () => (
         <Skeleton className="h-[500px] w-full rounded-xl" />
         <div className="space-y-2">
           <div className="flex gap-2">
+            <Skeleton className="h-10 w-24" />
+            <Skeleton className="h-10 w-24" />
             <Skeleton className="h-10 w-24" />
             <Skeleton className="h-10 w-24" />
           </div>
