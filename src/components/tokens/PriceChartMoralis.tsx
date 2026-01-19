@@ -21,7 +21,7 @@ const PriceChartMoralis: React.FC<PriceChartProps> = ({
 
     const fetchPairAndEmbed = async () => {
       try {
-        console.log('Fetching DexScreener data for DexTools chart:', tokenAddress);
+        console.log('Fetching DexScreener data for DexTools widget:', tokenAddress);
         
         const response = await fetch(
           `https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`
@@ -35,31 +35,31 @@ const PriceChartMoralis: React.FC<PriceChartProps> = ({
         const data = await response.json();
         console.log('DexScreener pairs:', data.pairs);
 
-        // ✅ Use first pair (most liquid) → DexTools Solana chart
+        // ✅ Use first pair → DexTools CHART WIDGET (not full page)
         const primaryPair = data.pairs?.[0];
         if (primaryPair?.pairAddress) {
-          // DexTools Solana pair chart embed
-          const dextoolsUrl = `https://www.dextools.io/app/en/solana/pair-explorer/${primaryPair.pairAddress}`;
-          setChartUrl(dextoolsUrl);
-          console.log('Using DexTools embed:', dextoolsUrl);
+          const dextoolsWidgetUrl = `https://www.dextools.io/widget-chart/en/solana/pe-light/${primaryPair.pairAddress}?theme=dark&chartType=0&chartResolution=1&drawingToolbars=true&tvPlatformColor=1f2128&tvPaneColor=1f2128&headerColor=1f2128&chartInUsd=true`;
+          setChartUrl(dextoolsWidgetUrl);
+          console.log('DexTools widget URL:', dextoolsWidgetUrl);
           return;
         }
 
-        // Fallback: DexTools token search page
-        setChartUrl(`https://www.dextools.io/app/en/solana/pair-explorer/search?q=${tokenAddress}`);
+        // Fallback: DexTools token search widget
+        const searchWidgetUrl = `https://www.dextools.io/widget-chart/en/solana/pe-light/search?q=${tokenAddress}&theme=dark&chartType=0&chartResolution=1`;
+        setChartUrl(searchWidgetUrl);
       } catch (error) {
-        console.error('DexTools chart fetch error:', error);
-        // Final fallback: DexTools Solana search
-        setChartUrl(`https://www.dextools.io/app/en/solana/pair-explorer/search?q=${tokenAddress}`);
+        console.error('DexTools widget fetch error:', error);
+        // Final fallback: token search widget
+        setChartUrl(`https://www.dextools.io/widget-chart/en/solana/pe-light/search?q=${tokenAddress}&theme=dark&chartType=0&chartResolution=1`);
       }
     };
 
     fetchPairAndEmbed();
 
-    // 10s timeout 
+    // 10s timeout
     timeoutId = setTimeout(() => {
       if (!chartUrl) {
-        setChartUrl(`https://www.dextools.io/app/en/solana/pair-explorer/search?q=${tokenAddress}`);
+        setChartUrl(`https://www.dextools.io/widget-chart/en/solana/pe-light/search?q=${tokenAddress}&theme=dark&chartType=0&chartResolution=1`);
       }
     }, 10000);
 
@@ -85,9 +85,9 @@ const PriceChartMoralis: React.FC<PriceChartProps> = ({
       src={chartUrl}
       className="w-full rounded-xl border-0 bg-gray-900 shadow-2xl"
       style={{ height }}
-      title={`DexTools Chart for ${tokenAddress.slice(0, 8)}...`}
+      title={`DexTools Chart Widget for ${tokenAddress.slice(0, 8)}...`}
       allowTransparency
-      sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation"
+      sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
       loading="lazy"
     />
   );
