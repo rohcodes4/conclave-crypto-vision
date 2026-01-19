@@ -182,14 +182,14 @@ const TokenDetails = () => {
             <TabsContent value="overview" className="mt-0">
               <Card className="bg-crypto-card border-crypto-card border-[1px] border-[#ff7229]">
                 <CardHeader>
-                  <CardTitle>Token Overview (Helius Enhanced)</CardTitle>
+                  <CardTitle>Token Overview</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                     <div className="space-y-2 text-center md:text-left">
                       <div className="flex items-center justify-center md:justify-start text-xs text-crypto-muted mb-2">
                         <DollarSign className="h-4 w-4 mr-1" />
-                        Price (Helius)
+                        Price
                       </div>
                       <div className="text-2xl font-bold">
                         {formatNumber(heliusData.price)}
@@ -225,7 +225,7 @@ const TokenDetails = () => {
                     <div className="space-y-2 text-center md:text-left">
                       <div className="flex items-center justify-center md:justify-start text-xs text-crypto-muted mb-2">
                         <Users className="h-4 w-4 mr-1" />
-                        Holders (Helius)
+                        Holders
                       </div>
                       <div className="text-xl font-bold text-[#42b192]">
                         {heliusData.holders?.toLocaleString() || 'N/A'}
