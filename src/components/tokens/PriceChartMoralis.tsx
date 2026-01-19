@@ -1,140 +1,54 @@
-import React, { useEffect, useRef, useState } from 'react';
-
-const PRICE_CHART_ID = 'price-chart-widget-container';
+import React, { useState, useEffect } from 'react';
 
 interface PriceChartProps {
   tokenAddress: string;
+  height?: string;
 }
 
-export const PriceChartMoralis: React.FC<PriceChartProps> = ({ tokenAddress }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isTelegramBrowser, setIsTelegramBrowser] = useState(false);
-  const [hasChartError, setHasChartError] = useState(false);
-  const [loading, setLoading] = useState(true);
+const PriceChartMoralis: React.FC<PriceChartProps> = ({ 
+  tokenAddress, 
+  height = '500px' 
+}) => {
+  const [chartUrl, setChartUrl] = useState('');
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (!tokenAddress) return;
 
-    const ua = navigator.userAgent.toLowerCase();
-    const isTelegram = ua.includes('telegram');
-    setHasChartError(isTelegram);
+    // Priority 1: Birdeye (direct token chart)
+    // setChartUrl(`https://public-api.birdeye.so/defi/chart/apollo?address=${tokenAddress}&type=1D`);
 
-
-    function isUserOnTelegram(): boolean {
-      if (typeof window === 'undefined') return false;
-    
-      const w = window as any;
-    
-      // Check for Telegram-specific WebView objects
-      if (
-        typeof w.TelegramWebviewProxy !== 'undefined' ||
-        typeof w.TelegramWebviewProxyProto !== 'undefined' ||
-        typeof w.Telegram !== 'undefined'
-      ) {
-        return true;
-      }
-    
-      // Fallback: check user agent for Telegram or WebView on Android
-      const ua = navigator.userAgent.toLowerCase();
-      
-      // Check if it's Telegram WebView on Android
-      const isTelegramAndroid = (ua.includes('telegram') || ua.includes('tgwebview'));
-      
-      // Check if it's Telegram WebView on iOS (added as an extra fallback)
-      const isTelegramiOS =  ua.includes('telegram');
-      
-      return isTelegramAndroid || isTelegramiOS;
-    }
-  
-
-    if (isUserOnTelegram()) {
-      // alert("TG browser")
-      setHasChartError(true);
-      setLoading(false)
-      return;
-    }
-
-    const loadWidget = () => {
-      if (typeof (window as any).createMyWidget === 'function') {
-        try {
-          (window as any).createMyWidget(PRICE_CHART_ID, {
-            autoSize: true,
-            chainId: 'solana',
-            tokenAddress: tokenAddress,
-            showHoldersChart: false,
-            defaultInterval: '1',
-            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'Etc/UTC',
-            theme: 'moralis',
-            locale: 'en',
-            backgroundColor: '#071321',
-            gridColor: '#0d2035',
-            textColor: '#68738D',
-            candleUpColor: '#4CE666',
-            candleDownColor: '#E64C4C',
-            hideLeftToolbar: false,
-            hideTopToolbar: false,
-            hideBottomToolbar: false
-          });
-          setLoading(false)
-        } catch (err) {
-          console.error('Chart initialization failed:', err);
-          setHasChartError(true);
+    // Fallback: GeckoTerminal (auto-find DEX pool)
+    const findPool = async () => {
+      try {
+        const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`);
+        const data = await res.json();
+        if (data.pairs?.[0]?.pairAddress) {
+          setChartUrl(`https://www.dextools.io/widget-chart/en/solana/pe-light/${tokenAddress}?theme=dark&chartType=0&chartResolution=1&drawingToolbars=true&tvPlatformColor=1f2128&tvPaneColor=1f2128&headerColor=1f2128&chartInUsd=true`);
         }
-      } else {
-        console.error('createMyWidget function is not defined.');
-        setHasChartError(true);        
-      }
+      } catch {}
     };
-
-    let script: HTMLScriptElement | null = null;
-
-    if (!document.getElementById('moralis-chart-widget')) {
-      script = document.createElement('script');
-      script.id = 'moralis-chart-widget';
-      script.src = 'https://moralis.com/static/embed/chart.js';
-      script.async = true;
-      script.onload = loadWidget;
-      script.onerror = () => {
-        console.error('Failed to load the chart widget script.');
-        setHasChartError(true);
-      };
-      document.body.appendChild(script);
-    } else {
-      loadWidget();
-    }
-
-    return () => {
-      if (script && script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
+    findPool();
   }, [tokenAddress]);
 
+  if (!chartUrl) {
+    return (
+      <div className="w-full h-[500px] flex items-center justify-center bg-gray-900 rounded-xl border border-gray-800">
+        <div className="text-gray-400 animate-pulse text-lg">Loading chart...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`w-full ${hasChartError?"h-[100px]":"max-md:h-[600px] h-[500px]"} flex flex-col`}>
-      {loading?<div className='w-full h-full flex justify-center items-center text-[30px]'><p>LOADING...</p></div>:<></>}
-      {hasChartError ? (
-        <div className="text-center text-yellow-500 p-4 bg-[#0d2035] rounded-lg">
-          Charts might not work in Telegram’s in-app browser.
-          <br />
-          <p className='text-[#00ff00]'>Open in external browser.</p>
-          {/* <a
-            href={typeof window !== 'undefined' ? window.location.href : '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline text-blue-400"
-          >
-            Tap here to open in your browser
-          </a> */}
-        </div>
-      ) : (
-        <div
-          id={PRICE_CHART_ID}
-          ref={containerRef}
-          className="w-full flex-grow md:max-h-[500px]"
-          style={{ height: '100%' }}
-        />
-      )}
-    </div>
+    <iframe
+      src={chartUrl}
+      className="w-full rounded-xl border-0 bg-black shadow-2xl"
+      style={{ height }}
+      title="Price Chart"
+      allowTransparency
+      sandbox="allow-scripts allow-same-origin allow-popups"
+      loading="lazy"
+    />
   );
 };
+
+export default PriceChartMoralis;
