@@ -43,6 +43,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
   const searchRef = useRef<HTMLDivElement>(null);
   const [showAppMenu, setShowAppMenu] = useState(false);
   const appMenuRef = useRef<HTMLDivElement>(null);
+  const searchWrapperRef = useRef<HTMLDivElement>(null);
 
   const handleRugCheckerClick = () => {
     navigate("/rug");
@@ -60,12 +61,13 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
   
   const { data: searchResults, isLoading } = useSearchSolanaTokens(searchQuery);
   
-  useOnClickOutside(searchRef, () => {
+  useOnClickOutside(searchWrapperRef, () => {
+    if (!showSearch) return;
     setShowResults(false);
-    if (isMobile) {
-      setShowSearch(false);
-    }
+    setShowSearch(false);
   });
+  
+  
   
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -185,17 +187,20 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
         
 
         {/* Search and User Menu */}
-        <div className="flex items-center md:gap-2">
+        <div className="flex items-center md:gap-2" ref={searchWrapperRef}>
           {/* Mobile Search Toggle */}
           {isMobile && (
             <Button 
-              variant="ghost" 
-              size="icon" 
-              className="mr-1"
-              onClick={toggleMobileSearch}
-            >
-              {showSearch ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
-            </Button>
+            variant="ghost" 
+            size="icon" 
+            className="mr-1"
+            onClick={(e) => {
+              toggleMobileSearch();
+            }}
+          >
+            {showSearch ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
+          </Button>
+          
           )}
           
           {/* Search Bar - Hidden on mobile unless toggled */}
