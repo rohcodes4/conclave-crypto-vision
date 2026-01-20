@@ -401,7 +401,7 @@ const WalletAnalysis: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col text-white">
       <div className="flex-1 flex flex-col items-center px-4 pt-24 pb-12">
-        <div className="w-full flex flex-col items-center space-y-6">
+        <div className="w-full flex flex-col items-center space-y-6 bg-black shadow-[0_0_60px_rgba(255,114,41,0.15)] w-max p-20 rounded-[24px]">
           <div className="text-center space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-crypto-card bg-crypto-bg/60 text-xs uppercase tracking-wide">
               <ShieldAlert className="h-3 w-3 text-crypto-accent" />
@@ -412,7 +412,7 @@ const WalletAnalysis: React.FC = () => {
             </h1>
           </div>
 
-          <div className={cn("w-full rounded-2xl border border-crypto-card bg-black/40 shadow-[0_0_60px_rgba(255,114,41,0.15)] backdrop-blur-md transition-all duration-500 max-w-7xl", stats ? "" : "max-w-2xl")}>
+          <div className={cn("w-full rounded-2xl border border-crypto-card bg-black/40 backdrop-blur-md transition-all duration-500 max-w-7xl", stats ? "" : "max-w-2xl")}>
             {/* Header */}
             <div className="border-b border-crypto-card px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -458,13 +458,13 @@ const WalletAnalysis: React.FC = () => {
 
             {/* Empty State */}
             {!stats && !error && !loading && (
-              <div className="px-8 py-20 text-center space-y-6">
-                <div className="w-24 h-24 mx-auto rounded-2xl bg-gradient-to-r from-crypto-accent/20 p-6">
+              <div className="px-2 py-2 text-center space-y-6">
+                <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-r from-crypto-accent/20 p-6">
                   <BarChart3 className="w-full h-full text-crypto-accent" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black mb-2">Enter wallet address</h3>
-                  <p className="text-lg text-crypto-muted max-w-md mx-auto">
+                  <h3 className="text-xl font-black mb-2">Enter wallet address</h3>
+                  <p className="text-md text-crypto-muted max-w-md mx-auto">
                     Get real-time portfolio value, token holdings, and complete trading history
                   </p>
                 </div>
