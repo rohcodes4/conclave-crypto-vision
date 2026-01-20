@@ -54,7 +54,7 @@ const ProtectedRoute:  React.FC<SplashScreenProps> = ({ handleSplashComplete }) 
           <source src={bg} type="video/mp4" />
           Your browser does not support the video tag.
         </video> */}
-        <MatrixRain/>
+        {/* <MatrixRain/> */}
         {/* Foreground content starts */}
         <div className="relative w-full max-w-md z-10 -mt-28 overflow-visible  rounded-xl">
           {/* Frame image in front of video */}
@@ -65,7 +65,7 @@ const ProtectedRoute:  React.FC<SplashScreenProps> = ({ handleSplashComplete }) 
           /> */}
 
           {/* Login card */}
-          <div className="relative z-20 rounded-lg p-6 md:p-8 w-full font-pixel text-white overflow-visible">
+          <div className="bg-[#00000050] shadow-[0_0_60px_rgba(255,114,41,0.15)] relative z-20 rounded-lg p-6 md:p-8 w-full font-pixel text-white overflow-visible">
             <img src={diamond} className="max-h-[200px] mx-auto" />
 
             <h1 className="mt-3 text-2xl md:text-3xl font-bold text-crypto-border mb-8 text-center uppercase tracking-[5px] text-shadow-(color:#ffffff) text-shadow-lg" style={{ WebkitTextStroke: "1px white" }}>
