@@ -153,12 +153,12 @@ const RugCheck: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col text-white">
       <div className="flex-1 flex flex-col items-center px-4 pt-24 pb-24">
-        <div className="w-full flex flex-col items-center space-y-6">
+        <div className="flex flex-col items-center space-y-6 bg-black shadow-[0_0_60px_rgba(255,114,41,0.15)] w-max p-20 rounded-[24px]">
           <div className="text-center space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-crypto-card bg-crypto-bg/60 text-xs uppercase tracking-wide">
+            {/* <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-crypto-card bg-crypto-bg/60 text-xs uppercase tracking-wide">
               <ShieldAlert className="h-3 w-3 text-crypto-accent" />
               <span>Rug Intelligence Console</span>
-            </div>
+            </div> */}
             <h1 className="text-3xl md:text-4xl font-black tracking-tight">
               <span className="text-crypto-accent font-pixel">Rug Check</span>
             </h1>
@@ -169,10 +169,10 @@ const RugCheck: React.FC = () => {
 
 
           <div className={cn(
-            "w-full rounded-2xl border border-crypto-card bg-black/40 shadow-[0_0_60px_rgba(255,114,41,0.15)] backdrop-blur-md transition-all duration-500 ease-in-out",
+            "w-full rounded-2xl border-2 border-crypto-card bg-black/40 backdrop-blur-md transition-all duration-500 ease-in-out",
             report ? "max-w-[1400px]" : "max-w-2xl"
             )}>
-            <div className="border-b border-crypto-card px-4 py-3 flex items-center justify-between">
+            <div className="border-b-2 border-crypto-card px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs text-crypto-muted">
                 <BarChart3 className="h-4 w-4 text-crypto-accent" />
                 <span>Token Risk Terminal</span>
@@ -557,7 +557,7 @@ const RugCheck: React.FC = () => {
 
 
           <div className="text-[11px] text-crypto-muted text-center max-w-md mt-4">
-            This tool is experimental and should not be treated as financial advice. Always do your own research before trading.
+            This tool should not be treated as financial advice. Always DYOR before trading.
           </div>
         </div>
       </div>
