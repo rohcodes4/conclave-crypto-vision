@@ -104,18 +104,19 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 h-44 md:h-[8.5rem] border-b border-crypto-card bg-crypto-bg/90 backdrop-blur-sm">
-      <div className="mx-auto flex h-16 items-center justify-between px-4">
+      <div className="max-w-[100vw] mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo and Mobile Menu Button */}
         <div className="flex items-center gap-4">
           <div className="relative" ref={appMenuRef}>
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-9 w-9 mr-2"
+              className="h-16 w-9 mr-2 flex items-center justify-center"
               onClick={() => setShowAppMenu(!showAppMenu)}
             >
               <MoreVertical className="h-5 w-5" />
             </Button>
+
             
             {showAppMenu && (
               <div className="absolute top-full left-0 mt-1 bg-crypto-card border border-crypto-card rounded-md shadow-xl z-50 min-w-[250px]">
@@ -146,11 +147,15 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
           </div>
         </div>
         <div className="flex items-center">
-          
-       
-          <Link to="/" className="mr-4 flex items-center">
-            <h1 className="text-md font-bold text-gradient whitespace-pre font-pixel">PAPER TRADER</h1>
-          </Link>
+        <Link
+          to="/"
+          className="mr-4 flex items-center h-16"
+        >
+          <h1 className="relative top-[1px] text-xs md:text-md font-bold text-gradient whitespace-pre font-pixel">
+            PAPER TRADER
+          </h1>
+        </Link>
+
           {/* {isMobile && (
             <Button 
               variant="ghost" 
@@ -165,7 +170,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
 
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-1 flex-1 justify-center">
+        <div className="hidden md:flex w-max items-center space-x-1 justify-center">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
