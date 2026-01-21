@@ -85,10 +85,17 @@ const formatCurrency = (num: number | undefined) => {
 
 const getRiskColor = (score?: number) => {
   if (!score) return "text-crypto-muted";
-  if (score >= 800) return "text-crypto-success";
-  if (score >= 500) return "text-yellow-400";
-  return "text-crypto-danger";
+  if (score >= 80) return "text-crypto-danger";
+  if (score >= 50) return "text-yellow-400";
+  return "text-crypto-success";
 };
+
+const getRiskState = (score?: number) => {
+    if (!score) return null;
+    if (score >= 80) return "Danger";
+  if (score >= 50) return "Warning";
+  return "Good";
+}
 
 
 const RugCheck: React.FC = () => {
@@ -303,23 +310,45 @@ const RugCheck: React.FC = () => {
                     <div className="flex justify-between gap-3">
                       <div className="flex flex-col md:items-end text-xs">
                         <span className="uppercase tracking-wide text-crypto-muted">
-                          RugCheck Score
+                          Risk Analysis
                         </span>
-                        <span className={cn("text-2xl font-black", getRiskColor(report.score))}>
-                          {report.score_normalised? `${report.score_normalised}/100`: report.score ? `${report.score}/100`:"N/A"}
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-end text-xs">
+                        <span className={cn("text-2xl font-black", getRiskColor(report.score_normalised))}>
+                          {report.score_normalised? `${report.score_normalised}/100`: report.score ? `${report.score}/1000`:"N/A"}
+                        </span>                        
+                      </div>                     
+                      {/* <div className="flex flex-col items-end text-xs">
                         <span className="uppercase tracking-wide text-crypto-muted">
                           Raw
                         </span>
                         <span className="text-crypto-muted">
                           {report.score ? `${report.score}/1000` : "N/A"}
                         </span>
-                      </div>
+                      </div> */}
                     </div>
+                    <div className="flex justify-between gap-3">
+                    <span className={`p-4 text-xl font-pixel rounded-[4px] border-2 ${getRiskState(report.score_normalised) === "Danger"?'border-red-900':getRiskState(report.score_normalised)==="Warning"? 'border-yellow-400':getRiskState(report.score_normalised)==="Good"?'border-green-900':'border-white'}`}>                            
+                        {getRiskState(report.score_normalised)}
+                        </span>
+                        </div>
                   </div>
-
+                    <div>
+                         {report.risks && report.risks.length > 0 && (
+                        <div>
+                          <div className="text-sm font-medium text-crypto-muted mb-3">Risks Found</div>
+                          <div className="space-y-2">
+                            {report.risks.map((risk, index) => (
+                              <div key={index} className="flex items-start gap-3 p-3 bg-crypto-bg border border-crypto-card rounded-lg">
+                                <AlertTriangle className="h-5 w-5 text-yellow-500 mt-0.5 flex-shrink-0" />
+                                <div>
+                                  <div className="font-medium">{risk.name}</div>
+                                  <div className="text-sm text-crypto-muted">{risk.description}</div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                        </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                     <div className="rounded-xl bg-crypto-bg/60 border border-crypto-card p-3 flex flex-col gap-1">
