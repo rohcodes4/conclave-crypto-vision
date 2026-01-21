@@ -131,7 +131,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
                     <div className="text-xs text-crypto-muted">Audit & risk analysis</div>
                   </div>
                 </Link>
-                <Link 
+                {/* <Link 
                   to="/wallet-analysis" 
                   className="flex items-center gap-3 p-4 hover:bg-crypto-bg/50 transition-colors w-full text-left"
                   onClick={() => setShowAppMenu(false)}
@@ -141,7 +141,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
                     <div className="font-medium">Wallet Analysis</div>
                     <div className="text-xs text-crypto-muted">Portfolio & holdings</div>
                   </div>
-                </Link>
+                </Link> */}
               </div>
             )}
           </div>
