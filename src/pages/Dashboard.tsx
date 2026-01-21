@@ -80,7 +80,7 @@ const Dashboard = () => {
         <p className="text-crypto-muted">Trending Tokens on Solana</p>
       </div>
       <Card className="rounded-lg bg-crypto-card mt-6">
-      <div className="flex gap-2 mb-0 overflow-x-auto py-2 no-scrollbar mt-4 ml-6">
+      {/* <div className="flex gap-2 mb-0 overflow-x-auto py-2 no-scrollbar mt-4 ml-6">
         <Button
           variant={sortBy === "marketCap" ? "default" : "outline"}
           size="sm"
@@ -105,7 +105,7 @@ const Dashboard = () => {
         >
           Volume {sortBy === "volume24h" && <ArrowDownUp className="h-3 w-3" />}
         </Button>
-      </div>
+      </div> */}
         <CardContent className="p-0">
         <TokenGrid 
         tokens={trendingTokens} 
