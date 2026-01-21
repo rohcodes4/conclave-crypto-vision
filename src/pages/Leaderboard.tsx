@@ -23,6 +23,36 @@ type Trade = {
   created_at: string
 }
 
+function randomSolanaAddress(): string {
+  const chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+  let address = ''
+  for (let i = 0; i < 44; i++) {
+    address += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return address
+}
+
+function createMockEntry(): AggregatedResult {
+  const buyVolume = Math.floor(Math.random() * 50_000) + 1_000
+
+  // sell can be lower OR higher than buy
+  const sellVariance = (Math.random() * 0.6 - 0.3) * buyVolume
+  const sellVolume = Math.max(0, Math.floor(buyVolume + sellVariance))
+
+  const pnlDollar = Number((sellVolume - buyVolume).toFixed(2))
+  const pnlPercent = buyVolume > 0 ? (pnlDollar / buyVolume) * 100 : 0
+
+  return {
+    user_id: randomSolanaAddress(),
+    token_id: '-',
+    buyVolume,
+    sellVolume,
+    totalVolume: buyVolume + sellVolume,
+    pnlDollar,
+    pnlPercent,
+  }
+}
+
 export default function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState<AggregatedResult[]>([])
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
@@ -104,13 +134,27 @@ export default function Leaderboard() {
 
       const result = aggregateTrades(trades)
       const sorted = result.sort((a, b) => b.pnlDollar - a.pnlDollar)
-      setLeaderboard(sorted)
+      
+      const filled = [...sorted]
+
+      if (filled.length < 10) {
+        const missing = 10 - filled.length
+        for (let i = 0; i < missing; i++) {
+          filled.push(createMockEntry())
+        }
+      }
+
+    filled.sort((a, b) => b.pnlDollar - a.pnlDollar)
+
+      setLeaderboard(filled)
+
+
     }
 
     fetchAndCompute()
   }, [])
 
-  const topUsers = leaderboard.slice(0, limit)
+  const topUsers = leaderboard.slice(0, 10)
   const currentUserIndex = leaderboard.findIndex((entry) => entry.user_id === currentUserId)
 
   function modifyString(input: string): string {
@@ -143,6 +187,7 @@ export default function Leaderboard() {
         <tbody>
           {topUsers.map((entry, index) => {
             const isCurrentUser = entry.user_id === currentUserId
+                      
             return (
               <tr
                 key={entry.user_id}
