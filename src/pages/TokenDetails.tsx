@@ -258,14 +258,14 @@ const TokenDetails = () => {
           >
             <ExternalLink className="h-4 w-4 mr-2" /> Birdeye
           </Button>
-          <Button 
+          {/* <Button 
             variant="outline" 
             size="sm" 
             className="text-crypto-muted"
             onClick={() => window.open(`https://rugcheck.xyz/tokens/${token.id}`, '_blank')}
           >
             <Shield className="h-4 w-4 mr-2" /> RugCheck
-          </Button>
+          </Button> */}
         </div>
       </div>
       
