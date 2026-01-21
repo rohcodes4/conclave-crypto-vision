@@ -249,22 +249,78 @@ export const fetchTokenDetails = async (address: string): Promise<TokenInfo> => 
 
   // ✅ 6. Helius holders (getAsset RPC)
   try {
-    console.log("[fetchTokenDetails] Fetching holders via Helius");
-    const response = await fetch(
-      `https://solana-gateway.moralis.io/token/mainnet/holders/${address}`,
-      {
-      headers: { 'X-API-Key': MORALIS_API_KEYS[0] }
+    console.log("[fetchTokenDetails] Fetching holders, cycling Moralis keys...");
+    holders = null; // Reset
+    
+    for (let i = 0; i < MORALIS_API_KEYS.length; i++) {
+      const apiKey = MORALIS_API_KEYS[i];
+      console.log(`[fetchTokenDetails] Holders key ${i + 1}/${MORALIS_API_KEYS.length} (${apiKey.slice(0, 12)}...)`);
+      
+      try {
+        const response = await fetch(
+          `https://solana-gateway.moralis.io/token/mainnet/holders/${address}`,
+          {
+            headers: { 
+              'accept': 'application/json',
+              'X-API-Key': apiKey 
+            }
+          }
+        );
+    
+        const status = response.status;
+        console.log(`Key ${i + 1} response: ${status} ${response.statusText}`);
+    
+        // ✅ SPECIFIC 401 HANDLING + other failures → TRY NEXT KEY
+        if (status === 401 || !response.ok) {
+          const errorText = await response.text().catch(() => "N/A");
+          console.warn(`Key ${i + 1} failed (${status}):`, errorText.slice(0, 150));
+          
+          // Continue to next key for 401, 429, 403, 5xx, etc.
+          if (i < MORALIS_API_KEYS.length - 1) {
+            console.log(`→ Trying next key... (${MORALIS_API_KEYS.length - i - 1} left)`);
+            continue;
+          }
+        }
+    
+        // ✅ SUCCESS (200 OK) - parse data
+        if (response.ok) {
+          const holderData = await response.json();
+          console.log(`✅ Key ${i + 1} SUCCESS - raw data:`, {
+            total: holderData.total,
+            totalHolders: holderData.totalHolders,
+            message: holderData.message ? 'Has error msg' : 'Clean data',
+            length: holderData.result?.length || 0
+          });
+          
+          // ✅ ANY valid response structure = SUCCESS
+          if (holderData && (
+            typeof holderData.total === 'number' ||
+            typeof holderData.totalHolders === 'number' ||
+            holderData.result?.length > 0 ||
+            holderData.message
+          )) {
+            holders = holderData;
+            console.log(`🎉 Holders key ${i + 1} FULL SUCCESS!`);
+            break; // ✅ STOP CYCLING
+          } else {
+            console.warn(`Key ${i + 1} OK but invalid data:`, holderData);
+          }
+        }
+      } catch (holderError: any) {
+        console.warn(`Key ${i + 1} NETWORK ERROR:`, holderError.message);
       }
-      );
-      // const data = await response.json();
-      console.log('[fetch] data',response)
-    if (response) {
-      const holderData = await response.json();
-      holders = holderData;
-      console.log("[fetchTokenDetails] Helius holders:", holderData);
-    } else {
-      console.warn("[fetchTokenDetails] Helius holders failed");
     }
+    
+    // 🆕 BETTER FALLBACKS
+    if (!holders) {
+      console.log("❌ All keys failed → Smart fallback");
+      holders = {
+        totalHolders: null,
+        total: null,
+        message: "All API keys exhausted (401/429 quota)",
+        fallback: true
+      };
+    } 
   } catch (e) {
     console.warn("[fetchTokenDetails] Helius holders error:", e);
   }
