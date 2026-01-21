@@ -1,6 +1,6 @@
 // src/pages/RugCheck.tsx
 import React, { useState } from "react";
-import { ShieldAlert, ShieldCheck, AlertTriangle, Search, Loader2, Coins, Users, Landmark, Clock, Globe, Copy, Link2, BarChart3 } from "lucide-react";
+import { ShieldAlert, ShieldCheck, AlertTriangle, Search, Loader2, Coins, Users, Landmark, Clock, Globe, Copy, Link2, BarChart3, SearchCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -153,7 +153,7 @@ const RugCheck: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col text-white">
       <div className="flex-1 flex flex-col items-center px-4 pt-24 pb-24">
-        <div className="flex flex-col items-center space-y-6 bg-black shadow-[0_0_60px_rgba(255,114,41,0.15)] w-max p-20 rounded-[24px]">
+        <div className="flex flex-col items-center space-y-6 bg-black shadow-[0_0_60px_rgba(255,114,41,0.15)] w-full md:w-max px-4 py-10 md:p-20 rounded-[24px]">
           <div className="text-center space-y-3">
             {/* <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-crypto-card bg-crypto-bg/60 text-xs uppercase tracking-wide">
               <ShieldAlert className="h-3 w-3 text-crypto-accent" />
@@ -224,7 +224,7 @@ const RugCheck: React.FC = () => {
                     {loading ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      "Analyze"
+                      <SearchCheck className="h-4 w-4"/>
                     )}
                   </Button>
                 </div>
@@ -232,7 +232,7 @@ const RugCheck: React.FC = () => {
                   <div className="flex items-center gap-2 text-[11px] text-crypto-muted">
                     <span className="uppercase tracking-wide">Current:</span>
                     <code className="bg-crypto-bg px-2 py-1 rounded-md text-[11px] max-w-[260px] md:max-w-[340px] truncate border border-crypto-card">
-                      {submittedMint}
+                      {submittedMint.slice(0, 6)}...{submittedMint.slice(-4)}
                     </code>
                     <Button
                       variant="ghost"
@@ -300,16 +300,16 @@ const RugCheck: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex gap-3">
-                      <div className="flex flex-col items-end text-xs">
+                    <div className="flex justify-between gap-3">
+                      <div className="flex flex-col md:items-end text-xs">
                         <span className="uppercase tracking-wide text-crypto-muted">
                           RugCheck Score
                         </span>
                         <span className={cn("text-2xl font-black", getRiskColor(report.score))}>
-                          {report.score_normalised ?? report.score ?? "N/A"}
+                          {report.score_normalised? `${report.score_normalised}/100`: report.score ? `${report.score}/100`:"N/A"}
                         </span>
                       </div>
-                      <div className="hidden md:flex flex-col items-end text-xs">
+                      <div className="flex flex-col items-end text-xs">
                         <span className="uppercase tracking-wide text-crypto-muted">
                           Raw
                         </span>
@@ -410,7 +410,7 @@ const RugCheck: React.FC = () => {
                                     )}
                                   </div>
                                   <div className="text-[11px] text-crypto-muted font-mono">
-                                    {market.pubkey}
+                                    {market.pubkey.slice(0, 6)}...{market.pubkey.slice(-4)}
                                   </div>
                                 </div>
                               </div>
@@ -453,7 +453,7 @@ const RugCheck: React.FC = () => {
                           <AlertTriangle className="h-4 w-4 text-yellow-400" />
                           <span>Risk Flags</span>
                         </div>
-                        <a
+                        {/* <a
                           href={`https://rugcheck.xyz/tokens/${report.mint}`}
                           target="_blank"
                           rel="noreferrer"
@@ -461,7 +461,7 @@ const RugCheck: React.FC = () => {
                         >
                           <span>RugCheck</span>
                           <Link2 className="h-3 w-3" />
-                        </a>
+                        </a> */}
                       </div>
                       {report.risks && report.risks.length > 0 ? (
                         <div className="space-y-2 max-h-96 overflow-auto pr-1">
