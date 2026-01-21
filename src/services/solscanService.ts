@@ -346,87 +346,131 @@ export const searchSolanaTokens = async (query: string): Promise<TokenInfo[]> =>
 // Fetch trending tokens using DexScreener boosted tokens
 export const fetchTrendingTokens = async (limit: number = 72): Promise<TokenInfo[]> => {
   try {
-    // Use DexScreener's boosted/trending tokens
-    const response = await fetch(`${DEXSCREENER_API_URL}/token-boosts/top/v1`);
+    // Rotate through Moralis API keys for better reliability
+    for (const apiKey of MORALIS_API_KEYS) {
+      try {
+        const options = {
+          method: 'GET' as const,
+          headers: {
+            accept: 'application/json',
+            'X-API-Key': apiKey,
+          },
+        };
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch trending tokens");
+        const res = await fetch(
+          `https://deep-index.moralis.io/api/v2.2/tokens/trending?chain=solana&limit=${Math.min(limit, 50)}`, // Respect likely limits
+          options
+        );
+
+        if (!res.ok) {
+          console.warn(`Moralis key failed (${apiKey.slice(0, 20)}...): ${res.status}`);
+          continue;
+        }
+
+        const response = await res.json();
+        
+        // Handle response structure - direct array as shown in your network response
+        if (!Array.isArray(response)) {
+          console.warn("Moralis response not array:", response);
+          continue;
+        }
+
+        console.log(`Moralis trending fetched ${response.length} tokens`);
+
+        const solanaTokens = response
+          .filter((item: any) => item.chainId === "solana" && item.tokenAddress)
+          .slice(0, limit);
+
+        const results = await Promise.all(
+          solanaTokens.map(async (item: any) => {
+            try {
+              return {
+                id: item.tokenAddress,
+                name: item.name || item.description || "Unknown",
+                symbol: item.symbol || "UNKNOWN",
+                price: item.usdPrice || 0,
+                change24h: item.pricePercentChange?.['24h'] || 0,
+                volume24h: item.totalVolume?.['24h'] || 0,
+                marketCap: item.marketCap || undefined,
+                logoUrl: item.logo,
+                launchDate: item.createdAt || Date.now() / 1000,
+                holder: { total: item.holders || 0 },
+                pairs: null,
+              } as TokenInfo;
+            } catch (detailError) {
+              console.warn("Token enrichment failed:", item.tokenAddress, detailError);
+              return null; // ✅ Return null instead of undefined
+            }
+          })
+        );
+
+        // Filter out stablecoins and very large cap tokens
+        const filtered = results.filter((token) => 
+          !['USDT', 'USDC', 'Wrapped SOL', 'WSOL', 'SOL'].includes(token.symbol?.toUpperCase()) &&
+          (!token.marketCap || token.marketCap <= 15000000000)
+        );
+
+        console.log(`Returning ${filtered.length} filtered trending tokens`);
+        console.log(`Returning filtered trending tokens: ${filtered}`);
+        return filtered;
+      } catch (keyError) {
+        console.warn("Moralis key error, trying next:", keyError);
+        continue;
+      }
     }
 
-    const data = await response.json();
-    const solanaPairs = data
-      .filter((item: any) => item.chainId === "solana")
-      .slice(0, limit);
-
-    const results = await Promise.all(
-      solanaPairs.map(async (item: any) => {
-        try {
-          const details = await fetchTokenDetails(item.tokenAddress);
-          return details;
-        } catch {
-          return {
-            id: item.tokenAddress,
-            name: item.description || "Unknown",
-            symbol: "UNKNOWN",
-            price: 0,
-            change24h: 0,
-            volume24h: 0,
-            logoUrl: item.icon,
-            launchDate: 0,
-            holder: 0,
-          };
-        }
-      })
-    );
-
-    // Filter out stablecoins and very large cap tokens
-    return results.filter((token) => 
-      token.name !== "USDT" &&
-      token.name !== "USDC" &&
-      token.name !== "Wrapped SOL" &&
-      (!token.marketCap || token.marketCap <= 15000000000)
-    );
-  } catch (error) {
-    console.error("Error fetching trending tokens:", error);
+    // If all Moralis keys fail, throw to trigger fallback
+    throw new Error('All Moralis keys failed for trending tokens');
     
-    // Fallback: try DexScreener's latest tokens
+  } catch (error) {
+    console.error("Primary Moralis trending failed:", error);
+    
+    // Fallback: DexScreener latest Solana tokens (high volume = trending proxy)
     try {
+      console.log("Falling back to DexScreener latest");
       const fallbackResponse = await fetch(
         `${DEXSCREENER_API_URL}/latest/dex/tokens/solana`
       );
       
-      if (fallbackResponse.ok) {
-        const fallbackData = await fallbackResponse.json();
-        const pairs = fallbackData.pairs?.slice(0, limit) || [];
-        
-        return await Promise.all(
-          pairs.map(async (pair: any) => {
-            try {
-              return await fetchTokenDetails(pair.baseToken.address);
-            } catch {
-              return {
-                id: pair.baseToken.address,
-                name: pair.baseToken.name || "Unknown",
-                symbol: pair.baseToken.symbol || "UNKNOWN",
-                price: parseFloat(pair.priceUsd) || 0,
-                change24h: parseFloat(pair.priceChange?.h24) || 0,
-                volume24h: parseFloat(pair.volume?.h24) || 0,
-                marketCap: parseFloat(pair.fdv || pair.marketCap) || 0,
-                logoUrl: pair.info?.imageUrl,
-                launchDate: 0,
-                holder: 0,
-              };
-            }
-          })
-        );
-      }
+      if (!fallbackResponse.ok) throw new Error('DexScreener fallback failed');
+      
+      const fallbackData = await fallbackResponse.json();
+      const pairs = fallbackData.pairs?.slice(0, limit) || [];
+      
+      const results = await Promise.all(
+        pairs.map(async (pair: any) => {
+          try {
+            // return await fetchTokenDetails(pair.baseToken.address);
+            return {
+              id: pair.baseToken.address,
+              name: pair.baseToken.name || "Unknown",
+              symbol: pair.baseToken.symbol || "UNKNOWN",
+              price: parseFloat(pair.priceUsd || "0") || 0,
+              change24h: parseFloat(pair.priceChange?.h24 || "0") || 0,
+              volume24h: parseFloat(pair.volume?.h24 || "0") || 0,
+              marketCap: parseFloat(pair.fdv || pair.marketCap || "0") || undefined,
+              logoUrl: pair.info?.imageUrl || pair.baseToken?.logoURI,
+              launchDate: pair.pairCreatedAt ? parseInt(pair.pairCreatedAt) / 1000 : Date.now() / 1000,
+              holder: null,
+            } as TokenInfo;
+          } catch {
+            
+          }
+        })
+      );
+
+      // Apply same filtering
+      return results.filter((token) => 
+        !['USDT', 'USDC', 'Wrapped SOL', 'WSOL'].includes(token.symbol?.toUpperCase()) &&
+        (!token.marketCap || token.marketCap <= 15000000000)
+      );
     } catch (fallbackError) {
-      console.error("Fallback trending tokens failed:", fallbackError);
+      console.error("DexScreener fallback failed:", fallbackError);
+      return []; // Graceful empty return instead of throw
     }
-    
-    throw error;
   }
 };
+
 
 // Fetch token prices in batch
 export const fetchTokenPricesBatch = async (
@@ -625,8 +669,8 @@ export const fetchPumpVisionTokens = async (): Promise<{
 export const useTrendingSolanaTokens = () => {
   return useQuery({
     queryKey: ["trending-solana-tokens"],
-    queryFn: fetchTrendingTokens,
-    refetchInterval: 60000,
+    queryFn: () => fetchTrendingTokens(30),
+    refetchInterval: 6000,
     retry: 3,
     retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 30000),
     meta: {

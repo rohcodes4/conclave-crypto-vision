@@ -10,9 +10,13 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
-  const { data: trendingTokens, isLoading: isLoadingTokens } = useTrendingSolanaTokens();
-  // console.log("trendingTokens")
-  // console.log(trendingTokens)
+  // const { data: trendingTokens, isLoading: isLoadingTokens } = useTrendingSolanaTokens();
+  const queryResult = useTrendingSolanaTokens();
+  const trendingTokens = queryResult.data ?? [];  // ✅ Safe default
+  const isLoadingTokens = queryResult.isLoading;
+  console.log("useTrendingSolanaTokens full result:", queryResult);
+  console.log("useTrendingSolanaTokens trendingTokens (safe):", trendingTokens);
+  console.log("useTrendingSolanaTokens isLoadingTokens:", isLoadingTokens);
   const { balance, trades, holdings, calculatePortfolioValue, calculatePnL } = useTradeStore();
   
   const portfolioValue = calculatePortfolioValue();
@@ -104,7 +108,7 @@ const Dashboard = () => {
       </div>
         <CardContent className="p-0">
         <TokenGrid 
-        tokens={sortedTokens} 
+        tokens={trendingTokens} 
         title="" 
         isLoading={isLoadingTokens}
         shouldCreateHasMoreData={false}

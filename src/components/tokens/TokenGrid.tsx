@@ -35,6 +35,7 @@ const TokenGrid = ({
   isLoading = false,
   shouldCreateHasMoreData = false,
 }: TokenGridProps) => {
+  console.log('tokensss',tokens)
   const [displayedTokens, setDisplayedTokens] = useState<Token[]>([]);
   const [remainingTokens, setRemainingTokens] = useState<Token[]>([]);
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -49,7 +50,7 @@ const TokenGrid = ({
           token.id &&
           token.name &&
           token.symbol &&
-          token.holder.totalHolders > -1 &&
+          (token.holder.totalHolders > -1 || token.holder.total > -1)  &&
           token.marketCap > -1
       );
 
