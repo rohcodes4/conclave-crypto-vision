@@ -11,7 +11,7 @@ declare global {
 const TelegramLogin = () => {
   const handleLogin = () => {
     const botUsername = 'paperTrader_bot'; // without @
-    const redirectUrl = encodeURIComponent(`${import.meta.env.VITE_RENDER_URL}/auth/telegram`);
+    const redirectUrl = encodeURIComponent(`${window.location.origin}/auth/telegram`);
     
     const telegramAuthUrl = `https://oauth.telegram.org/auth?bot_id=8086922089&origin=${window.location.origin}&embed=1&request_access=write&redirect_uri=${redirectUrl}`;
     
@@ -25,7 +25,20 @@ const TelegramLogin = () => {
       body: JSON.stringify(userData),
     });
 
-    const data = await res.json();
+    let data: any = null;
+
+    const text = await res.text();
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error('Server returned non-JSON response');
+      }
+    }
+
+    if (!res.ok) {
+      throw new Error(`Telegram auth failed (${res.status})`);
+    }    
 
     if (data.success && data.login_url) {
       window.location.href = data.login_url;
