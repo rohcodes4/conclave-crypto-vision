@@ -103,7 +103,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 h-44 md:h-[8.5rem] border-b border-crypto-card bg-crypto-bg/90 backdrop-blur-sm">
+    <header className="fixed top-0 left-0 right-0 z-40 border-b border-crypto-card bg-crypto-bg/90 backdrop-blur-sm">
       <div className="max-w-[100vw] mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo and Mobile Menu Button */}
         <div className="flex items-center gap-4">
@@ -151,7 +151,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
           to="/"
           className="mr-4 flex items-center h-16"
         >
-          <h1 className="relative top-[1px] text-xs md:text-md font-bold text-gradient whitespace-pre font-pixel">
+          <h1 className="relative top-[1px] text-xs md:text-md font-bold text-white whitespace-pre font-pixel">
             PAPER TRADER
           </h1>
         </Link>
@@ -317,27 +317,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
               <span>{item.name}</span>
             </NavLink>
           ))}
-        </div>
-        <div className="flex justify-center items-center pt-4 pb-4 border-white border-[1px] rounded-md w-max mx-auto px-4">
-          <Button variant="link" className="bg-crypto-border font-black" onClick={handleBuyToken}>BUY $TBD</Button>
-          <div className="flex items-center gap-0 ml-2">
-                                <code className="bg-black p-2 rounded-lg text-xs w-full overflow-x-auto whitespace-nowrap">
-                                TBD...TBD
-                                </code>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="shrink-0" 
-                                  onClick={() => {
-                                    navigator.clipboard.writeText("TBD........TBD");
-                                    toast.success("Copied to clipboard!");
-                                    // You could add a toast notification here
-                                  }}
-                                >
-                                  <Clipboard className="h-4 w-4" />
-                                </Button>
-                              </div>
-        </div>
+        </div>       
     </header>
   );
 };

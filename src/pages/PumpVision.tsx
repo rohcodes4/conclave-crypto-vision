@@ -53,8 +53,7 @@ const PumpVision = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Pump Vision</h1>
-        <p className="text-crypto-muted">Early detection of potentially high-growth tokens</p>
+        <h1 className="text-xl font-semibold mb-2">Pump Vision</h1>        
       </div>
       
       {/* <div className="bg-gradient-to-r from-crypto-accent/20 to-crypto-highlight/20 p-4 rounded-lg border border-crypto-accent/30">

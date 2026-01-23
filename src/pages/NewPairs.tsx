@@ -72,8 +72,7 @@ const NewPairs = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">New Pairs</h1>
-        <p className="text-crypto-muted">Recently launched tokens on DEXes</p>
+        <h1 className="text-xl font-semibold mb-2">New Pairs</h1>
       </div>
       
       {/* <div className="flex gap-2 md:gap-4 overflow-x-auto py-2 no-scrollbar">
@@ -102,10 +101,10 @@ const NewPairs = () => {
           </CardContent>
         </Card>
       ) : (
-        <Card className="bg-crypto-card border-crypto-card rounded-lg">
+        <Card className="border-crypto-card rounded-lg">
           <div className="flex gap-2 mb-0 overflow-x-auto py-2 no-scrollbar mt-4 ml-6">
         <Button
-          variant={sortBy === "marketCap" ? "default" : "outline"}
+          variant={sortBy === "marketCap" ? "outline" : "outline"}
           size="sm"
           onClick={() => toggleSort("marketCap")}
           className="flex items-center gap-1"
@@ -113,7 +112,7 @@ const NewPairs = () => {
           Market Cap {sortBy === "marketCap" && <ArrowDownUp className="h-3 w-3" />}
         </Button>
         <Button
-          variant={sortBy === "change24h" ? "default" : "outline"}
+          variant={sortBy === "change24h" ? "outline" : "outline"}
           size="sm"
           onClick={() => toggleSort("change24h")}
           className="flex items-center gap-1"
@@ -121,7 +120,7 @@ const NewPairs = () => {
           24h % {sortBy === "change24h" && <ArrowDownUp className="h-3 w-3" />}
         </Button>
         <Button
-          variant={sortBy === "volume24h" ? "default" : "outline"}
+          variant={sortBy === "volume24h" ? "outline" : "outline"}
           size="sm"
           onClick={() => toggleSort("volume24h")}
           className="flex items-center gap-1"

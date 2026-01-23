@@ -210,8 +210,7 @@ const getRandomImage = (isPositive: boolean) => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Holdings</h1>
-        <p className="text-crypto-muted">Track your paper trading portfolio</p>
+        <h1 className="text-xl font-semibold mb-2">Holdings</h1>        
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

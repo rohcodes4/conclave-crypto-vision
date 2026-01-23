@@ -55,7 +55,7 @@ const AccountMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-9 w-9 rounded-full overflow-hidden p-0 border-2 border-crypto-accent ">
+        <Button variant="ghost" className="relative h-9 w-9 rounded-full overflow-hidden p-0 border-2 border-crypto-accent">
           <div className="flex h-full w-full items-center justify-center rounded-full text-white" dangerouslySetInnerHTML={{ __html: getAvatar() }} >
           {/* <User className="h-5 w-5" /> */}
             {/* {(!user.email.includes("telegram") || !user.email.includes("wallet") )&& user.email? user.email[0].toUpperCase() : <User className="h-5 w-5" />} */}
@@ -63,7 +63,7 @@ const AccountMenu = () => {
           </div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-crypto-card border-crypto-accent shadow-2xl w-56">
+      <DropdownMenuContent align="end" className="bg-crypto-card border-0 shadow-2xl w-56">
         <DropdownMenuLabel className="text-crypto-muted">My Account</DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-crypto-card" />
         

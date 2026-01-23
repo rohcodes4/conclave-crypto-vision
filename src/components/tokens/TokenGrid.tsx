@@ -113,7 +113,7 @@ const TokenGrid = ({
       <div
         className={`${
           title !== "" ? "" : "mt-2 md:mt-6"
-        } rounded-lg overflow-hidden grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-0 md:gap-0`}
+        } rounded-lg overflow-hidden grid gap-3 grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4`}
       >
         {displayedTokens.length > 0 ? (
           displayedTokens.map((token) => (

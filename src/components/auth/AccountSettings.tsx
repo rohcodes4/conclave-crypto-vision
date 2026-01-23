@@ -76,7 +76,7 @@ const AccountSettings = () => {
   return (
     <>
       <Button variant="ghost" className="md:p-0 md:pr-4" onClick={() => setIsOpen(true)}>
-        <Wallet className="h-4 w-4 text-crypto-border" />
+        <Wallet className="h-4 w-4 text-white" />
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -90,7 +90,7 @@ const AccountSettings = () => {
           
           <div className="space-y-4 py-4">
             <div className="flex items-center gap-3 mb-4">
-              <Avatar className="h-12 w-12 rounded-full bg-crypto-accent overflow-hidden border border-crypto-card">
+              <Avatar className="h-12 w-12 rounded-full bg-crypto-accent overflow-hidden">
                 <AvatarImage src={getAvatarUrl() || ""} alt="User avatar" className="h-full w-full object-cover" />
                 <AvatarFallback>{getInitials()}</AvatarFallback>
               </Avatar>

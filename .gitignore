@@ -1,4 +1,12 @@
-node_modules/
-package-lock.json
-.DS_Store
-.env
+# Node modules (standard + variants)
+**/node_modules/
+**/node_module*/
+**node_module*
+
+# Timestamped/partial variants (e.g., node_module 23-32-11-481)
+**/node_module *\
+
+# Locks/Env/DS
+**/package-lock.json
+**/.DS_Store
+**/.env

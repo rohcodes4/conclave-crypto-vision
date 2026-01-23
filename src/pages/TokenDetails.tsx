@@ -225,7 +225,7 @@ const TokenDetails = () => {
         </h1>
         <div className="mt-0 pt-1">
           <div className="flex items-center gap-2">
-            <code className="bg-[#14100d] border-[1px] border-[#ff7229] p-2 rounded text-xs w-max overflow-x-auto whitespace-nowrap">
+            <code className="bg-[#14100d] p-2 rounded text-xs w-max overflow-x-auto whitespace-nowrap">
               {token.id.slice(0,4)}...{token.id.slice(-4)}
             </code>
             <Button 
@@ -249,23 +249,7 @@ const TokenDetails = () => {
             onClick={() => window.open(`https://dexscreener.com/solana/${token.id}`, '_blank')}
           >
             <ExternalLink className="h-4 w-4 mr-2" /> DexScreener
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="text-crypto-muted"
-            onClick={() => window.open(`https://birdeye.so/token/${token.id}?chain=solana`, '_blank')}
-          >
-            <ExternalLink className="h-4 w-4 mr-2" /> Birdeye
-          </Button>
-          {/* <Button 
-            variant="outline" 
-            size="sm" 
-            className="text-crypto-muted"
-            onClick={() => window.open(`https://rugcheck.xyz/tokens/${token.id}`, '_blank')}
-          >
-            <Shield className="h-4 w-4 mr-2" /> RugCheck
-          </Button> */}
+          </Button>          
         </div>
       </div>
       
@@ -277,7 +261,7 @@ const TokenDetails = () => {
           />
           
           <Tabs defaultValue="overview" className="w-full">
-            <div className="border border-[#ff7229] rounded-md mb-4">
+            <div className="rounded-md mb-4">
               <TabsList className="w-full bg-crypto-card flex">
                 <TabsTrigger value="overview" className="flex-1 data-[state=active]:bg-crypto-border data-[state=active]:text-white">Overview</TabsTrigger>
                 <TabsTrigger value="details" className="flex-1 data-[state=active]:bg-crypto-border data-[state=active]:text-white">Details</TabsTrigger>
@@ -287,7 +271,7 @@ const TokenDetails = () => {
             </div>
             
             <TabsContent value="overview" className="mt-0">
-              <Card className="bg-crypto-card border-crypto-card border-[1px] border-[#ff7229]">
+              <Card className="bg-crypto-card">
                 <CardHeader>
                   <CardTitle>Token Overview</CardTitle>
                 </CardHeader>
@@ -446,7 +430,7 @@ const TokenDetails = () => {
             </TabsContent>
             
             <TabsContent value="details" className="mt-0">
-              <Card className="bg-crypto-card border-crypto-card border-[1px] border-[#ff7229]">
+              <Card className="bg-crypto-card">
                 <CardHeader>
                   <CardTitle>Token Details</CardTitle>
                 </CardHeader>
@@ -549,32 +533,14 @@ const TokenDetails = () => {
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       View on DexScreener
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="flex-1"
-                      onClick={() => window.open(`https://birdeye.so/token/${token.id}?chain=solana`, '_blank')}
-                    >
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      View on Birdeye
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="flex-1"
-                      onClick={() => window.open(`https://rugcheck.xyz/tokens/${token.id}`, '_blank')}
-                    >
-                      <Shield className="h-4 w-4 mr-2" />
-                      RugCheck
-                    </Button>
+                    </Button>                    
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
             <TabsContent value="security" className="mt-0">
-              <Card className="bg-crypto-card border-crypto-card border-[1px] border-[#ff7229]">
+              <Card className="bg-crypto-card">
                 <CardHeader>
                   <CardTitle>Security Analysis</CardTitle>
                 </CardHeader>
@@ -653,7 +619,7 @@ const TokenDetails = () => {
             </TabsContent>
 
             <TabsContent value="holders" className="mt-0">
-              <Card className="bg-crypto-card border-crypto-card border-[1px] border-[#ff7229]">
+              <Card className="bg-crypto-card">
                 <CardHeader>
                   <CardTitle>Top Holders</CardTitle>
                 </CardHeader>

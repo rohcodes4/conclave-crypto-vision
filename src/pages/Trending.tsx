@@ -69,8 +69,7 @@ const Trending = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Trending on Solana</h1>
-        <p className="text-crypto-muted">Most popular tokens by market activity</p>
+        <h1 className="text-xl font-semibold mb-2">Trending on Solana</h1>        
       </div>
       
       <div className="flex gap-2 mb-4 overflow-x-auto py-2 no-scrollbar">

@@ -76,10 +76,9 @@ const Dashboard = () => {
       </div>:
       <div>
         <div className="">
-        <h1 className="text-3xl font-bold mb-2">Trending Tokens</h1>
-        <p className="text-crypto-muted">Trending Tokens on Solana</p>
+        <h1 className="text-xl font-semibold mb-2">Trending Tokens</h1>        
       </div>
-      <Card className="rounded-lg bg-crypto-card mt-6">
+      <Card className="rounded-lg bg-crypto-card mt-6 bg-transparent">
       {/* <div className="flex gap-2 mb-0 overflow-x-auto py-2 no-scrollbar mt-4 ml-6">
         <Button
           variant={sortBy === "marketCap" ? "default" : "outline"}

@@ -42,8 +42,7 @@ const History = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Trade History</h1>
-        <p className="text-crypto-muted">View your paper trading activity</p>
+        <h1 className="text-xl font-semibold mb-2">Trade History</h1>        
       </div>
 
       <Card className="bg-crypto-card border-crypto-card overflow-hidden">

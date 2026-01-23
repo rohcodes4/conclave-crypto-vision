@@ -56,7 +56,7 @@ const TokenCard = ({
 
   return (
     <Link to={`/token/${id}`}>
-      <Card className="overflow-hidden bg-crypto-card border-crypto-card hover:border-crypto-accent/50 transition-all h-full md:border-[1px] md:border-[#ff7229] max-md:border-[0] max-md:border-b-[1px] max-md: border-[#ff7229] p-6 hover:border-[#ff5700]">
+      <Card className="overflow-hidden bg-crypto-card transition-all h-full p-6 ">
         <CardContent className="p-3 sm:p-4">
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center gap-2 sm:gap-3">

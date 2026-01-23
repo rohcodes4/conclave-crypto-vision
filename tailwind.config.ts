@@ -31,8 +31,8 @@ export default {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       colors: {
-        'crypto-bg': '#181A20',
-        'crypto-card': '#1F2128',
+        'crypto-bg': '#000000',
+        'crypto-card': '#1c1c1c',
         'crypto-accent': '#ff7229',
         'crypto-highlight': '#f2a57c',
         'crypto-success': '#32CE79',
