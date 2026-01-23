@@ -37,6 +37,7 @@ import Maintainance from './pages/Maintainance';
 import RugCheck from './pages/RugCheck';
 import WalletAnalysis from './pages/WalletAnalysis';
 import LayoutNew from './components/layout/LayoutNew';
+import Landing from './pages/Landing';
 
 const wallets = [
   new PhantomWalletAdapter(),
@@ -118,7 +119,7 @@ const AppContent = () => {
           <Routes>
             {/* Add Auth route */}
             <Route path="/auth" element={<Auth handleSplashComplete={handleSplashComplete}/>} />
-            
+            <Route path="/landing" element={<Landing/>} />            
             {/* Protected routes */}
             <Route element={<ProtectedRoute handleSplashComplete={handleSplashComplete}/>}>
               <Route element={<Layout />}>
