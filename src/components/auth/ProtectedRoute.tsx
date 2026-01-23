@@ -115,7 +115,7 @@ const ProtectedRoute: React.FC<SplashScreenProps> = ({ handleSplashComplete }) =
                 },
               },
               {
-                label: "Continue with Web3",
+                label: "Continue with Wallet",
                 icon: <IconWeb3Wallet className="mr-2 h-4 w-4" />,
                 onClick: () => {
                   // Web3Login component integration
