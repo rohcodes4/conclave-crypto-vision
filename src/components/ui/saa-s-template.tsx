@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 // Inline Button Component
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -102,9 +103,9 @@ const Navigation = React.memo(() => {
     <header className="fixed top-0 w-full z-50 border-b border-gray-800/50 bg-black/80 backdrop-blur-md">
       <nav className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="text-xl font-semibold text-white">Logo</div>
+          <div className="text-xl font-semibold text-white font-pixel">Paper Trader</div>
           
-          <div className="hidden md:flex items-center justify-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          {/* <div className="hidden md:flex items-center justify-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <a href="#getting-started" className="text-sm text-white/60 hover:text-white transition-colors">
               Getting started
             </a>
@@ -114,15 +115,17 @@ const Navigation = React.memo(() => {
             <a href="#documentation" className="text-sm text-white/60 hover:text-white transition-colors">
               Documentation
             </a>
-          </div>
+          </div> */}
 
-          <div className="hidden md:flex items-center gap-4">
-            <Button type="button" variant="ghost" size="sm">
+          <div className="hidden md:flex items-center gap-4 cursor-pointer">
+            {/* <Button type="button" variant="ghost" size="sm">
               Sign in
-            </Button>
+            </Button> */}
+            <Link to="/">
             <Button type="button" variant="default" size="sm">
-              Sign Up
+              Start Trading
             </Button>
+            </Link>
           </div>
 
           <button
