@@ -173,7 +173,7 @@ export default function Leaderboard() {
       <h1 className="font-bold text-3xl font-bold mb-2">Leaderboard</h1>
       <p className="text-crypto-muted mb-8 ">See where you rank amongst others</p>
       <div className="w-full overflow-x-auto">
-      <table className="w-max min-w-[600px]">
+      <table className="w-full min-w-[600px]">
         <thead>
           <tr className="text-left text-xs text-crypto-muted border-b border-crypto-card">
             <th className="pb-3 px-3">#</th>
