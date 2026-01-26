@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowUp, ArrowDown, Info } from "lucide-react";
+import { ArrowUp, ArrowDown, Info, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -13,6 +13,7 @@ interface TokenCardProps {
   price: number;
   change24h: number;
   volume24h: number;
+  liquidityUsd?: number;
   logoUrl?: string;
   marketCap?: number;
   fullyDilutedValuation?: number;
@@ -23,6 +24,20 @@ interface TokenCardProps {
   
 }
 
+const formatNumberWithoutCurrency = (num: number | undefined) => {
+  if (num === undefined || num === 0) return 'N/A';
+  if (num >= 1_000_000_000_000) {
+    return `${(num / 1_000_000_000_000).toFixed(2)}T`;
+  } else if (num >= 1_000_000_000) {
+    return `${(num / 1_000_000_000).toFixed(2)}B`;
+  } else if (num >= 1_000_000) {
+    return `${(num / 1_000_000).toFixed(2)}M`;
+  } else if (num >= 1_000) {
+    return `${(num / 1_000).toFixed(2)}K`;
+  }
+  return `${num.toFixed(2)}`;
+};
+
 const TokenCard = ({
   id,
   name,
@@ -32,6 +47,7 @@ const TokenCard = ({
   volume24h,
   logoUrl,
   marketCap,
+  liquidityUsd,
   fullyDilutedValuation,
   holder,
   totalSupply,
@@ -56,8 +72,8 @@ const TokenCard = ({
 
   return (
     <Link to={`/token/${id}`}>
-      <Card className="overflow-hidden bg-crypto-card transition-all h-full p-6 ">
-        <CardContent className="p-3 sm:p-4">
+      <Card className="overflow-hidden bg-crypto-card transition-all h-full p-4">
+        <CardContent className="sm:p-1 p-4">
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-crypto-card flex items-center justify-center overflow-hidden flex-shrink-0">
@@ -97,44 +113,38 @@ const TokenCard = ({
             </div>
           </div>
           
-          <div className="mt-2 grid grid-cols-2 gap-x-2 gap-y-1 text-xs sm:text-sm">
+          <div className="mt-2 grid grid-cols-2 gap-x-2 gap-y-1 text-xs sm:text-sm auto-rows-fr">
+            {/* Top-left: Market Cap */}
             {marketCap >= 0 && (
               <div className="flex text-[#438fff]">
-                <span className="mr-2">MC:</span>
-                <span>{marketCap==0?"N/A":formatNumber(marketCap)}</span>
+                <span className="mr-1">MC:</span>
+                <span>{marketCap === 0 ? "N/A" : formatNumber(marketCap)}</span>
               </div>
             )}
             
-            {(holder.totalHolders >= 0 || holder.total >= 0) && <div className={`flex ${marketCap >= 0 ? "justify-end" : ""} text-[#42b192]`}>
-              <span className="mr-2">Holders:</span>
-              <span>{holder.totalHolders || holder.total}</span>
-            </div>}
+            {/* Top-right: Holders */}
+            {(holder.totalHolders >= 0 || holder.total >= 0) && (
+              <div className="flex justify-end items-center gap-1 text-crypto-border">
+                <User className="h-4 w-4" />
+                <span>{holder.totalHolders || holder.total}</span>
+              </div>
+            )}
             
-            {/* {launchDate && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="flex justify-between items-center cursor-help">
-                      <span className="text-crypto-muted flex items-center">
-                        Launch <Info className="h-3 w-3 ml-1" />
-                      </span>
-                      <span>{launchDate.split('T')[0] || 'New'}</span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Token launch date</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )} */}
+            {/* {(volume24h!=0) && volume24h && (
+              <div className="flex text-[#42b192]">
+                <span className="mr-1">V:</span>
+                <span>{volume24h?formatNumber(volume24h):null}</span>
+              </div>
+            )}
             
-            {/* {fullyDilutedValuation && (
-              <div className="flex justify-between">
-                <span className="text-crypto-muted">FDV:</span>
-                <span>{formatNumber(fullyDilutedValuation)}</span>
+            {(change24h!=0) && change24h && (
+              <div className="flex justify-end text-[#42b192]">
+                <span className="mr-1">24H P: </span>
+                <span>{change24h?formatNumberWithoutCurrency((change24h * 100)):null}%</span>
               </div>
             )} */}
           </div>
+
         </CardContent>
       </Card>
     </Link>

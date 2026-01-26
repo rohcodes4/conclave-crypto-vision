@@ -440,18 +440,20 @@ export const fetchTrendingTokens = async (limit: number = 72): Promise<TokenInfo
         const results = await Promise.all(
           solanaTokens.map(async (item: any) => {
             try {
+              console.log('itemmm',item)
               return {
                 id: item.tokenAddress,
                 name: item.name || item.description || "Unknown",
                 symbol: item.symbol || "UNKNOWN",
-                price: item.usdPrice || 0,
-                change24h: item.pricePercentChange?.['24h'] || 0,
-                volume24h: item.totalVolume?.['24h'] || 0,
+                price: item.usdPrice || null,
+                change24h: item.pricePercentChange?.['24h'] || null,
+                volume24h: item.totalVolume?.['24h'] || null,
                 marketCap: item.marketCap || undefined,
                 logoUrl: item.logo,
                 launchDate: item.createdAt || Date.now() / 1000,
-                holder: { total: item.holders || 0 },
+                holder: { total: item.holders || null },
                 pairs: null,
+                liquidityUsd: item.liquidityUsd
               } as TokenInfo;
             } catch (detailError) {
               console.warn("Token enrichment failed:", item.tokenAddress, detailError);
@@ -466,8 +468,8 @@ export const fetchTrendingTokens = async (limit: number = 72): Promise<TokenInfo
           (!token.marketCap || token.marketCap <= 15000000000)
         );
 
-        console.log(`Returning ${filtered.length} filtered trending tokens`);
-        console.log(`Returning filtered trending tokens: ${filtered}`);
+        // console.log(`Returning ${filtered.length} filtered trending tokens`);
+        // console.log(`Returning filtered trending tokens: ${filtered}`);
         return filtered;
       } catch (keyError) {
         console.warn("Moralis key error, trying next:", keyError);

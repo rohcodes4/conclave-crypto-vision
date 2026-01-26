@@ -70,15 +70,18 @@ const Dashboard = () => {
       {/* <div>
         <h1 className="text-3xl font-bold mb-6">Dashboard</h1>       
       </div> */}
-      {isLoadingTokens? <div className="flex flex-col items-center justify-center h-screen bg-crypto-bg">
-        <div className="w-16 h-16 border-4 border-crypto-accent border-t-transparent rounded-full animate-spin mb-8"></div>
-        <p className="text-crypto-muted">Loading...</p>
+      {isLoadingTokens? <div className="relative flex items-center justify-center h-screen bg-black overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#1a1a1a,black)]" />
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="w-16 h-16 border border-white/20 rounded-full animate-spin border-t-white mb-6" />
+          <p className="text-white/60 text-sm tracking-widest uppercase">Loading</p>
+        </div>
       </div>:
       <div>
         <div className="">
-        <h1 className="text-xl font-semibold mb-2">Trending Tokens</h1>        
+        <h1 className="text-xl font-semibold">Trending Tokens</h1>        
       </div>
-      <Card className="rounded-lg bg-crypto-card mt-6 bg-transparent">
+      <Card className="rounded-lg bg-crypto-card bg-transparent">
       {/* <div className="flex gap-2 mb-0 overflow-x-auto py-2 no-scrollbar mt-4 ml-6">
         <Button
           variant={sortBy === "marketCap" ? "default" : "outline"}

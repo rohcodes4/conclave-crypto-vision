@@ -108,7 +108,7 @@ const TokenGrid = ({
   return (
     <div className="w-full">
       {title !== "" && (
-        <h2 className="mt-4 ml-4 text-xl md:text-2xl font-bold mb-6">{title}</h2>
+        <h2 className="mt-1 ml-4 text-xl md:text-2xl font-bold mb-6">{title}</h2>
       )}
       <div
         className={`${

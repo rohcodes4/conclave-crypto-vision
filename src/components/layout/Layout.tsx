@@ -23,8 +23,8 @@ const Layout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <TopNav navOpen={navOpen} setNavOpen={setNavOpen} />
-      <main className={`flex-1 pt-32 md:pt-20 ${navOpen && isMobile ? 'pt-[calc(16rem+4rem)]' : ''}`}>
-        <div className="p-4 md:p-6">
+      <main className={`flex-1 pt-28 md:pt-20 ${navOpen && isMobile ? 'pt-[calc(16rem+4rem)]' : ''}`}>
+        <div className="p-2 md:p-2">
           <Outlet />
         </div>
       </main>

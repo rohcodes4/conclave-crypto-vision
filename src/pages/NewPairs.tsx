@@ -71,9 +71,9 @@ const NewPairs = () => {
 
   return (
     <div className="space-y-6">
-      <div>
+      {/* <div>
         <h1 className="text-xl font-semibold mb-2">New Pairs</h1>
-      </div>
+      </div> */}
       
       {/* <div className="flex gap-2 md:gap-4 overflow-x-auto py-2 no-scrollbar">
         <button 
@@ -90,10 +90,13 @@ const NewPairs = () => {
         //     <Skeleton key={i} className="h-32 w-full rounded-lg" />
         //   ))}
         // </div>
-        <div className="flex flex-col items-center justify-center h-screen bg-crypto-bg">
-             <div className="w-16 h-16 border-4 border-crypto-accent border-t-transparent rounded-full animate-spin mb-8"></div>
-             <p className="text-crypto-muted">Loading...</p>
-           </div>
+        <div className="relative flex items-center justify-center h-screen bg-black overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#1a1a1a,black)]" />
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="w-16 h-16 border border-white/20 rounded-full animate-spin border-t-white mb-6" />
+          <p className="text-white/60 text-sm tracking-widest uppercase">Loading</p>
+        </div>
+      </div>
       ) : error ? (
         <Card className="bg-crypto-card border-crypto-card">
           <CardContent className="flex justify-center items-center p-6">
@@ -102,7 +105,7 @@ const NewPairs = () => {
         </Card>
       ) : (
         <Card className="border-crypto-card rounded-lg">
-          <div className="flex gap-2 mb-0 overflow-x-auto py-2 no-scrollbar mt-4 ml-6">
+          <div className="flex gap-2 mb-0 overflow-x-auto py-2 no-scrollbar mt-0 ml-6">
         <Button
           variant={sortBy === "marketCap" ? "outline" : "outline"}
           size="sm"
