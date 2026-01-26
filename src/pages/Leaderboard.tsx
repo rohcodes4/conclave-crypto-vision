@@ -169,10 +169,11 @@ export default function Leaderboard() {
   }
 
   return (
-    <div className="p-4 pl-3">
+    <div className="p-4 pl-3 overflow-x-hidden max-w-full">
       <h1 className="font-bold text-3xl font-bold mb-2">Leaderboard</h1>
       <p className="text-crypto-muted mb-8 ">See where you rank amongst others</p>
-      <table className="w-full">
+      <div className="w-full overflow-x-auto">
+      <table className="w-max min-w-[600px]">
         <thead>
           <tr className="text-left text-xs text-crypto-muted border-b border-crypto-card">
             <th className="pb-3 px-3">#</th>
@@ -244,6 +245,7 @@ export default function Leaderboard() {
           )}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }
