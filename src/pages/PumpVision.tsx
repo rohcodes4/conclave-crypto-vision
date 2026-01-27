@@ -11,22 +11,13 @@ const PumpVision = () => {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        {/* <div>
-          <h1 className="text-3xl font-bold mb-2">Pump Vision</h1>
-          <p className="text-crypto-muted">Early detection of potentially high-growth tokens</p>
-        </div> */}
-        <div className="flex flex-col items-center justify-center h-screen bg-crypto-bg">
-             <div className="w-16 h-16 border-4 border-crypto-accent border-t-transparent rounded-full animate-spin mb-8"></div>
-             <p className="text-crypto-muted">Loading...</p>
-           </div>
-        
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {Array(8).fill(0).map((_, i) => (
-            <Skeleton key={i} className="h-32 w-full rounded-lg" />
-          ))}
-        </div> */}
+      <div className="relative flex items-center justify-center h-screen bg-black overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#1a1a1a,black)]" />
+      <div className="relative z-10 flex flex-col items-center">
+        <div className="w-16 h-16 border border-white/20 rounded-full animate-spin border-t-white mb-6" />
+        <p className="text-white/60 text-sm tracking-widest uppercase">Loading</p>
       </div>
+    </div>
     );
   }
 
