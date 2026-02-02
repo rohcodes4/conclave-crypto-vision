@@ -351,9 +351,6 @@ const TokenDetails = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="text-sm text-crypto-muted">
-                        Raw Score: {rugcheckData.score}/1000 | {rugcheckData.rugged ? 'RUGGED' : 'Not rugged'}
-                      </div>
                     </div>
                   )}
 
