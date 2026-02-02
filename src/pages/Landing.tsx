@@ -17,13 +17,10 @@ export const LandingPage: React.FC = () => {
       <Component />
       <FeaturesSection />
       <Features />
-      {/* <TokenExploration /> */}
       <RugCheckerSection />
       <PortfolioSection />
-      {/* <LeaderboardSection /> */}
-      {/* <WhyPaperTrader /> */}
       <FinalCTA />
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

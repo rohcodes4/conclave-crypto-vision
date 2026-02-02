@@ -5,7 +5,6 @@ const PortfolioSection: React.FC = () => {
     <section className="relative min-h-screen bg-black text-white px-8 py-28 overflow-hidden">
       {/* Ambient background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(80,255,170,0.12),transparent_40%),radial-gradient(circle_at_80%_30%,rgba(255,180,80,0.15),transparent_45%)]" />
-      <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.04]" />
 
       <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
         {/* LEFT */}

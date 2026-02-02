@@ -258,7 +258,7 @@ const Hero = React.memo(() => {
         </Link>
       </div>
 
-      <div className="w-full max-w-5xl relative pb-20">
+      <div className="w-full max-w-5xl relative">
         <div
           className="absolute left-1/2 w-[90%] pointer-events-none z-0"
           style={{
