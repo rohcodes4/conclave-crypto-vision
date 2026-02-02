@@ -14,7 +14,7 @@ const RugCheckerSection: React.FC = () => {
   const progress = circumference * (1 - score / 100);
 
   return (
-    <section className="relative py-32 px-6 bg-black text-white overflow-hidden">
+    <section className="relative py-20 md:py-32 px-6 bg-black text-white overflow-hidden">
       {/* background grid */}
       <div className="absolute inset-0 opacity-[0.08] bg-[linear-gradient(to_right,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:40px_40px]" />
 

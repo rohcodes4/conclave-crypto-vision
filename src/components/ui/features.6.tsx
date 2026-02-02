@@ -2,7 +2,7 @@ import { Cpu, Lock, Sparkles, Zap } from 'lucide-react'
 import tokenDetailsImg from "@/assets/images/tokenDetails.png";
 export function Features() {
     return (
-        <section className="py-10 md:py-10 bg-black">
+        <section className="py-2 md:py-10 bg-black">
             <div className="mx-auto max-w-5xl space-y-12 px-6">
                 <div className="relative z-10 grid items-center gap-4 md:grid-cols-2 md:gap-12">
                     <h2 className="text-4xl font-semibold">Explore, Analyze,<br/> and Trade<br/> any Solana Token</h2>

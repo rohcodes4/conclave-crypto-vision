@@ -2,7 +2,7 @@ import React from "react";
 
 const PortfolioSection: React.FC = () => {
   return (
-    <section className="relative min-h-screen bg-black text-white px-8 py-28 overflow-hidden">
+    <section className="relative md:min-h-screen bg-black text-white px-8 py-12 md:py-28 overflow-hidden">
       {/* Ambient background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(80,255,170,0.12),transparent_40%),radial-gradient(circle_at_80%_30%,rgba(255,180,80,0.15),transparent_45%)]" />
 

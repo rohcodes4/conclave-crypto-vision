@@ -192,7 +192,7 @@ Navigation.displayName = "Navigation";
 const Hero = React.memo(() => {
   return (
     <section
-      className="relative min-h-screen flex flex-col items-center justify-start px-6 py-20 md:py-24"
+      className="relative md:min-h-screen flex flex-col items-center justify-start px-6 pb-10 pt-24 md:py-24"
       style={{
         animation: "fadeIn 0.6s ease-out"
       }}
@@ -293,7 +293,7 @@ Hero.displayName = "Hero";
 // Main Component
 export default function Component() {
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="md:min-h-screen bg-black text-white">
       <Navigation />
       <Hero />
     </main>
