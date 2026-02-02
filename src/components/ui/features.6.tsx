@@ -14,7 +14,7 @@ export function Features() {
                         <div className="bg-gradient-to-t z-1 from-background absolute inset-0 to-transparent"></div>
                         {/* <img src="https://tailark.com/_next/image?url=%2Fmail-upper.png&w=3840&q=75" className="absolute inset-0 z-10" alt="payments illustration dark" width={2797} height={1137} /> */}
                         <img src="https://tailark.com/_next/image?url=%2Fmail-back.png&w=3840&q=75" className="hidden dark:block" alt="payments illustration dark" width={2797} height={1137} />
-                        <img src={tokenDetailsImg} className="dark:hidden" alt="payments illustration light" width={2797} height={1137} />
+                        <img src={tokenDetailsImg} className="dark:hidden border border-white/20 rounded-lg" alt="payments illustration light" width={2797} height={1137} />
                     </div>
                 </div>
                 <div className="relative mx-auto grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-8 lg:grid-cols-4">

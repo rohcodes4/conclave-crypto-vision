@@ -272,7 +272,7 @@ const getRandomImage = (isPositive: boolean) => {
               {holdings.length === 0 ? (
                 <div className="p-8 text-center">
                   <p className="text-crypto-muted mb-4">You don't have any current assets yet.</p>
-                  <Link to="/trending">
+                  <Link to="/dashboard">
                     <button className="bg-crypto-accent hover:bg-crypto-highlight text-white px-4 py-2 rounded-md transition-colors">
                       Start Trading
                     </button>
@@ -402,7 +402,7 @@ const getRandomImage = (isPositive: boolean) => {
                 {trades.length === 0 ? (
                   <div className="py-12 text-center">
                     <p className="text-crypto-muted mb-4">You haven't made any trades yet.</p>
-                    <Link to="/trending">
+                    <Link to="/dashboard">
                       <Button variant="outline">Start Trading</Button>
                     </Link>
                   </div>
@@ -518,7 +518,7 @@ const getRandomImage = (isPositive: boolean) => {
                 <div className="p-8 text-center">
                   <p className="text-crypto-muted mb-4">No realized profits or losses yet.</p>
                   <p className="text-crypto-muted mb-4">When you sell all of your holdings for a token, your PnL will show here.</p>
-                  <Link to="/trending">
+                  <Link to="/dashboard">
                     <button className="bg-crypto-accent hover:bg-crypto-highlight text-white px-4 py-2 rounded-md transition-colors">
                       Start Trading
                     </button>

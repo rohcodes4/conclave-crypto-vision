@@ -281,7 +281,7 @@ const Hero = React.memo(() => {
         <div
           className="absolute left-1/2 w-[90%] pointer-events-none z-0"
           style={{
-            top: "-23%",
+            top: "-32%",
             transform: "translateX(-50%)"
           }}
           aria-hidden="true"
@@ -298,7 +298,7 @@ const Hero = React.memo(() => {
           <img
             src={heroImg}
             alt="Dashboard preview showing analytics and metrics interface"
-            className="w-full h-auto rounded-lg shadow-2xl"
+            className="w-full h-auto rounded-lg shadow-2xl border border-white/20"
             loading="eager"
           />
         </div>

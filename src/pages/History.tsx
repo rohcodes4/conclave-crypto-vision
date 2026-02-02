@@ -61,7 +61,7 @@ const History = () => {
             {trades.length === 0 ? (
               <div className="py-12 text-center">
                 <p className="text-crypto-muted mb-4">You haven't made any trades yet.</p>
-                <Link to="/trending">
+                <Link to="/dashboard">
                   <Button variant="outline">Start Trading</Button>
                 </Link>
               </div>

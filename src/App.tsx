@@ -127,7 +127,7 @@ const AppContent = () => {
                 <Route path="/leaderboard" element={<Leaderboard />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/new-pairs" element={<NewPairs />} />
-                <Route path="/trending" element={<Trending />} />
+                {/* <Route path="/trending" element={<Trending />} /> */}
                 <Route path="/pump-vision" element={<PumpVision />} />
                 <Route path="/holdings" element={<Holdings />} />
                 <Route path="/token/:id" element={<TokenDetails />} />

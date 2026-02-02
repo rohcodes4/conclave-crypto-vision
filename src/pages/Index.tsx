@@ -72,7 +72,7 @@ const Index = () => {
                   size="lg" 
                   variant="outline" 
                   className="border-crypto-accent text-crypto-accent hover:bg-crypto-accent/10"
-                  onClick={() => navigate('/trending')}
+                  onClick={() => navigate('/dashboard')}
                 >
                   Explore Trending Tokens
                 </Button>
@@ -106,7 +106,7 @@ const Index = () => {
             <Button 
               variant="ghost" 
               className="flex items-center gap-2 text-crypto-accent"
-              onClick={() => navigate('/trending')}
+              onClick={() => navigate('/dashboard')}
             >
               <span>See More</span>
               <TrendingUp className="h-4 w-4" />

@@ -119,7 +119,7 @@ const Dashboard = () => {
       </Card>
       </div>}
       <div className="flex justify-center">
-                  <Link to="/trending" className="mr-4 flex items-center">
+                  <Link to="/dashboard" className="mr-4 flex items-center">
         
         <Button variant="outline" >View More</Button>
         </Link>
@@ -228,7 +228,7 @@ const Dashboard = () => {
               ) : (
                 <div className="p-6 text-center">
                   <p className="text-crypto-muted">No trades yet</p>
-                  <Link to="/trending">
+                  <Link to="/dashboard">
                     <button className="mt-2 text-sm text-crypto-accent hover:underline">
                       Start Trading
                     </button>
@@ -274,7 +274,7 @@ const Dashboard = () => {
               ) : (
                 <div className="p-6 text-center">
                   <p className="text-crypto-muted">No holdings yet</p>
-                  <Link to="/trending">
+                  <Link to="/dashboard">
                     <button className="mt-2 text-sm text-crypto-accent hover:underline">
                       Start Trading
                     </button>
