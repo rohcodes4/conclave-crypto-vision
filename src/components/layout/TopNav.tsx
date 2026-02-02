@@ -148,7 +148,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
         </div>
         <div className="flex items-center">
         <Link
-          to="/"
+          to="/dashboard"
           className="mr-4 flex items-center h-16"
         >
           <h1 className="relative top-[1px] text-xs md:text-md font-bold text-white whitespace-pre font-pixel">

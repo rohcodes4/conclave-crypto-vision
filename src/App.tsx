@@ -67,7 +67,7 @@ const PostAuthRedirect = () => {
   useEffect(() => {
     // If user is authenticated and we're at the auth page, redirect to home
     if (user && window.location.pathname === '/auth') {
-      navigate('/');
+      navigate('/dashboard');
     }
   }, [user, navigate]);
   

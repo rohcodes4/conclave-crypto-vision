@@ -44,7 +44,7 @@ const Auth :  React.FC<SplashScreenProps> = ({ handleSplashComplete }) => {
   const [resetSent, setResetSent] = useState(false);
 
   useEffect(() => {
-      navigate("/");
+      navigate("/dashboard");
   }, []);
   // // Login form
   // const loginForm = useForm({
