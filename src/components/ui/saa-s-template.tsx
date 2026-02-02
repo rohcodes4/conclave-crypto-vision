@@ -102,8 +102,15 @@ const Navigation = React.memo(() => {
   return (
     <header className="fixed top-0 w-full z-50 border-b border-gray-800/50 bg-black/80 backdrop-blur-md">
       <nav className="max-w-7xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="text-xl font-semibold text-white">Paper Trader</div>
+        <div className="flex items-center justify-center">
+          <div className="text-2xl mt-1 font-semibold text-white font-medium text-center max-w-3xl px-6 leading-tight"
+          style={{
+            background: "linear-gradient(to bottom, #ffffff, #ffffff, #ffffff80 , #ffffff60",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+            letterSpacing: "-0.05em"
+          }}>PAPER TRADER</div>
           
           {/* <div className="hidden md:flex items-center justify-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <a href="#getting-started" className="text-sm text-white/60 hover:text-white transition-colors">
@@ -117,22 +124,12 @@ const Navigation = React.memo(() => {
             </a>
           </div> */}
 
-          <div className="hidden md:flex items-center gap-4 cursor-pointer">
-            {/* <Button type="button" variant="ghost" size="sm">
-              Sign in
-            </Button> */}
-            <Link to="/dashboard">
-            <Button type="button" variant="default" size="sm">
-              Start Trading
-            </Button>
-            </Link>
-          </div>
 
-          <Link to="/dashboard" className="md:hidden">
+          {/* <Link to="/dashboard" className="md:hidden">
             <Button type="button" variant="default" size="sm">
               Start Trading
             </Button>
-            </Link>
+            </Link> */}
 
           {/* <button
             type="button"
@@ -228,23 +225,7 @@ const Hero = React.memo(() => {
             transform: translateY(0);
           }
         }
-      `}</style>
-
-      <aside className="opacity-0 mb-8 cursor-default inline-flex flex-wrap items-center justify-center gap-2 px-4 py-2 rounded-full border border-gray-700 bg-gray-800/50 backdrop-blur-sm max-w-full">
-        <span className="text-xs text-center whitespace-nowrap" style={{ color: '#9ca3af' }}>
-          New version of template is out!
-        </span>
-        <a
-          href="#"
-          className="cursor-default flex items-center gap-1 text-xs hover:text-white transition-all active:scale-95 whitespace-nowrap"
-          style={{ color: '#9ca3af' }}
-          aria-label="Read more about the new version"
-          aria-disabled={true}
-        >
-          Read more
-          <ArrowRight size={12} />
-        </a>
-      </aside>
+      `}</style>      
 
       <h1
         className="text-4xl md:text-5xl lg:text-6xl font-medium text-center max-w-3xl px-6 leading-tight mb-6"
