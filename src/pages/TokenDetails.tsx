@@ -189,7 +189,7 @@ const TokenDetails = () => {
       <div className="flex flex-col items-center justify-center h-64">
         <h2 className="text-xl font-semibold mb-2">Token not found</h2>
         <p className="text-crypto-muted mb-4">We couldn't find details for this token.</p>
-        <Link to="/">
+        <Link to="/dashboard">
           <Button variant="outline">Go back to dashboard</Button>
         </Link>
       </div>
@@ -207,7 +207,7 @@ const TokenDetails = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center gap-4">
-        <Link to="/">
+        <Link to="/dashboard">
           <Button variant="outline" size="icon" className="h-9 w-9">
             <ArrowLeft className="h-4 w-4" />
           </Button>

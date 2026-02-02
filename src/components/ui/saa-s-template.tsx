@@ -121,14 +121,14 @@ const Navigation = React.memo(() => {
             {/* <Button type="button" variant="ghost" size="sm">
               Sign in
             </Button> */}
-            <Link to="/">
+            <Link to="/dashboard">
             <Button type="button" variant="default" size="sm">
               Start Trading
             </Button>
             </Link>
           </div>
 
-          <Link to="/" className="md:hidden">
+          <Link to="/dashboard" className="md:hidden">
             <Button type="button" variant="default" size="sm">
               Start Trading
             </Button>
@@ -264,7 +264,7 @@ const Hero = React.memo(() => {
       </p>
 
       <div className="flex items-center gap-4 relative z-10 mb-16">
-        <Link to="/">
+        <Link to="/dashboard">
           <Button
             type="button"
             variant="gradient"

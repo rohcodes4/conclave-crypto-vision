@@ -119,13 +119,13 @@ const AppContent = () => {
           <Routes>
             {/* Add Auth route */}
             <Route path="/auth" element={<Auth handleSplashComplete={handleSplashComplete}/>} />
-            <Route path="/landing" element={<Landing/>} />            
+            <Route path="/" element={<Landing/>} />            
             {/* Protected routes */}
             <Route element={<ProtectedRoute handleSplashComplete={handleSplashComplete}/>}>
               <Route element={<Layout />}>
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/new-pairs" element={<NewPairs />} />
                 <Route path="/trending" element={<Trending />} />
                 <Route path="/pump-vision" element={<PumpVision />} />

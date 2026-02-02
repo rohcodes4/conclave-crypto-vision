@@ -24,7 +24,7 @@ const Sidebar = ({ className }: SidebarProps) => {
   const { user, signOut } = useAuth();
   
   const navItems = [
-    { name: "Explore", path: "/", icon: Search },
+    { name: "Explore", path: "/dashboard", icon: Search },
     { name: "New Pairs", path: "/new-pairs", icon: Sparkles },
     { name: "Pump Vision", path: "/pump-vision", icon: LineChart },
     { name: "Holdings", path: "/holdings", icon: Wallet },
