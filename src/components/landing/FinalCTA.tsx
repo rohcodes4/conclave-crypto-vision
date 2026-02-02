@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const FinalCTA: React.FC = () => {
   return (
@@ -41,9 +42,11 @@ const FinalCTA: React.FC = () => {
           transition={{ delay: 1, duration: 0.8 }}
           className="flex flex-col sm:flex-row gap-4 justify-center mt-6"
         >
-          <button className="px-8 py-4 bg-white text-black font-semibold rounded-xl shadow-lg shadow-cyan-400/40 hover:scale-105 transition-transform duration-300">
-            Start Paper Trading
-          </button>
+          <Link to="/">
+            <button className="px-8 py-4 bg-white text-black font-semibold rounded-xl shadow-lg shadow-cyan-400/40 hover:scale-105 transition-transform duration-300">
+              Start Paper Trading
+            </button>
+          </Link>
 
         </motion.div>
       </div>

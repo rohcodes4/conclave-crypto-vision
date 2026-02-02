@@ -14,25 +14,16 @@ import { TokenExploration } from "@/components/landing/TokenExploration";
 export const LandingPage: React.FC = () => {
   return (
     <div className="bg-neutral-950 text-neutral-100 overflow-hidden">
-        <Component />
-        {/* <FeaturesGrid /> */}
-        <FeaturesSection />
-        <Features/>
-      <TokenExploration />
+      <Component />
+      <FeaturesSection />
+      <Features />
+      {/* <TokenExploration /> */}
       <RugCheckerSection />
       <PortfolioSection />
-      <LeaderboardSection />
-      <WhyPaperTrader />
+      {/* <LeaderboardSection /> */}
+      {/* <WhyPaperTrader /> */}
       <FinalCTA />
       <Footer />
-      {/* <Hero /> */}
-      {/* <FeaturesGrid />
-      <TokenExploration />
-      <PortfolioSection />
-      <RugCheckerSection />
-      <WhyPaperTrader />
-      <FinalCTA />
-      <Footer /> */}
     </div>
   );
 };

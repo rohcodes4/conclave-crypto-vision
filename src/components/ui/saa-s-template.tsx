@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import heroImg from "@/assets/images/heroImg.png";
 // Inline Button Component
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "default" | "secondary" | "ghost" | "gradient";
@@ -103,7 +103,7 @@ const Navigation = React.memo(() => {
     <header className="fixed top-0 w-full z-50 border-b border-gray-800/50 bg-black/80 backdrop-blur-md">
       <nav className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="text-xl font-semibold text-white font-pixel">Paper Trader</div>
+          <div className="text-xl font-semibold text-white">Paper Trader</div>
           
           {/* <div className="hidden md:flex items-center justify-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <a href="#getting-started" className="text-sm text-white/60 hover:text-white transition-colors">
@@ -128,20 +128,31 @@ const Navigation = React.memo(() => {
             </Link>
           </div>
 
-          <button
+          <Link to="/" className="md:hidden">
+            <Button type="button" variant="default" size="sm">
+              Start Trading
+            </Button>
+            </Link>
+
+          {/* <button
             type="button"
             className="md:hidden text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          </button> */}
         </div>
       </nav>
-
+{/* 
       {mobileMenuOpen && (
         <div className="md:hidden bg-black/95 backdrop-blur-md border-t border-gray-800/50 animate-[slideDown_0.3s_ease-out]">
           <div className="px-6 py-4 flex flex-col gap-4">
+          <Link to="/">
+            <Button type="button" variant="default" size="sm">
+              Start Trading
+            </Button>
+            </Link>
             <a
               href="#getting-started"
               className="text-sm text-white/60 hover:text-white transition-colors py-2"
@@ -173,7 +184,7 @@ const Navigation = React.memo(() => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </header>
   );
 });
@@ -253,15 +264,17 @@ const Hero = React.memo(() => {
       </p>
 
       <div className="flex items-center gap-4 relative z-10 mb-16">
-        <Button
-          type="button"
-          variant="gradient"
-          size="lg"
-          className="rounded-lg flex items-center justify-center"
-          aria-label="Get started with the template"
-        >
-          Start Paper Trading
-        </Button>
+        <Link to="/">
+          <Button
+            type="button"
+            variant="gradient"
+            size="lg"
+            className="rounded-lg flex items-center justify-center"
+            aria-label="Get started with the template"
+          >
+            Start Paper Trading
+          </Button>
+        </Link>
       </div>
 
       <div className="w-full max-w-5xl relative pb-20">
@@ -283,7 +296,7 @@ const Hero = React.memo(() => {
         
         <div className="relative z-10">
           <img
-            src="https://i.postimg.cc/SKcdVTr1/Dashboard2.png"
+            src={heroImg}
             alt="Dashboard preview showing analytics and metrics interface"
             className="w-full h-auto rounded-lg shadow-2xl"
             loading="eager"

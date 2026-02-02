@@ -153,18 +153,18 @@ const RugCheckerSection: React.FC = () => {
               </ul>
             </div>
 
-            {/* Live Signals */}
+            {/* Creator Balance & Details */}
             <div className="rounded-2xl p-5 bg-white/5 backdrop-blur-xl border border-white/10">
               <div className="flex items-center gap-3">
-                <Activity className="w-5 h-5 text-red-400" />
-                <h4 className="font-medium">Live Signals</h4>
+                <Users className="w-5 h-5 text-red-400" />
+                <h4 className="font-medium">Creator Balance & Details</h4>
               </div>
 
               <ul className="mt-4 space-y-1.5 text-sm text-neutral-300">
-                <li>• Large holder exit detected</li>
-                <li>• Short-term volatility spike</li>
-                <li>• Repeated mint checks</li>
-                <li>• Signals update in real time</li>
+                <li>• Creator wallet holds 18%</li>
+                <li>• No recent balance reduction</li>
+                <li>• Multiple wallets linked to deployer</li>
+                <li>• No public identity verification</li>
               </ul>
             </div>
           </div>
