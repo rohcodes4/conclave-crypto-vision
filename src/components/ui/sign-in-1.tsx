@@ -104,7 +104,7 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
                 <div key={index} className="relative group">
                   {/* Coming Soon Badge - per button */}
                   <div className="absolute -top-2 -right-2 z-10">
-                    <div className="bg-orange-500 text-black text-xs font-bold px-1.5 py-0.5 rounded-full shadow-md transform scale-90 animate-pulse">
+                    <div className="bg-orange-500 text-black text-xs font-bold px-1.5 py-0.5 rounded-full shadow-md transform scale-90">
                       SOON
                     </div>
                   </div>
