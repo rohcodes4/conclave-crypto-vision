@@ -52,8 +52,8 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
 
   const navItems = [
     { name: "Explore", path: "/dashboard", icon: Search },
-    { name: "New Pairs", path: "/new-pairs", icon: Sparkles },
     { name: "Pump Vision", path: "/pump-vision", icon: LineChart },
+    { name: "Rug Checker", path: "/rug-check", icon: ShieldAlert },
     { name: "Leaderboard", path: "/leaderboard", icon: ChartColumnIncreasing },
     { name: "Holdings", path: "/holdings", icon: Wallet },
     { name: "Settings", path: "/settings", icon: Settings },
@@ -106,7 +106,7 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
     <header className="fixed top-0 left-0 right-0 z-40 border-b border-crypto-card bg-crypto-bg/90 backdrop-blur-sm">
       <div className="max-w-[100vw] mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo and Mobile Menu Button */}
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <div className="relative" ref={appMenuRef}>
             <Button 
               variant="ghost" 
@@ -130,23 +130,12 @@ const TopNav = ({ navOpen, setNavOpen }: TopNavProps) => {
                     <div className="font-medium">Token Rug Checker</div>
                     <div className="text-xs text-crypto-muted">Audit & risk analysis</div>
                   </div>
-                </Link>
-                {/* <Link 
-                  to="/wallet-analysis" 
-                  className="flex items-center gap-3 p-4 hover:bg-crypto-bg/50 transition-colors w-full text-left"
-                  onClick={() => setShowAppMenu(false)}
-                >
-                  <ShieldCheck className="h-5 w-5 flex-shrink-0 text-crypto-success" />
-                  <div>
-                    <div className="font-medium">Wallet Analysis</div>
-                    <div className="text-xs text-crypto-muted">Portfolio & holdings</div>
-                  </div>
-                </Link> */}
+                </Link>              
               </div>
             )}
           </div>
-        </div>
-        <div className="flex items-center">
+        </div> */}
+        <div className="flex items-center lg:ml-5">
         <Link
           to="/dashboard"
           className="mr-4 flex items-center h-16"
