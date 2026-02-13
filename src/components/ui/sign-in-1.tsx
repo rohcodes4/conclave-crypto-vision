@@ -101,18 +101,35 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
             </Button>           
 
             {/* Secondary Action Buttons */}
-            {/* <div className="grid gap-2">
-              {secondaryActions?.map((action, index) => (
-                <Button key={index} variant="secondary" className="bg-[#2a2a2a] hover:bg-white hover:text-black w-full transition-transform hover:scale-[1.03]" onClick={action.onClick}>
-                  {action.icon}
-                  {action.label}
-                </Button>
-              ))}
-            </div> */}
             <div className="grid gap-2">
+            {secondaryActions?.map((action, index) => (
+                <div key={index} className="relative group">
+                  {/* Coming Soon Badge - per button */}
+                  <div className="absolute -top-2 -right-2 z-10">
+                    <div className="bg-orange-500 text-black text-xs font-bold px-1.5 py-0.5 rounded-full shadow-md transform scale-90 animate-pulse">
+                      SOON
+                    </div>
+                  </div>
+                  
+                  {/* Disabled Button */}
+                  <Button 
+                    variant="secondary" 
+                    className="bg-[#2a2a2a] hover:bg-[#2a2a2a] cursor-not-allowed relative w-full transition-none pr-8" 
+                    disabled
+                    onClick={action.onClick}  // Keep for accessibility
+                  >
+                    <div className="flex items-center gap-2">
+                      {action.icon}
+                      <span>{action.label}</span>
+                    </div>
+                  </Button>
+                </div>
+              ))}
+            </div>
+            {/* <div className="grid gap-2">
               <TelegramLogin/>
               <Web3Login/>
-            </div>
+            </div> */}
           </CardContent>
 
           {/* Skip Action Button */}
