@@ -10,22 +10,37 @@ import { Buffer } from 'buffer';
 import { Button } from './ui/button';
 
 const Web3Login = () => {
-  const { publicKey, signMessage, connected, connect, disconnect } = useWallet();
+  const { publicKey, wallet, wallets, signMessage, connected } = useWallet();
   const { setVisible } = useContext(WalletModalContext);
   const [shouldSign, setShouldSign] = useState(false);
 
-  const startLogin = () => {
-    if (!connected) {
-      setVisible(true); // open wallet selector
-      setShouldSign(true); // flag to sign after connection
-    } else {
-      handleLogin(); // directly sign if already connected
+  const startLogin = useCallback(() => {
+    console.log('=== WALLET DEBUG ===')
+    console.log('Connected:', connected)
+    console.log('PublicKey:', publicKey?.toBase58())
+    console.log('Wallet:', wallet)
+    console.log('Wallet readyState:', wallet?.adapter.readyState)
+    console.log('Wallets available:', wallets.length)
+    console.log('setVisible fn:', typeof setVisible)
+    
+    if (!setVisible) {
+      console.error('❌ WalletModalContext missing!')
+      return
     }
-  };
+    
+    setVisible(true)
+    setShouldSign(true)
+    console.log('✅ Modal opened, shouldSign=true')
+  }, [wallet, wallets, publicKey, connected, setVisible])
 
   const handleLogin = useCallback(async () => {
     try {
-      if (!publicKey || !signMessage) throw new WalletNotConnectedError();
+      console.log('handleLogin called')
+    if (!publicKey || !signMessage) {
+      console.error('❌ Missing state:', { publicKey: !!publicKey, signMessage: !!signMessage })
+      return
+    }
+      // if (!publicKey || !signMessage) throw new WalletNotConnectedError();
 
       const message = `Login request for ${publicKey?.toBase58()}`;
       const encodedMessage = new TextEncoder().encode(message);
@@ -56,13 +71,22 @@ const Web3Login = () => {
     }
   }, [publicKey, signMessage]);
 
-  // Automatically sign after connection
   useEffect(() => {
-    if (connected && shouldSign) {
-      handleLogin();
-      setShouldSign(false); // reset
+    console.log('useEffect: connected=', connected, 'publicKey=', !!publicKey, 'shouldSign=', shouldSign)
+    if (connected && publicKey && shouldSign) {
+      handleLogin()
+      setShouldSign(false)
     }
-  }, [connected, shouldSign, handleLogin]);
+  }, [connected, publicKey, shouldSign, handleLogin])
+
+
+  // // Automatically sign after connection
+  // useEffect(() => {
+  //   if (connected && shouldSign) {
+  //     handleLogin();
+  //     setShouldSign(false); // reset
+  //   }
+  // }, [connected, shouldSign, handleLogin]);
 
   return (
       <Button onClick={startLogin} className="bg-[#2a2a2a] hover:bg-white hover:text-black w-full transition-transform hover:scale-[1.03]">
