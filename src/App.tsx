@@ -148,7 +148,7 @@ const AppContent = () => {
 
 const App = () => (
   <ConnectionProvider endpoint={endpoint}>
-    <WalletProvider wallets={wallets} autoConnect={false}>
+    <WalletProvider wallets={wallets} autoConnect={false} onError={(error) => console.log('Wallet error:', error)}>
       <WalletModalProvider>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>

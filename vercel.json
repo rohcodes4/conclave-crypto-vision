@@ -2,7 +2,11 @@
     "rewrites": [
       {
         "source": "/(.*)",
-        "destination": "/index.html"
+        "destination": "/index.html",
+        "headers": [{
+          "key": "Content-Security-Policy",
+          "value": "frame-src 'self' https://*.solana.com https://*.metamask.io; connect-src 'self' * ws://* wss://*"
+        }]
       }
     ]
   }
