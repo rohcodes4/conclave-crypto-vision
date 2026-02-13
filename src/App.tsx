@@ -24,6 +24,7 @@ import {
   ConnectionProvider,
   WalletProvider
 } from '@solana/wallet-adapter-react';
+import { InjectedWalletAdapter } from '@solana/wallet-adapter-wallets'
 import { 
   WalletAdapterNetwork
 } from '@solana/wallet-adapter-base'; 
@@ -39,13 +40,19 @@ import WalletAnalysis from './pages/WalletAnalysis';
 import LayoutNew from './components/layout/LayoutNew';
 import Landing from './pages/Landing';
 
+
 const wallets = [
+  new InjectedWalletAdapter(),  // MetaMask + injected
   new PhantomWalletAdapter(),
+]
+
+// const wallets = [
+  // new PhantomWalletAdapter(),
   // new SolflareWalletAdapter(),
-  new AlphaWalletAdapter(),
+  // new AlphaWalletAdapter(),
   // new CloverWalletAdapter(),
   // new TorusWalletAdapter()
-];
+// ];
 
 // FREE Solana RPC endpoints (with fallbacks)
 const RPC_ENDPOINTS = [
