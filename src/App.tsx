@@ -25,9 +25,9 @@ import {
   WalletProvider
 } from '@solana/wallet-adapter-react';
 import { 
-  InjectedWalletAdapter,
   PhantomWalletAdapter,
-  BackpackWalletAdapter
+  BackpackWalletAdapter,
+  SolflareWalletAdapter  // ✅ Keep but last (no conflict when not first)
 } from '@solana/wallet-adapter-wallets';
 import { 
   WalletAdapterNetwork
@@ -39,21 +39,19 @@ import WalletAnalysis from './pages/WalletAnalysis';
 import LayoutNew from './components/layout/LayoutNew';
 import Landing from './pages/Landing';
 
-// ✅ Fix 3: MetaMask-First with InjectedWalletAdapter (native MetaMask support)
+// ✅ Fix: MetaMask-First Order (Backpack detects MetaMask automatically)
 const wallets = [
-  new InjectedWalletAdapter(),     // ✅ Native MetaMask + injected wallets first
-  new BackpackWalletAdapter(),     // ✅ MetaMask shim/backup
-  new PhantomWalletAdapter(),      // ✅ Solana native
-  // ❌ Removed: SolflareWalletAdapter (conflicts with MetaMask detection)
-// ❌ Removed: AlphaWalletAdapter (slow), Clover, Torus
+  new BackpackWalletAdapter(),     // ✅ #1: MetaMask shim + auto-detection
+  new PhantomWalletAdapter(),      // ✅ #2: Solana native  
+  new SolflareWalletAdapter(),     // ✅ #3: Last position (no StreamMiddleware conflict)
+  // Removed slow/conflicting adapters
 ];
 
-// ✅ Fix 2: Single reliable FREE RPC endpoint
-const endpoint = "https://rpc.ankr.com/solana";  // Fast, reliable, free
+// ✅ Single reliable RPC
+const endpoint = "https://rpc.ankr.com/solana";
 
 const queryClient = new QueryClient();
 
-// Component to handle post-authentication redirect
 const PostAuthRedirect = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -67,7 +65,6 @@ const PostAuthRedirect = () => {
   return null;
 };
 
-// Main application with splash screen
 const AppContent = () => {
   const [showSplash, setShowSplash] = useState(false);
   const [splashCompleted, setSplashCompleted] = useState(false);
@@ -124,14 +121,13 @@ const AppContent = () => {
   );
 };
 
-// ✅ Fix 5: Complete WalletProvider config
 const App = () => (
   <ConnectionProvider endpoint={endpoint}>
     <WalletProvider 
       wallets={wallets} 
       autoConnect={false}
       config={{ 
-        commitment: 'processed',  // ✅ Faster confirmations
+        commitment: 'processed',
         network: WalletAdapterNetwork.Mainnet
       }}
       onError={(error) => console.log('Wallet error:', error)}
