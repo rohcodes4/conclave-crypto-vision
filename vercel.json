@@ -11,11 +11,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data: https:; connect-src 'self' ws://localhost:* wss://* https://*.solana.com https://api.mainnet-beta.solana.com https://rpc.ankr.com https://*.phantom.app https://*.metamask.io https://*.solflare.com; frame-src 'self' https://*.solana.com https://*.phantom.app https://*.metamask.io https://*.solflare.com https://accounts.google.com; object-src 'none'; base-uri 'self'"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src * data:; font-src *; connect-src * ws://* wss://*; frame-src *; object-src 'none'"
         }
       ]
     }
