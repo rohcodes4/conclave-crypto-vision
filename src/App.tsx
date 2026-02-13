@@ -24,15 +24,14 @@ import {
   ConnectionProvider,
   WalletProvider
 } from '@solana/wallet-adapter-react';
-import { InjectedWalletAdapter } from '@solana/wallet-adapter-wallets'
+import { 
+  InjectedWalletAdapter,
+  PhantomWalletAdapter,
+  BackpackWalletAdapter
+} from '@solana/wallet-adapter-wallets';
 import { 
   WalletAdapterNetwork
 } from '@solana/wallet-adapter-base'; 
-import {
-  PhantomWalletAdapter,
-  AlphaWalletAdapter
-} from '@solana/wallet-adapter-wallets';
-
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import Maintainance from './pages/Maintainance';
 import RugCheck from './pages/RugCheck';
@@ -40,29 +39,17 @@ import WalletAnalysis from './pages/WalletAnalysis';
 import LayoutNew from './components/layout/LayoutNew';
 import Landing from './pages/Landing';
 
-
+// ✅ Fix 3: MetaMask-First with InjectedWalletAdapter (native MetaMask support)
 const wallets = [
-  new InjectedWalletAdapter(),  // MetaMask + injected
-  new PhantomWalletAdapter(),
-]
-
-// const wallets = [
-  // new PhantomWalletAdapter(),
-  // new SolflareWalletAdapter(),
-  // new AlphaWalletAdapter(),
-  // new CloverWalletAdapter(),
-  // new TorusWalletAdapter()
-// ];
-
-// FREE Solana RPC endpoints (with fallbacks)
-const RPC_ENDPOINTS = [
-  // "https://api.mainnet-beta.solana.com", // Official free endpoint
-  "https://rpc.ankr.com/solana", // Ankr free endpoint
-  "https://solana-api.projectserum.com", // Serum free endpoint
+  new InjectedWalletAdapter(),     // ✅ Native MetaMask + injected wallets first
+  new BackpackWalletAdapter(),     // ✅ MetaMask shim/backup
+  new PhantomWalletAdapter(),      // ✅ Solana native
+  // ❌ Removed: SolflareWalletAdapter (conflicts with MetaMask detection)
+// ❌ Removed: AlphaWalletAdapter (slow), Clover, Torus
 ];
 
-// Use the first endpoint, with fallback capability built into Solana's ConnectionProvider
-const endpoint = RPC_ENDPOINTS[0];
+// ✅ Fix 2: Single reliable FREE RPC endpoint
+const endpoint = "https://rpc.ankr.com/solana";  // Fast, reliable, free
 
 const queryClient = new QueryClient();
 
@@ -72,7 +59,6 @@ const PostAuthRedirect = () => {
   const { user } = useAuth();
   
   useEffect(() => {
-    // If user is authenticated and we're at the auth page, redirect to home
     if (user && window.location.pathname === '/auth') {
       navigate('/dashboard');
     }
@@ -86,7 +72,6 @@ const AppContent = () => {
   const [showSplash, setShowSplash] = useState(false);
   const [splashCompleted, setSplashCompleted] = useState(false);
   
-  // Check if splash screen has been shown in this session
   useEffect(() => {
     const splashShown = sessionStorage.getItem('splashShown');
     if (!splashShown) {
@@ -98,13 +83,9 @@ const AppContent = () => {
     }
   }, []);
   
-  // Handle splash screen completion
   const handleSplashComplete = () => {
     setShowSplash(false);
-    // Mark that splash has been shown in this session
     sessionStorage.setItem('splashShown', 'true');
-    
-    // Add small delay before rendering the app content
     setTimeout(() => {
       setSplashCompleted(true);
     }, 300);
@@ -115,36 +96,26 @@ const AppContent = () => {
       {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       
       {splashCompleted && (
-      //   <BrowserRouter>
-      //   <Routes>
-      //     <Route element={<Layout />}>
-      //       <Route path="*" element={<Maintainance />} />
-      //     </Route>
-      //   </BrowserRouter>
         <BrowserRouter>
           <PostAuthRedirect />
           <Routes>
-            {/* Add Auth route */}
             <Route path="/auth" element={<Auth handleSplashComplete={handleSplashComplete}/>} />
             <Route path="/" element={<Landing/>} />            
-            {/* Protected routes */}
             <Route element={<ProtectedRoute handleSplashComplete={handleSplashComplete}/>}>
               <Route element={<Layout />}>
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/new-pairs" element={<NewPairs />} />
-                {/* <Route path="/trending" element={<Trending />} /> */}
                 <Route path="/pump-vision" element={<PumpVision />} />
                 <Route path="/holdings" element={<Holdings />} />
                 <Route path="/token/:id" element={<TokenDetails />} />
-                </Route>
+              </Route>
               <Route element={<LayoutNew />}>
                 <Route path="/rug-check" element={<RugCheck />} />
                 <Route path="/wallet-analysis" element={<WalletAnalysis />} />
               </Route>
             </Route>
-            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
@@ -153,12 +124,18 @@ const AppContent = () => {
   );
 };
 
+// ✅ Fix 5: Complete WalletProvider config
 const App = () => (
   <ConnectionProvider endpoint={endpoint}>
-    <WalletProvider wallets={wallets} autoConnect={false} onError={(error) => console.log('Wallet error:', error)} config={{
-    commitment: 'processed',  // Faster
-    network: WalletAdapterNetwork.Mainnet
-  }}>
+    <WalletProvider 
+      wallets={wallets} 
+      autoConnect={false}
+      config={{ 
+        commitment: 'processed',  // ✅ Faster confirmations
+        network: WalletAdapterNetwork.Mainnet
+      }}
+      onError={(error) => console.log('Wallet error:', error)}
+    >
       <WalletModalProvider>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
