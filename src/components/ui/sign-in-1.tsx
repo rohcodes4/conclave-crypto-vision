@@ -126,10 +126,10 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
                 </div>
               ))}
             </div>
-            {/* <div className="grid gap-2">
-              <TelegramLogin/>
+            <div className="grid gap-2">
+              {/* <TelegramLogin/> */}
               <Web3Login/>
-            </div> */}
+            </div>
           </CardContent>
 
           {/* Skip Action Button */}
