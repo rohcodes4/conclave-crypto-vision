@@ -3,6 +3,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { ExternalLink } from 'lucide-react';
 import { useEffect } from 'react';
+import { Button } from './ui/button';
 declare global {
   interface Window {
     tgAuthHandled?: boolean;
@@ -87,14 +88,11 @@ const TelegramLogin = () => {
   }, []);
 
   return (
-    <div className='flex justify-center mt-6'>
-      <button
-        onClick={handleLogin}
-        className='w-full px-4 py-2 bg-blue-500 text-white text-sm rounded-full shadow-md hover:bg-blue-600 flex gap-3 justify-center max-md:text-[11px]'
-      >
+    <div className='flex justify-center'>
+      <Button onClick={handleLogin} className="bg-[#2a2a2a] hover:bg-white hover:text-black w-full transition-transform hover:scale-[1.03]">
         <ExternalLink className='h-4 w-4' />
         Login with Telegram
-      </button>
+      </Button>
     </div>
   );
 };

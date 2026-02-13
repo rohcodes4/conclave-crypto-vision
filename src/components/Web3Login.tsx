@@ -7,12 +7,14 @@ import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { Wallet } from 'lucide-react';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { Buffer } from 'buffer';
+import { Button } from './ui/button';
 
 const Web3Login = () => {
   const { publicKey, signMessage, connected, connect, disconnect } = useWallet();
   const { setVisible } = useContext(WalletModalContext);
   const [shouldSign, setShouldSign] = useState(false);
 
+  console.log('publicKey', publicKey.toBase58())
   const startLogin = () => {
     if (!connected) {
       setVisible(true); // open wallet selector
@@ -30,15 +32,18 @@ const Web3Login = () => {
       const encodedMessage = new TextEncoder().encode(message);
       const signature = await signMessage(encodedMessage);
 
-      const res = await fetch(`${import.meta.env.VITE_RENDER_URL}/auth/web3`, {
+      const res = await fetch('https://nqibrtuxmslqdjnrpjvd.supabase.co/functions/v1/wallet-login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`  // Optional
+        },
         body: JSON.stringify({
           address: publicKey.toBase58(),
           signature: Buffer.from(signature).toString('base64'),
           message,
         }),
-      });
+      });      
 
       const data = await res.json();
       if (data.success) {
@@ -61,17 +66,114 @@ const Web3Login = () => {
   }, [connected, shouldSign, handleLogin]);
 
   return (
-    <button
-      onClick={startLogin}
-      className="bg-[#ff7229] text-white text-sm px-4 py-2 rounded-full w-full flex justify-center gap-3 items-center max-md:text-[11px]"
-    >
+      <Button onClick={startLogin} className="bg-[#2a2a2a] hover:bg-white hover:text-black w-full transition-transform hover:scale-[1.03]">
       <Wallet className="h-4 w-4" />
-      Login with Wallet
-    </button>
+        Login with Wallet
+      </Button>
   );
 };
 
 export default Web3Login;
+
+// import { useWallet } from '@solana/wallet-adapter-react';
+// import { WalletModalContext } from '@solana/wallet-adapter-react-ui';
+// import { useConnectModal } from '@rainbow-me/rainbowkit';
+// import React, { useContext, useCallback, useEffect, useState } from 'react';
+// import { Wallet } from 'lucide-react';
+// import { supabase } from '@/integrations/supabase/client';
+
+// declare global {
+//   interface Window {
+//     solana?: any;
+//   }
+// }
+
+// const Web3Login = () => {
+//   const { publicKey, connected: solConnected, signMessage } = useWallet();
+//   const { setVisible: setSolVisible } = useContext(WalletModalContext);
+//   const { openConnectModal: openEvmConnect } = useConnectModal();
+//   const [shouldSign, setShouldSign] = useState<'solana' | 'evm' | null>(null);
+
+//   const handleSolanaLogin = useCallback(async () => {
+//     if (!publicKey || !signMessage || !window.solana) return;
+
+//     const { data, error } = await supabase.auth.signInWithWeb3({
+//       chain: 'solana',
+//       statement: 'I accept the Terms of Service for paper trading app.',
+//       wallet: window.solana,
+//     });
+
+//     if (error) {
+//       console.error('Login error:', error);
+//       alert('Login failed: ' + error.message);
+//     }
+//   }, [publicKey, signMessage]);
+
+//   const handleEvmLogin = useCallback(async () => {
+//     const { data, error } = await supabase.auth.signInWithWeb3({
+//       chain: 'ethereum',
+//       statement: 'I accept the Terms of Service for paper trading app.',
+//     });
+
+//     if (error) {
+//       console.error('Login error:', error);
+//       alert('Login failed: ' + error.message);
+//     }
+//   }, []);
+
+//   const startSolanaLogin = () => {
+//     if (!solConnected) {
+//       setSolVisible(true);
+//       setShouldSign('solana');
+//     } else {
+//       handleSolanaLogin();
+//     }
+//   };
+
+//   const startEvmLogin = () => {
+//     openEvmConnect?.();
+//     setShouldSign('evm');
+//   };
+
+//   useEffect(() => {
+//     if (shouldSign === 'solana' && solConnected) {
+//       handleSolanaLogin();
+//       setShouldSign(null);
+//     }
+//   }, [solConnected, shouldSign, handleSolanaLogin]);
+
+//   useEffect(() => {
+//     if (shouldSign === 'evm') {
+//       handleEvmLogin();
+//       setShouldSign(null);
+//     }
+//   }, [shouldSign, handleEvmLogin]);
+
+//   return (
+//     <div className="flex flex-col gap-2 w-full">
+//       <button
+//         onClick={startSolanaLogin}
+//         className="bg-[#ff7229] text-white text-sm px-4 py-2 rounded-full flex justify-center gap-3 items-center max-md:text-[11px] cursor-pointer"
+//         disabled={!window.solana}
+//       >
+//         <Wallet className="h-4 w-4" />
+//         {solConnected ? 'Solana Login' : 'Connect Solana'}
+//       </button>
+      
+//       <button
+//         onClick={startEvmLogin}
+//         className="bg-[#ff7229] text-white text-sm px-4 py-2 rounded-full flex justify-center gap-3 items-center max-md:text-[11px] cursor-pointer"
+//       >
+//         <Wallet className="h-4 w-4" />
+//         Connect EVM
+//       </button>
+//     </div>
+//   );
+// };
+
+// export default Web3Login;
+
+
 
 
 // // Web3Login.tsx
