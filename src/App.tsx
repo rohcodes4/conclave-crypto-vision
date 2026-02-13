@@ -29,10 +29,7 @@ import {
 } from '@solana/wallet-adapter-base'; 
 import {
   PhantomWalletAdapter,
-  SolflareWalletAdapter,
-  AlphaWalletAdapter,
-  CloverWalletAdapter,
-  TorusWalletAdapter
+  AlphaWalletAdapter
 } from '@solana/wallet-adapter-wallets';
 
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
@@ -44,7 +41,7 @@ import Landing from './pages/Landing';
 
 const wallets = [
   new PhantomWalletAdapter(),
-  new SolflareWalletAdapter(),
+  // new SolflareWalletAdapter(),
   new AlphaWalletAdapter(),
   // new CloverWalletAdapter(),
   // new TorusWalletAdapter()
