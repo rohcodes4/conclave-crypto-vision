@@ -26,7 +26,7 @@ import {
 } from '@solana/wallet-adapter-react';
 import { 
   PhantomWalletAdapter,
-  BackpackWalletAdapter,
+  // BackpackWalletAdapter,
   SolflareWalletAdapter  // ✅ Keep but last (no conflict when not first)
 } from '@solana/wallet-adapter-wallets';
 import { 
@@ -41,7 +41,7 @@ import Landing from './pages/Landing';
 
 // ✅ Fix: MetaMask-First Order (Backpack detects MetaMask automatically)
 const wallets = [
-  new BackpackWalletAdapter(),     // ✅ #1: MetaMask shim + auto-detection
+  // new BackpackWalletAdapter(),     // ✅ #1: MetaMask shim + auto-detection
   new PhantomWalletAdapter(),      // ✅ #2: Solana native  
   new SolflareWalletAdapter(),     // ✅ #3: Last position (no StreamMiddleware conflict)
   // Removed slow/conflicting adapters
