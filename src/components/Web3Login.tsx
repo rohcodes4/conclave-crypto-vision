@@ -14,7 +14,6 @@ const Web3Login = () => {
   const { setVisible } = useContext(WalletModalContext);
   const [shouldSign, setShouldSign] = useState(false);
 
-  console.log('publicKey', publicKey.toBase58())
   const startLogin = () => {
     if (!connected) {
       setVisible(true); // open wallet selector
@@ -28,7 +27,7 @@ const Web3Login = () => {
     try {
       if (!publicKey || !signMessage) throw new WalletNotConnectedError();
 
-      const message = `Login request for ${publicKey.toBase58()}`;
+      const message = `Login request for ${publicKey?.toBase58()}`;
       const encodedMessage = new TextEncoder().encode(message);
       const signature = await signMessage(encodedMessage);
 
@@ -39,7 +38,7 @@ const Web3Login = () => {
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`  // Optional
         },
         body: JSON.stringify({
-          address: publicKey.toBase58(),
+          address: publicKey?.toBase58(),
           signature: Buffer.from(signature).toString('base64'),
           message,
         }),
