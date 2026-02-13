@@ -50,7 +50,7 @@ const Web3Login = () => {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`  // Optional
+          // 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`  // Optional
         },
         body: JSON.stringify({
           address: publicKey?.toBase58(),
