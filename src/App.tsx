@@ -24,6 +24,9 @@ import {
   ConnectionProvider,
   WalletProvider
 } from '@solana/wallet-adapter-react';
+import { 
+  WalletAdapterNetwork
+} from '@solana/wallet-adapter-base'; 
 import {
   PhantomWalletAdapter,
   SolflareWalletAdapter,
@@ -43,15 +46,15 @@ const wallets = [
   new PhantomWalletAdapter(),
   new SolflareWalletAdapter(),
   new AlphaWalletAdapter(),
-  new CloverWalletAdapter(),
-  new TorusWalletAdapter()
+  // new CloverWalletAdapter(),
+  // new TorusWalletAdapter()
 ];
 
 // FREE Solana RPC endpoints (with fallbacks)
 const RPC_ENDPOINTS = [
   // "https://api.mainnet-beta.solana.com", // Official free endpoint
-  "https://solana-api.projectserum.com", // Serum free endpoint
   "https://rpc.ankr.com/solana", // Ankr free endpoint
+  "https://solana-api.projectserum.com", // Serum free endpoint
 ];
 
 // Use the first endpoint, with fallback capability built into Solana's ConnectionProvider
@@ -148,7 +151,10 @@ const AppContent = () => {
 
 const App = () => (
   <ConnectionProvider endpoint={endpoint}>
-    <WalletProvider wallets={wallets} autoConnect={false} onError={(error) => console.log('Wallet error:', error)}>
+    <WalletProvider wallets={wallets} autoConnect={false} onError={(error) => console.log('Wallet error:', error)} config={{
+    commitment: 'processed',  // Faster
+    network: WalletAdapterNetwork.Mainnet
+  }}>
       <WalletModalProvider>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
