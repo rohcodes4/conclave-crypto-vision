@@ -150,6 +150,11 @@ const PostAuthRedirect = () => {
   
   return null;
 };
+const { user } = useAuth();
+
+useEffect(()=>{
+  console.log('user',user)
+},[user])
 
 // Main application with splash screen
 const AppContent = () => {
