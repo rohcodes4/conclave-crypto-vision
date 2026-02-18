@@ -150,16 +150,17 @@ const PostAuthRedirect = () => {
   
   return null;
 };
-const { user } = useAuth();
-
-useEffect(()=>{
-  console.log('user',user)
-},[user])
 
 // Main application with splash screen
 const AppContent = () => {
   const [showSplash, setShowSplash] = useState(false);
   const [splashCompleted, setSplashCompleted] = useState(false);
+  
+  const { user } = useAuth();
+
+  useEffect(()=>{
+    console.log('user',user)
+  },[user])
   
   // Check if splash screen has been shown in this session
   useEffect(() => {
