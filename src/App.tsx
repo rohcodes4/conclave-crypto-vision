@@ -73,7 +73,6 @@ const TelegramAuthHandler = () => {
     try {
       const encoded = hash.replace('#tgAuthResult=', '');
       const userData = JSON.parse(atob(encoded));
-      // Clean the URL immediately
       window.history.replaceState(null, '', window.location.pathname);
 
       (async () => {
@@ -97,7 +96,6 @@ const TelegramAuthHandler = () => {
             return;
           }
 
-          // Extract token from magic link and exchange it client-side
           const url = new URL(data.login_url);
           const tokenHash = url.searchParams.get('token');
 
@@ -106,6 +104,15 @@ const TelegramAuthHandler = () => {
             return;
           }
 
+          // Listen for auth state BEFORE calling verifyOtp
+          // so we don't navigate until AuthContext has the session
+          const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+              subscription.unsubscribe();
+              navigate('/dashboard', { replace: true });
+            }
+          });
+
           const { error } = await supabase.auth.verifyOtp({
             token_hash: tokenHash,
             type: 'email',
@@ -113,11 +120,8 @@ const TelegramAuthHandler = () => {
 
           if (error) {
             console.error('verifyOtp error:', error);
-            return;
+            subscription.unsubscribe();
           }
-
-          // Always go to /dashboard after successful login
-          navigate('/dashboard', { replace: true });
 
         } catch (err) {
           console.error('Telegram auth error:', err);
