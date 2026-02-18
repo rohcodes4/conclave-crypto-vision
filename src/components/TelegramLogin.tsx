@@ -12,7 +12,7 @@ declare global {
 const TelegramLogin = () => {
   const handleLogin = () => {
     const botUsername = 'paperTrader_bot'; // without @
-    const redirectUrl = encodeURIComponent(`${window.location.origin}`);
+    const redirectUrl = encodeURIComponent(`${window.location.origin}/dashboard`);
     
     const telegramAuthUrl = `https://oauth.telegram.org/auth?bot_id=8086922089&origin=${window.location.origin}&embed=1&request_access=write&redirect_uri=${redirectUrl}`;
     
