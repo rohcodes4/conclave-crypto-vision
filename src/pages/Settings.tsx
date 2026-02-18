@@ -121,7 +121,9 @@ const Settings = () => {
       );
 
       const data = await response.json();
-      if (data.error) throw new Error(data.error);
+      if (!response.ok || data.error || !data.success) {
+        throw new Error(data.error || 'Delete failed');
+      }
 
       // Sign out locally to clear the session from the browser
       await supabase.auth.signOut();
