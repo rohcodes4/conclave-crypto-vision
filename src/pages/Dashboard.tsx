@@ -14,9 +14,6 @@ const Dashboard = () => {
   const queryResult = useTrendingSolanaTokens();
   const trendingTokens = queryResult.data ?? [];  // ✅ Safe default
   const isLoadingTokens = queryResult.isLoading;
-  console.log("useTrendingSolanaTokens full result:", queryResult);
-  console.log("useTrendingSolanaTokens trendingTokens (safe):", trendingTokens);
-  console.log("useTrendingSolanaTokens isLoadingTokens:", isLoadingTokens);
   const { balance, trades, holdings, calculatePortfolioValue, calculatePnL } = useTradeStore();
   
   const portfolioValue = calculatePortfolioValue();

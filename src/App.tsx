@@ -156,12 +156,6 @@ const AppContent = () => {
   const [showSplash, setShowSplash] = useState(false);
   const [splashCompleted, setSplashCompleted] = useState(false);
   
-  const { user } = useAuth();
-
-  useEffect(()=>{
-    console.log('user',user)
-  },[user])
-  
   // Check if splash screen has been shown in this session
   useEffect(() => {
     const splashShown = sessionStorage.getItem('splashShown');

@@ -431,8 +431,6 @@ export const fetchTrendingTokens = async (limit: number = 72): Promise<TokenInfo
           continue;
         }
 
-        console.log(`Moralis trending fetched ${response.length} tokens`);
-
         const solanaTokens = response
           .filter((item: any) => item.chainId === "solana" && item.tokenAddress)
           .slice(0, limit);
@@ -440,7 +438,6 @@ export const fetchTrendingTokens = async (limit: number = 72): Promise<TokenInfo
         const results = await Promise.all(
           solanaTokens.map(async (item: any) => {
             try {
-              console.log('itemmm',item)
               return {
                 id: item.tokenAddress,
                 name: item.name || item.description || "Unknown",
