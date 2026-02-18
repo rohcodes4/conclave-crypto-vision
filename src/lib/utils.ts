@@ -33,8 +33,6 @@ export const getDisplayName = () => {
   return email;
 };
 
-
-
 export const getProvider = ()=>{
   const { user } = useAuth();
   const email = user?.email ?? user?.identities?.[0]?.identity_data.email ?? '';
