@@ -188,7 +188,7 @@ const AppContent = () => {
       //     </Route>
       //   </BrowserRouter>
         <BrowserRouter>
-        <TelegramAuthHandler>
+        <TelegramAuthHandler />
           <PostAuthRedirect />
           <Routes>
             {/* Add Auth route */}
@@ -214,7 +214,6 @@ const AppContent = () => {
             
             <Route path="*" element={<NotFound />} />
           </Routes>
-          </TelegramAuthHandler>
         </BrowserRouter>
       )}
     </>
