@@ -99,61 +99,32 @@ const Settings = () => {
     loadUserData();
   }, [user]);
 
-  // const handleDeleteAccount = async () => {
-  //   if (!user) return;
-  
-  //   try {
-  //     setIsDeleting(true);
-  
-  //     // Get session to retrieve the access token
-      // const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      // if (sessionError || !session?.access_token) throw new Error("Unable to retrieve session.");
-  
-  //     const res = await fetch('https://nqibrtuxmslqdjnrpjvd.supabase.co/auth/v1/user', {
-  //       method: 'DELETE',
-  //       headers: {
-  //         Authorization: `Bearer ${session.access_token}`,
-  //         apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bHpqbXpoYnF1bmJqZnFlaG1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQzMDEwMTQsImV4cCI6MjA1OTg3NzAxNH0.ApeTujrwkwjQx71sfX5bcs7j_7xOZqmVSF1-k0gRqOc', // This is safe to use on client
-  //       },
-  //     });
-  
-  //     if (!res.ok) {
-  //       const err = await res.json();
-  //       throw new Error(err.message || "Failed to delete account.");
-  //     }
-  
-  //     toast.success("Account deleted successfully");
-  //     await supabase.auth.signOut();
-  //     navigate("/auth");
-  
-  //   } catch (error: any) {
-  //     console.error("Error deleting account:", error);
-  //     toast.error("Failed to delete account: " + error.message);
-  //   } finally {
-  //     setIsDeleting(false);
-  //   }
-  // };
-
-  
   const handleDeleteAccount = async () => {
     if (!user) return;
     
     try {
       setIsDeleting(true);
-      const { error } = await supabase.auth.admin.deleteUser(user.id);
       
-      if (error) throw error;
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-account`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${await supabase.auth.getSession().then(({ data }) => data.session?.access_token)}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user_id: user.id }),
+      });
       
-      toast.success("Account deleted successfully");
+      const { error } = await response.json();
+      if (error) throw new Error(error);
+      
+      toast.success("Account fully deleted");
       navigate("/auth");
     } catch (error: any) {
-      console.error("Error deleting account:", error);
-      toast.error("Failed to delete account: " + error.message);
-      await signOut();
+      toast.error("Delete failed: " + error.message);
     } finally {
       setIsDeleting(false);
     }
-  };
+  };  
 
   const initiateSubscription = async (plan: string) => {
     // This would normally connect to a payment gateway
@@ -406,7 +377,7 @@ const Settings = () => {
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" className="w-full bg-red-900 hover:bg-red-800 text-white">
-                      Sign Out
+                      Delete Account
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent className="bg-crypto-card border-crypto-card">
@@ -427,7 +398,7 @@ const Settings = () => {
                         }}
                         disabled={isDeleting}
                       >
-                        {isDeleting ? "Signing out..." : "Sign Out"}
+                        {isDeleting ? "Deleting..." : "Delete Account"}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
