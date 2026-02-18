@@ -101,30 +101,40 @@ const Settings = () => {
 
   const handleDeleteAccount = async () => {
     if (!user) return;
-    
+
     try {
       setIsDeleting(true);
-      
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-account`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${await supabase.auth.getSession().then(({ data }) => data.session?.access_token)}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user_id: user.id }),
-      });
-      
-      const { error } = await response.json();
-      if (error) throw new Error(error);
-      
-      toast.success("Account fully deleted");
-      navigate("/auth");
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('No active session');
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-account`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          // No body needed — server gets user_id from the JWT
+        }
+      );
+
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+
+      // Sign out locally to clear the session from the browser
+      await supabase.auth.signOut();
+
+      toast.success('Account deleted successfully');
+      navigate('/auth', { replace: true });
+
     } catch (error: any) {
-      toast.error("Delete failed: " + error.message);
+      toast.error('Delete failed: ' + error.message);
     } finally {
       setIsDeleting(false);
     }
-  };  
+  };
 
   const initiateSubscription = async (plan: string) => {
     // This would normally connect to a payment gateway
