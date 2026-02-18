@@ -38,6 +38,7 @@ import RugCheck from './pages/RugCheck';
 import WalletAnalysis from './pages/WalletAnalysis';
 import LayoutNew from './components/layout/LayoutNew';
 import Landing from './pages/Landing';
+import { supabase } from '@/integrations/supabase/client';
 
 const wallets = [
   new PhantomWalletAdapter(),
@@ -58,6 +59,78 @@ const RPC_ENDPOINTS = [
 const endpoint = RPC_ENDPOINTS[0];
 
 const queryClient = new QueryClient();
+
+
+// ── Handles #tgAuthResult= hash from Telegram OAuth redirect ──────────────
+// Must be inside BrowserRouter so it has access to useNavigate.
+const TelegramAuthHandler = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (!hash.startsWith('#tgAuthResult=')) return;
+
+    try {
+      const encoded = hash.replace('#tgAuthResult=', '');
+      const userData = JSON.parse(atob(encoded));
+      // Clean the URL immediately
+      window.history.replaceState(null, '', window.location.pathname);
+
+      (async () => {
+        try {
+          const res = await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/telegram-login`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+              },
+              body: JSON.stringify(userData),
+            }
+          );
+
+          const data = await res.json();
+
+          if (!data.success || !data.login_url) {
+            console.error('Telegram login failed:', data.error);
+            return;
+          }
+
+          // Extract token from magic link and exchange it client-side
+          const url = new URL(data.login_url);
+          const tokenHash = url.searchParams.get('token');
+
+          if (!tokenHash) {
+            console.error('No token in login_url');
+            return;
+          }
+
+          const { error } = await supabase.auth.verifyOtp({
+            token_hash: tokenHash,
+            type: 'email',
+          });
+
+          if (error) {
+            console.error('verifyOtp error:', error);
+            return;
+          }
+
+          // Always go to /dashboard after successful login
+          navigate('/dashboard', { replace: true });
+
+        } catch (err) {
+          console.error('Telegram auth error:', err);
+        }
+      })();
+
+    } catch (err) {
+      console.error('Failed to parse tgAuthResult:', err);
+    }
+  }, [navigate]);
+
+  return null;
+};
 
 // Component to handle post-authentication redirect
 const PostAuthRedirect = () => {
@@ -115,6 +188,7 @@ const AppContent = () => {
       //     </Route>
       //   </BrowserRouter>
         <BrowserRouter>
+        <TelegramAuthHandler>
           <PostAuthRedirect />
           <Routes>
             {/* Add Auth route */}
@@ -140,6 +214,7 @@ const AppContent = () => {
             
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </TelegramAuthHandler>
         </BrowserRouter>
       )}
     </>
