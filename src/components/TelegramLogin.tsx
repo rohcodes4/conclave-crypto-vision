@@ -3,93 +3,103 @@
 import { supabase } from '@/integrations/supabase/client';
 import { ExternalLink } from 'lucide-react';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
+
 declare global {
   interface Window {
     tgAuthHandled?: boolean;
   }
 }
+
 const TelegramLogin = () => {
+  const navigate = useNavigate();
+
   const handleLogin = () => {
-    const botUsername = 'paperTrader_bot'; // without @
-    const redirectUrl = encodeURIComponent(`${window.location.origin}/dashboard`);
-    
+    const redirectUrl = encodeURIComponent(window.location.origin);
     const telegramAuthUrl = `https://oauth.telegram.org/auth?bot_id=8086922089&origin=${window.location.origin}&embed=1&request_access=write&redirect_uri=${redirectUrl}`;
-    
     window.location.href = telegramAuthUrl;
   };
 
   const handleTelegramAuth = async (userData: any) => {
-    const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/telegram-login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
-    });
+    try {
+      // 1. Verify with edge function, get back the magic link URL
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/telegram-login`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify(userData),
+        }
+      );
 
-    let data: any = null;
+      const data = await res.json();
 
-    const text = await res.text();
-    if (text) {
-      try {
-        data = JSON.parse(text);
-      } catch {
-        throw new Error('Server returned non-JSON response');
+      if (!data.success || !data.login_url) {
+        console.error('Telegram login failed:', data.error);
+        alert('Login failed: ' + (data.error ?? 'Unknown error'));
+        return;
       }
-    }
 
-    if (!res.ok) {
-      throw new Error(`Telegram auth failed (${res.status})`);
-    }    
+      // 2. Pull the token out of the magic link URL — do NOT navigate to it
+      //    action_link format: https://<project>.supabase.co/auth/v1/verify?token=XXX&type=magiclink&...
+      const url = new URL(data.login_url);
+      const tokenHash = url.searchParams.get('token');
 
-    if (data.success && data.login_url) {
-      window.location.href = data.login_url;
-    }
+      if (!tokenHash) {
+        alert('Login failed: missing token');
+        return;
+      }
 
-    if (data.success && data.session?.access_token && data.session?.refresh_token) {
-      await supabase.auth.setSession({
-        access_token: data.session.access_token,
-        refresh_token: data.session.refresh_token,
+      // 3. Exchange token locally — Supabase sets the session in the browser
+      const { error } = await supabase.auth.verifyOtp({
+        token_hash: tokenHash,
+        type: 'email',
       });
 
-      const { data: { user } } = await supabase.auth.getUser();
-      // console.log('✅ Refetched user:', user);
-    } else {
-      console.error('❌ Invalid session returned from server:', data);
+      if (error) {
+        console.error('verifyOtp error:', error);
+        alert('Login failed: ' + error.message);
+        return;
+      }
+
+      // 4. We control the redirect — always go to /dashboard
+      navigate('/dashboard', { replace: true });
+
+    } catch (err) {
+      console.error('Telegram auth error:', err);
+      alert('Something went wrong.');
     }
   };
 
   useEffect(() => {
-    // console.log('Checking for tgAuthResult in URL...');
-    if (window.tgAuthHandled) {
-      // console.log('Auth already handled. Skipping.');
-      return;
-    }
-  
+    if (window.tgAuthHandled) return;
+
     const hash = window.location.hash;
-    // console.log('Current hash:', hash);
-  
+
     if (hash.startsWith('#tgAuthResult=')) {
       try {
         const encoded = hash.replace('#tgAuthResult=', '');
-        // console.log('Encoded:', encoded);
         const decoded = atob(encoded);
-        // console.log('Decoded:', decoded);
         const userData = JSON.parse(decoded);
-        // console.log('Parsed user data:', userData);
         window.tgAuthHandled = true;
         window.history.replaceState(null, '', window.location.pathname);
         handleTelegramAuth(userData);
       } catch (err) {
-        console.error('❌ Failed to parse tgAuthResult', err);
+        console.error('Failed to parse tgAuthResult', err);
       }
-    } else {
-      // console.log('No tgAuthResult in URL');
     }
   }, []);
 
   return (
     <div className='flex justify-center'>
-      <Button onClick={handleLogin} className="bg-[#2a2a2a] hover:bg-white hover:text-black w-full transition-transform hover:scale-[1.03]">
+      <Button
+        onClick={handleLogin}
+        className="bg-[#2a2a2a] hover:bg-white hover:text-black w-full transition-transform hover:scale-[1.03]"
+      >
         <ExternalLink className='h-4 w-4' />
         Login with Telegram
       </Button>
@@ -98,6 +108,107 @@ const TelegramLogin = () => {
 };
 
 export default TelegramLogin;
+
+// 'use client';
+
+// import { supabase } from '@/integrations/supabase/client';
+// import { ExternalLink } from 'lucide-react';
+// import { useEffect } from 'react';
+// import { Button } from './ui/button';
+// declare global {
+//   interface Window {
+//     tgAuthHandled?: boolean;
+//   }
+// }
+// const TelegramLogin = () => {
+//   const handleLogin = () => {
+//     const botUsername = 'paperTrader_bot'; // without @
+//     const redirectUrl = encodeURIComponent(`${window.location.origin}/dashboard`);
+    
+//     const telegramAuthUrl = `https://oauth.telegram.org/auth?bot_id=8086922089&origin=${window.location.origin}&embed=1&request_access=write&redirect_uri=${redirectUrl}`;
+    
+//     window.location.href = telegramAuthUrl;
+//   };
+
+//   const handleTelegramAuth = async (userData: any) => {
+//     const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/telegram-login`, {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify(userData),
+//     });
+
+//     let data: any = null;
+
+//     const text = await res.text();
+//     if (text) {
+//       try {
+//         data = JSON.parse(text);
+//       } catch {
+//         throw new Error('Server returned non-JSON response');
+//       }
+//     }
+
+//     if (!res.ok) {
+//       throw new Error(`Telegram auth failed (${res.status})`);
+//     }    
+
+//     if (data.success && data.login_url) {
+//       window.location.href = data.login_url;
+//     }
+
+//     if (data.success && data.session?.access_token && data.session?.refresh_token) {
+//       await supabase.auth.setSession({
+//         access_token: data.session.access_token,
+//         refresh_token: data.session.refresh_token,
+//       });
+
+//       const { data: { user } } = await supabase.auth.getUser();
+//       // console.log('✅ Refetched user:', user);
+//     } else {
+//       console.error('❌ Invalid session returned from server:', data);
+//     }
+//   };
+
+//   useEffect(() => {
+//     // console.log('Checking for tgAuthResult in URL...');
+//     if (window.tgAuthHandled) {
+//       // console.log('Auth already handled. Skipping.');
+//       return;
+//     }
+  
+//     const hash = window.location.hash;
+//     // console.log('Current hash:', hash);
+  
+//     if (hash.startsWith('#tgAuthResult=')) {
+//       try {
+//         const encoded = hash.replace('#tgAuthResult=', '');
+//         // console.log('Encoded:', encoded);
+//         const decoded = atob(encoded);
+//         // console.log('Decoded:', decoded);
+//         const userData = JSON.parse(decoded);
+//         // console.log('Parsed user data:', userData);
+//         window.tgAuthHandled = true;
+//         window.history.replaceState(null, '', window.location.pathname);
+//         handleTelegramAuth(userData);
+//       } catch (err) {
+//         console.error('❌ Failed to parse tgAuthResult', err);
+//       }
+//     } else {
+//       // console.log('No tgAuthResult in URL');
+//     }
+//   }, []);
+
+//   return (
+//     <div className='flex justify-center'>
+//       <Button onClick={handleLogin} className="bg-[#2a2a2a] hover:bg-white hover:text-black w-full transition-transform hover:scale-[1.03]">
+//         <ExternalLink className='h-4 w-4' />
+//         Login with Telegram
+//       </Button>
+//     </div>
+//   );
+// };
+
+// export default TelegramLogin;
 
 // import { supabase } from '@/integrations/supabase/client';
 // import { ExternalLink } from 'lucide-react';
