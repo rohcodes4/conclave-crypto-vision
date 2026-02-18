@@ -12,7 +12,7 @@ declare global {
 const TelegramLogin = () => {
   const handleLogin = () => {
     const botUsername = 'paperTrader_bot'; // without @
-    const redirectUrl = encodeURIComponent(`${window.location.origin}/auth/telegram`);
+    const redirectUrl = encodeURIComponent(`${window.location.origin}`);
     
     const telegramAuthUrl = `https://oauth.telegram.org/auth?bot_id=8086922089&origin=${window.location.origin}&embed=1&request_access=write&redirect_uri=${redirectUrl}`;
     
@@ -77,7 +77,7 @@ const TelegramLogin = () => {
         const userData = JSON.parse(decoded);
         // console.log('Parsed user data:', userData);
         window.tgAuthHandled = true;
-        // window.history.replaceState(null, '', window.location.pathname);
+        window.history.replaceState(null, '', window.location.pathname);
         handleTelegramAuth(userData);
       } catch (err) {
         console.error('❌ Failed to parse tgAuthResult', err);
