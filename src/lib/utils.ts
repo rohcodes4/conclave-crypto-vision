@@ -6,29 +6,34 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-
-export const getDisplayName=()=>{
+export const getDisplayName = () => {
   const { user } = useAuth();
-  const email = user?.email ?? user?.identities?.[0]?.identity_data.email ?? '';
-  const fullName = user.user_metadata.full_name ?? '';
-  const firstLastName = (user.user_metadata.first_name ?? '') + ' ' + (user.user_metadata.last_name ?? '');
-  const trimmedFirstLast = firstLastName.trim();
-  const displayName = fullName ?? trimmedFirstLast ?? (user.user_metadata.telegram_username ?? '');
+  const email = user?.email ?? user?.identities?.[0]?.identity_data?.email ?? '';
+  
+  const fullName = user?.user_metadata?.full_name ?? '';
+  const firstName = user?.user_metadata?.first_name ?? '';
+  const lastName = user?.user_metadata?.last_name ?? '';
+  const firstLastName = `${firstName} ${lastName}`.trim();
+  const telegramUsername = user?.user_metadata?.telegram_username ?? '';
+  const displayName = fullName || firstLastName || telegramUsername || '';
+  
   if (email.startsWith('wallet-') && email.endsWith('@walletuser.com')) {
-    const address = email?.replace('wallet-', '')?.replace('@walletuser.com', '');
+    const address = email.replace('wallet-', '').replace('@walletuser.com', '');
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
   }
-
+  
   if (email.startsWith('telegram-') && email.endsWith('@telegramuser.com')) {
-    let result = displayName?.replace("undefined", "").trim();
-    return result;
+    return firstLastName || telegramUsername || firstName || email.split('@')[0];
   }
-  if(user.app_metadata.provider=="discord"){
-    let result = displayName?.replace("undefined", "").trim();
-    return result;
+  
+  if (user?.app_metadata?.provider === 'discord') {
+    return displayName;
   }
+  
   return email;
-}
+};
+
+
 
 export const getProvider = ()=>{
   const { user } = useAuth();
