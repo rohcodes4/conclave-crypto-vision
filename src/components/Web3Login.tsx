@@ -31,7 +31,7 @@ const Web3Login = () => {
       const encodedMessage = new TextEncoder().encode(message);
       const signature = await signMessage(encodedMessage);
 
-      const res = await fetch('https://nqibrtuxmslqdjnrpjvd.supabase.co/functions/v1/wallet-login', {
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/wallet-login`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

@@ -20,7 +20,7 @@ const TelegramLogin = () => {
   };
 
   const handleTelegramAuth = async (userData: any) => {
-    const res = await fetch(`${import.meta.env.VITE_RENDER_URL}/auth/telegram`, {
+    const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/telegram-login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),
