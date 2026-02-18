@@ -33,7 +33,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { formatUserIdentifier } from "@/components/auth/AccountMenu";
 import { getDisplayName, getProvider } from "@/lib/utils";
 
 const Settings = () => {

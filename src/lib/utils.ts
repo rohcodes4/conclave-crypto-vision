@@ -53,5 +53,5 @@ export const getAvatar = () =>{
   };
 
   if(user.email.startsWith('wallet-')) return "W";
-  return getDisplayName().charAt(0).toUpperCase(); 
+  return getDisplayName()?.charAt(0).toUpperCase() || "U"; 
 }
